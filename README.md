@@ -4,8 +4,11 @@
 
 * How to run this project
 
+## Project Setup
+
 1. file structure
 ``` 
+.
 ├── ft_transcendence.pdf
 ├── makefile
 ├── README.md
@@ -39,11 +42,26 @@
         ├── urls.py
         └── wsgi.py
 ```
-1. create virtial env 
-``` python3 -m venv env ```
+2. create virtial env: ``` python3 -m venv env ```
 
 so you will got this:
 ```
 $>ls 
 env  ft_transcendence.pdf  makefile  README.md  requirements.txt  User_manage 
 ```
+
+3. activate env: ``` source env/bin/activate ``` ( run ``` deactivate	``` for deactivate env) 
+
+4. install python module (used modules are listed in `requirements.txt`):
+```
+	pip3 install -r requirements.txt
+```
+
+## Run Project
+
+1. run django server:
+``` python3 User_manage/manage.py runserver 8000 ```
+	
+so now, you server will available at ```127.0.0.1:8000```
+
+for example: 	```127.0.0.1:8000/Auth``` you will got: ```Hello, world. You're at the polls index.```
