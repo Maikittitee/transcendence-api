@@ -1,12 +1,29 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-
+from django.views.decorators.csrf import csrf_exempt
+import json
 
 # Create your views here.
 
+users = {
+	
+}
+
 def index(request):
-    return HttpResponse("Hello, world. You're at the polls index.")
+	return HttpResponse("Hello, world. You're at the polls index.")
+
+@csrf_exempt
 def register(request):
-    return HttpResponse("Hello, You're in register View")
+	if (request.method == "POST"):
+		name = request.POST.get("username")
+		password = request.POST.get("password")
+		if (name in users.keys()):
+			return HttpResponse("This username is already exist, please try another")
+		users[name] = password
+		print(json.dumps(users))
+		return HttpResponse(f"Thank you for register, {name}.")
+	return HttpResponse("the method is not allow")
+
+@csrf_exempt
 def login(request):
-    return HttpResponse("Hello, You can login in this view")
+	return HttpResponse("Hello, You can login in this view")
