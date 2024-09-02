@@ -45,10 +45,10 @@
 2. create virtial env: ``` python3 -m venv env ```
 
 so you will got this:
-```
-$>ls 
-env  ft_transcendence.pdf  makefile  README.md  requirements.txt  User_manage 
-```
+	```
+	$>ls 
+	env  ft_transcendence.pdf  makefile  README.md  requirements.txt  User_manage 
+	```
 
 3. activate env: ``` source env/bin/activate ``` ( run ``` deactivate	``` for deactivate env) 
 
@@ -56,6 +56,10 @@ env  ft_transcendence.pdf  makefile  README.md  requirements.txt  User_manage
 ```
 	pip3 install -r requirements.txt
 ```
+5. create `.env` file with content:
+	```SECRET_KEY="xxxx"```
+
+	- of course `xxxx` is Secret, but you will know if you are colaborator
 
 ## Run Project
 
