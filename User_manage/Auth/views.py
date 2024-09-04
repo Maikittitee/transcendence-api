@@ -27,3 +27,10 @@ def register(request):
 @csrf_exempt
 def login(request):
 	return HttpResponse("Hello, You can login in this view")
+
+def oauth_callback(request):
+	if (request.method == "GET"):
+		qd = request.GET
+		print(qd)
+		return HttpResponse("Authentication Success!")
+	return HttpResponse("Authentication Failed")
