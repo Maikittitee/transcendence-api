@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseNotFound, HttpResponseNotAllowed
+from django.http import HttpResponse, HttpResponseNotFound, HttpResponseNotAllowed, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse
 import json
@@ -12,8 +12,10 @@ users = {
 	
 }
 
+@csrf_exempt
 def index(request):
-	return HttpResponse("Hello, world. You're at the polls index.")
+	# return HttpResponse("Hello index")
+	return JsonResponse({"hello":"world"})
 
 @csrf_exempt
 def register(request):
@@ -31,6 +33,7 @@ def register(request):
 def login(request):
 	return HttpResponse("Hello, You can login in this view")
 
+@csrf_exempt
 def oauth_callback(request):
 	if (request.method == "GET"):
 		qd = request.GET
@@ -50,9 +53,9 @@ def oauth_callback(request):
 		print(base_params["client_secret"])
 		response = requests.post(base_url, params=base_params)
 		results = response.json()
-		print(json.dumps(results, indent=2))
-		
-		return HttpResponse("Authorization Success!")
+		results = dict(results)
+		results["msg"] = "Authorization Success!"
+		return JsonResponse(results)
 	if (request.method == "POST"):
 		qd = request.POST
 		print(qd)

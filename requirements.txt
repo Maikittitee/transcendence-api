@@ -1,3 +1,4 @@
 Django
 python-decouple
 requests
+django-cors-headers
