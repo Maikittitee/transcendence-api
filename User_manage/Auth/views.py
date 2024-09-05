@@ -1,7 +1,10 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotFound, HttpResponseNotAllowed
 from django.views.decorators.csrf import csrf_exempt
+from django.urls import reverse
 import json
+import requests
+from decouple import config
 
 # Create your views here.
 
@@ -31,6 +34,27 @@ def login(request):
 def oauth_callback(request):
 	if (request.method == "GET"):
 		qd = request.GET
+		code = qd.get('code')
+		if (not code):
+			return HttpResponseNotFound("Unauthorization")
+		print(f"Authorize_code: {code}")
+		base_url = "https://api.intra.42.fr/oauth/token"
+		base_params = {
+			"grant_type": "authorization_code",
+			"client_id": config("UID"),
+			"client_secret": config("CLIENT_SECRET"),
+			"code": code,
+			"redirect_uri": "http://localhost:9000" + reverse("callback") 
+		}
+		print(base_params["client_id"])
+		print(base_params["client_secret"])
+		response = requests.post(base_url, params=base_params)
+		results = response.json()
+		print(json.dumps(results, indent=2))
+		
+		return HttpResponse("Authorization Success!")
+	if (request.method == "POST"):
+		qd = request.POST
 		print(qd)
 		return HttpResponse("Authentication Success!")
-	return HttpResponse("Authentication Failed")
+	return HttpResponseNotAllowed("Authentication Failed")
