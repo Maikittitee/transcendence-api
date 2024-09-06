@@ -18,17 +18,21 @@ def index(request):
 @csrf_exempt
 def register(request):
 	try:
-		username = request.POST.get("username")
-		password = request.POST.get("password")
-	
-		if (not username or not password):
-			raise Exception("invalid input.")
-		new_user = User(username = username, password = password)
+		# username = request.POST.get("username")
+		# password = request.POST.get("password")
+		try: 
+			data = json.loads(request.body)
+		except json.JSONDecodeError:
+			data = request.POST
+		print(f"recieve: {data})")
+		username = data["username"]
+		password = data["password"]
+		new_user = User(username = username.lower(), password = password)
 		new_user.save() # save into DB
-		
+		print(f"DB {User.objects.all()}")	
 		return JsonResponse({"massage":"Successful"})
-	except Exception:
-		return JsonResponse({"massage": "Failed"})
+	except Exception as e:
+		return JsonResponse({"massage": f"Failed: {e}"})
 
 @csrf_exempt
 def login(request):
