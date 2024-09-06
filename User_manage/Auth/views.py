@@ -49,8 +49,6 @@ def oauth_callback(request):
 			"code": code,
 			"redirect_uri": "http://localhost:9000" + reverse("callback") 
 		}
-		print(base_params["client_id"])
-		print(base_params["client_secret"])
 		response = requests.post(base_url, params=base_params)
 		results = response.json()
 		results = dict(results)
