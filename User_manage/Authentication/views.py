@@ -18,15 +18,13 @@ def index(request):
 @csrf_exempt
 def register(request):
 	try:
-		# username = request.POST.get("username")
-		# password = request.POST.get("password")
 		try: 
 			data = json.loads(request.body)
 		except json.JSONDecodeError:
 			data = request.POST
-		print(f"recieve: {data})")
 		username = data["username"]
 		password = data["password"]
+
 		new_user = User(username = username.lower(), password = password)
 		new_user.save() # save into DB
 		print(f"DB {User.objects.all()}")	
@@ -37,6 +35,9 @@ def register(request):
 @csrf_exempt
 def login(request):
 	return HttpResponse("Hello, You can login in this view")
+
+def get_users(request):
+	pass
 
 @csrf_exempt
 def oauth_callback(request):
