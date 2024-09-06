@@ -2,15 +2,13 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseNotAllowed, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse
+from Authentication.models import User
 import json
 import requests
+
 from decouple import config
 
 # Create your views here.
-
-users = {
-	
-}
 
 @csrf_exempt
 def index(request):
@@ -19,15 +17,18 @@ def index(request):
 
 @csrf_exempt
 def register(request):
-	if (request.method == "POST"):
-		name = request.POST.get("username")
+	try:
+		username = request.POST.get("username")
 		password = request.POST.get("password")
-		if (name in users.keys()):
-			return HttpResponse("This username is already exist, please try another")
-		users[name] = password
-		print(json.dumps(users))
-		return HttpResponse(f"Thank you for register, {name}.")
-	return HttpResponse("the method is not allow")
+	
+		if (not username or not password):
+			raise Exception("invalid input.")
+		new_user = User(username = username, password = password)
+		new_user.save() # save into DB
+		
+		return JsonResponse({"massage":"Successful"})
+	except Exception:
+		return JsonResponse({"massage": "Failed"})
 
 @csrf_exempt
 def login(request):
