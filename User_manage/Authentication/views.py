@@ -83,7 +83,7 @@ def oauth_callback(request):
 			"client_id": config("UID"),
 			"client_secret": config("CLIENT_SECRET"),
 			"code": code,
-			"redirect_uri": "http://localhost:9000" + reverse("callback") 
+			"redirect_uri": config("REDIRECT_URI")
 		}
 		response = requests.post(base_url, json=base_params)
 		results = response.json()
