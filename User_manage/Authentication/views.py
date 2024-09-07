@@ -34,10 +34,24 @@ def register(request):
 
 @csrf_exempt
 def login(request):
-	return HttpResponse("Hello, You can login in this view")
+	try:
+		try: 
+			data = json.loads(request.body)
+		except json.JSONDecodeError:
+			data = request.POST
+		username = data["username"]
+		password = data["password"]
 
+		login_user = models.User.objects.filter(username=username).first()
+		if (not login_user or login_user.password != password):
+			return (JsonResponse({"massage": "incorrect username, password"}))
+		return (JsonResponse({"massage": "Login Success"}))
+	except Exception as e:
+		return JsonResponse({"massage": {e}})
+
+@csrf_exempt
 def get_users(request):
-	pass
+	return HttpResponse(models.User.objects.all())
 
 @csrf_exempt
 def oauth_callback(request):
@@ -45,8 +59,7 @@ def oauth_callback(request):
 		qd = request.GET
 		code = qd.get('code')
 		if (not code):
-			return HttpResponseNotFound("Unauthorization")
-		print(f"Authorize_code: {code}")
+			return JsonResponse({"massage":"Authorization code is invalid."})
 		base_url = "https://api.intra.42.fr/oauth/token"
 		base_params = {
 			"grant_type": "authorization_code",
@@ -60,8 +73,4 @@ def oauth_callback(request):
 		results = dict(results)
 		utils.fetch_42user_data(results.get("access_token"))
 		return JsonResponse(results)
-	if (request.method == "POST"):
-		qd = request.POST
-		print(qd)
-		return HttpResponse("Authentication Success!")
-	return HttpResponseNotAllowed("Authentication Failed")
+	return JsonResponse({"massage":"method not allow"})
