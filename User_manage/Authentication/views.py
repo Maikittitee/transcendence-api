@@ -2,11 +2,10 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseNotAllowed, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse
+from decouple import config
+import json, jwt, datetime, requests
 from . import models
 from . import utils
-import json
-import requests
-from decouple import config
 
 # Create your views here.
 
@@ -45,13 +44,31 @@ def login(request):
 		login_user = models.User.objects.filter(username=username).first()
 		if (not login_user or login_user.password != password):
 			return (JsonResponse({"massage": "incorrect username, password"}))
-		return (JsonResponse({"massage": "Login Success"}))
+		payload = {
+			'username': login_user.username,
+			'exp': datetime.datetime.now(datetime.UTC) + datetime.timedelta(minutes=60),
+			'iat': datetime.datetime.now(datetime.UTC)
+		}
+
+		token = jwt.encode(payload, "secret", algorithm="HS256")
+		return (JsonResponse({
+			"massage": "Login Success",
+			"jwt": token
+			}))
 	except Exception as e:
-		return JsonResponse({"massage": {e}})
+		return JsonResponse({"massage": e})
 
 @csrf_exempt
 def get_users(request):
-	return HttpResponse(models.User.objects.all())
+	try: 
+
+		encoded_token = request.headers.get("Authorization").split(' ')[1]
+		identity = jwt.decode(encoded_token, "secret", algorithms=["HS256"])
+		username = identity.get("username") 
+		user = models.User.objects.filter(username=username).first()
+		return JsonResponse(user.to_dict())
+	except Exception as e:
+		return JsonResponse({"massage": e})
 
 @csrf_exempt
 def oauth_callback(request):
