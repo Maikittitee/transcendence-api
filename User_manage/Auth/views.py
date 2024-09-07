@@ -38,6 +38,7 @@ def oauth_callback(request):
 	if (request.method == "GET"):
 		qd = request.GET
 		code = qd.get('code')
+		print(code)
 		if (not code):
 			return HttpResponseNotFound("Unauthorization")
 		print(f"Authorize_code: {code}")
@@ -47,8 +48,8 @@ def oauth_callback(request):
 			"client_id": config("UID"),
 			"client_secret": config("CLIENT_SECRET"),
 			"code": code,
-			"redirect_uri": "http://localhost:9000" + reverse("callback") 
-		}
+			"redirect_uri": config("REDIRECT_URI")
+        }
 		response = requests.post(base_url, params=base_params)
 		results = response.json()
 		results = dict(results)
