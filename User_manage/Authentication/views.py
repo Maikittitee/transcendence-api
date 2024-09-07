@@ -2,10 +2,10 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseNotAllowed, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse
-from Authentication.models import User
+from . import models
+from . import utils
 import json
 import requests
-
 from decouple import config
 
 # Create your views here.
@@ -13,7 +13,7 @@ from decouple import config
 @csrf_exempt
 def index(request):
 	# return HttpResponse("Hello index")
-	return JsonResponse({"hello":"world"})
+	return JsonResponse({"massage":"you can use /register and /login"})
 
 @csrf_exempt
 def register(request):
@@ -25,9 +25,9 @@ def register(request):
 		username = data["username"]
 		password = data["password"]
 
-		new_user = User(username = username.lower(), password = password)
+		new_user = models.User(username = username.lower(), password = password)
 		new_user.save() # save into DB
-		print(f"DB {User.objects.all()}")	
+		print(f"DB {models.User.objects.all()}")
 		return JsonResponse({"massage":"Successful"})
 	except Exception as e:
 		return JsonResponse({"massage": f"Failed: {e}"})
@@ -58,7 +58,7 @@ def oauth_callback(request):
 		response = requests.post(base_url, params=base_params)
 		results = response.json()
 		results = dict(results)
-		results["msg"] = "Authorization Success!"
+		utils.fetch_42user_data(results.get("access_token"))
 		return JsonResponse(results)
 	if (request.method == "POST"):
 		qd = request.POST
