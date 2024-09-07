@@ -55,7 +55,7 @@ def oauth_callback(request):
 			"code": code,
 			"redirect_uri": "http://localhost:9000" + reverse("callback") 
 		}
-		response = requests.post(base_url, params=base_params)
+		response = requests.post(base_url, json=base_params)
 		results = response.json()
 		results = dict(results)
 		utils.fetch_42user_data(results.get("access_token"))

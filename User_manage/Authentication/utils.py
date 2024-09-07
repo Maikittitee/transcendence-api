@@ -2,6 +2,15 @@
 import requests
 import json
 
+
+def is_user():
+	pass
+
+def create_user():
+	pass
+
+
+
 def fetch_42user_data(token: str):
 	if (not token):
 		print("No Token")
