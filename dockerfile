@@ -10,8 +10,10 @@ COPY ./requirements.txt ./
 
 COPY ./.env ./
 
-RUN apt-get update && apt-get install -y --no-install-recommends python3.10 python3-pip
+RUN apt-get update && apt-get install -y --no-install-recommends python3.10 python3-pip curl
 	
 RUN pip install -r requirements.txt
 
-CMD ["tail", "-f", "/dev/null"]
+EXPOSE 9000
+
+CMD ["python3", "User_manage/manage.py", "runserver", "0.0.0.0:9000", "--noreload"]
