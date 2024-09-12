@@ -1,5 +1,5 @@
-Django
-python-decouple
-requests
-django-cors-headers
-pyJWT
+Django==4.2.5
+python-decouple==3.8
+requests==2.31.0
+django-cors-headers==4.2.0
+pyJWT==2.8.0

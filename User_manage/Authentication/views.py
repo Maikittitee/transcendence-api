@@ -23,7 +23,7 @@ def register(request):
 			data = request.POST
 		username = data["username"]
 		password = data["password"]
-
+		
 		new_user = models.User(username = username.lower(), password = password)
 		new_user.save() # save into DB
 		print(f"DB {models.User.objects.all()}")
@@ -46,8 +46,8 @@ def login(request):
 			return (JsonResponse({"massage": "incorrect username, password"}))
 		payload = {
 			'username': login_user.username,
-			'exp': datetime.datetime.now(datetime.UTC) + datetime.timedelta(minutes=60),
-			'iat': datetime.datetime.now(datetime.UTC)
+			'exp': datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(minutes=60),
+			'iat': datetime.datetime.now(datetime.timezone.utc)
 		}
 
 		token = jwt.encode(payload, "secret", algorithm="HS256")
