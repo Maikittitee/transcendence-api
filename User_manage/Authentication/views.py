@@ -7,12 +7,10 @@ import json, jwt, datetime, requests
 from . import models
 from . import utils
 
-# Create your views here.
-
 @csrf_exempt
 def index(request):
 	# return HttpResponse("Hello index")
-	return JsonResponse({"massage":"you can use /register and /login"})
+	return JsonResponse({"message":"you can use /register and /login"})
 
 @csrf_exempt
 def register(request):
@@ -23,13 +21,13 @@ def register(request):
 			data = request.POST
 		username = data["username"]
 		password = data["password"]
-
+		
 		new_user = models.User(username = username.lower(), password = password)
 		new_user.save() # save into DB
 		print(f"DB {models.User.objects.all()}")
-		return JsonResponse({"massage":"Successful"})
+		return JsonResponse({"message":"Successful"})
 	except Exception as e:
-		return JsonResponse({"massage": f"Failed: {e}"})
+		return JsonResponse({"message": f"Failed: {e}"})
 
 @csrf_exempt
 def login(request):
@@ -43,20 +41,12 @@ def login(request):
 
 		login_user = models.User.objects.filter(username=username).first()
 		if (not login_user or login_user.password != password):
-			return (JsonResponse({"massage": "incorrect username, password"}))
-		payload = {
-			'username': login_user.username,
-			'exp': datetime.datetime.now(datetime.UTC) + datetime.timedelta(minutes=60),
-			'iat': datetime.datetime.now(datetime.UTC)
-		}
-
-		token = jwt.encode(payload, "secret", algorithm="HS256")
-		return (JsonResponse({
-			"massage": "Login Success",
-			"jwt": token
-			}))
+			return (JsonResponse({"message": "incorrect username, password"}))
+		if (login_user.is_42):
+			return JsonResponse({"message": "42 User must login by 42 Authentication"})	
+		return (JsonResponse(login_user.login()))
 	except Exception as e:
-		return JsonResponse({"massage": e})
+		return JsonResponse({"message": e})
 
 @csrf_exempt
 def get_users(request):
@@ -68,7 +58,7 @@ def get_users(request):
 		user = models.User.objects.filter(username=username).first()
 		return JsonResponse(user.to_dict())
 	except Exception as e:
-		return JsonResponse({"massage": e})
+		return JsonResponse({"message": e})
 
 @csrf_exempt
 def oauth_callback(request):
@@ -88,6 +78,16 @@ def oauth_callback(request):
 		response = requests.post(base_url, json=base_params)
 		results = response.json()
 		results = dict(results)
-		utils.fetch_42user_data(results.get("access_token"))
-		return JsonResponse(results)
-	return JsonResponse({"massage":"method not allow"})
+		user_data = utils.fetch_42user_data(results.get("access_token"))
+		if (not user_data):
+			return JsonResponse({"message": "fetch user error"})
+		login_user = models.User.objects.filter(username=user_data["email"]).first()
+		if (not login_user):
+			login_user = models.User(
+					username = user_data["login"] + "@42", 
+					email = user_data["email"], 
+					is_42 = True,
+				)
+			login_user.save()
+		return JsonResponse(login_user.login())
+	return JsonResponse({"message":"method not allow"})

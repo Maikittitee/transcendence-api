@@ -50,14 +50,19 @@ so you will got this:
 	env  ft_transcendence.pdf  makefile  README.md  requirements.txt  User_manage 
 	```
 
-3. activate env: ``` source env/bin/activate ``` ( run ``` deactivate	``` for deactivate env) 
+3. activate env: ``` source env/bin/activate ``` ( run `deactivate` for deactivate env) 
 
 4. install python module (used modules are listed in `requirements.txt`):
 ```
 	pip3 install -r requirements.txt
 ```
 5. create `.env` file with content:
-	```SECRET_KEY="xxxx"```
+```
+SECRET_KEY = "xxxx"
+UID = "xxxx"
+CLIENT_SECRET = "xxxx"
+REDIRECT_URI = "http://127.0.0.1:9000"
+```
 
 	- of course `xxxx` is Secret, but you will know if you are colaborator
 
