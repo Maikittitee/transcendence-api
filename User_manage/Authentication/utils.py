@@ -24,7 +24,6 @@ def fetch_42user_data(token: str):
 	}
 	response = requests.get(url, headers=headers)
 	data = response.json()
-	print(f"data: {data}")
 	try:
 		return ({"message": data['error']})
 	except:
