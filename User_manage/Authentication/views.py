@@ -75,13 +75,16 @@ def oauth_callback(request):
 			"code": code,
 			"redirect_uri": config("REDIRECT_URI")
 		}
+		print(base_params)
 		response = requests.post(base_url, json=base_params)
 		results = response.json()
 		results = dict(results)
+		print(f"response: {results}")
 		user_data = utils.fetch_42user_data(results.get("access_token"))
 		if (not user_data):
 			return JsonResponse({"message": "fetch user error"})
-		login_user = models.User.objects.filter(username=user_data["email"]).first()
+		login_user = models.User.objects.filter(email=user_data["email"]).first()
+		print(f"login user: {login_user}")
 		if (not login_user):
 			login_user = models.User(
 					username = user_data["login"] + "@42", 
