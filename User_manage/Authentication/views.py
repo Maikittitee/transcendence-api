@@ -49,7 +49,7 @@ def login(request):
 		return JsonResponse({"message": e})
 
 @csrf_exempt
-def get_users(request):
+def get_user(request):
 	try: 
 
 		encoded_token = request.headers.get("Authorization").split(' ')[1]
