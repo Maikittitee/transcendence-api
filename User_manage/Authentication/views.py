@@ -21,8 +21,8 @@ def register(request):
 			data = request.POST
 		username = data["username"]
 		password = data["password"]
-		
-		new_user = models.User(username = username.lower(), password = password)
+		email = data["email"]
+		new_user = models.User(username = username.lower(), password = password, email=email)
 		new_user.save() # save into DB
 		print(f"DB {models.User.objects.all()}")
 		return JsonResponse({"message":"Successful"})

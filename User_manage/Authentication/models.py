@@ -18,7 +18,12 @@ class User(models.Model):
 	def to_dict(self):
 		return {
 			   "username": self.username,
-			   "is_42_user": self.is_42_user
+			   "email": self.email,
+			   "bio": self.bio,
+			   "is_42_user": self.is_42,
+			   "is_online": self.is_online,
+			   "win": self.win,
+
 		}
 	
 	def login(self):
