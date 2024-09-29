@@ -83,6 +83,7 @@ def oauth_callback(request):
 		user_data = utils.fetch_42user_data(results.get("access_token"))
 		if (not user_data):
 			return JsonResponse({"message": "fetch user error"})
+		print(user_data)
 		login_user = models.User.objects.filter(email=user_data["email"]).first()
 		print(f"login user: {login_user}")
 		if (not login_user):
@@ -90,6 +91,7 @@ def oauth_callback(request):
 					username = user_data["login"] + "@42", 
 					email = user_data["email"], 
 					is_42 = True,
+					profile_img = user_data["image"]["link"]
 				)
 			login_user.save()
 		return JsonResponse(login_user.login())
