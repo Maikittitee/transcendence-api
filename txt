@@ -1,0 +1,47 @@
+User_manage
+├── Authentication
+│   ├── __init__.py
+│   ├── __pycache__
+│   │   ├── __init__.cpython-312.pyc
+│   │   ├── admin.cpython-312.pyc
+│   │   ├── apps.cpython-312.pyc
+│   │   ├── models.cpython-312.pyc
+│   │   ├── urls.cpython-312.pyc
+│   │   ├── utils.cpython-312.pyc
+│   │   └── views.cpython-312.pyc
+│   ├── admin.py
+│   ├── apps.py
+│   ├── migrations
+│   │   ├── 0001_initial.py
+│   │   ├── 0002_alter_user_username.py
+│   │   ├── 0003_user_is_42_user.py
+│   │   ├── 0004_rename_is_42_user_user_is_42_user_bio_user_email_and_more.py
+│   │   ├── 0005_alter_user_bio_alter_user_password.py
+│   │   ├── __init__.py
+│   │   └── __pycache__
+│   │       ├── 0001_initial.cpython-312.pyc
+│   │       ├── 0002_alter_user_username.cpython-312.pyc
+│   │       ├── 0003_user_is_42_user.cpython-312.pyc
+│   │       ├── 0004_rename_is_42_user_user_is_42_user_bio_user_email_and_more.cpython-312.pyc
+│   │       ├── 0005_alter_user_bio_alter_user_password.cpython-312.pyc
+│   │       └── __init__.cpython-312.pyc
+│   ├── models.py
+│   ├── tests.py
+│   ├── urls.py
+│   ├── utils.py
+│   └── views.py
+├── User_manage
+│   ├── __init__.py
+│   ├── __pycache__
+│   │   ├── __init__.cpython-312.pyc
+│   │   ├── settings.cpython-312.pyc
+│   │   ├── urls.cpython-312.pyc
+│   │   └── wsgi.cpython-312.pyc
+│   ├── asgi.py
+│   ├── settings.py
+│   ├── urls.py
+│   └── wsgi.py
+├── db.sqlite3
+└── manage.py
+
+6 directories, 38 files

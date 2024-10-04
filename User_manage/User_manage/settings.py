@@ -92,7 +92,7 @@ WSGI_APPLICATION = "User_manage.wsgi.application"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'testdb_tran', 
+        'NAME': 'db_user', 
         'USER': 'postgres',
         'PASSWORD': '1',
         'HOST': 'localhost', 

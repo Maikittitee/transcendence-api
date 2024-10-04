@@ -10,7 +10,7 @@ COPY ./requirements.txt ./
 
 COPY ./.env ./
 
-RUN apt-get update && apt-get install -y --no-install-recommends python3.10 python3-pip curl
+RUN apt-get update && apt-get install -y --no-install-recommends python3.10 python3-pip curl libpq-dev
 	
 RUN pip install -r requirements.txt
 
