@@ -23,7 +23,6 @@ services:
     depends_on:
       - postgres_db
     
-
   postgres_db:
     container_name: "postgres"
     image: postgres
