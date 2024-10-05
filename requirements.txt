@@ -4,4 +4,8 @@ requests==2.31.0
 django-cors-headers==4.2.0
 pyJWT==2.8.0
 drf-yasg
+<<<<<<< HEAD
 psycopg2-binary
+=======
+psycopg2==2.9
+>>>>>>> b55fc0cf2d79d77a980a0006465f08e9435cc70b

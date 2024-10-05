@@ -5,6 +5,7 @@ services:
     build: .
     ports: 
       - "9000:9000"
+<<<<<<< HEAD
     depends_on:
       - web
 
@@ -32,6 +33,27 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+=======
+    environment:
+      - POSTGRES_DB=db_user
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1
+      - POSTGRES_HOST=localhost
+      - POSTGRES_PORT=5432
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: db_user
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+>>>>>>> b55fc0cf2d79d77a980a0006465f08e9435cc70b
 
 volumes:
   postgres_data:
