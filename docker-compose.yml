@@ -6,8 +6,8 @@ services:
     ports: 
       - "9000:9000"
     depends_on:
-      - postgres_db
-      # - web
+      # - postgres_db
+      - web
 
   web:
     container_name: "web"
