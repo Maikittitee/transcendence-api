@@ -6,12 +6,13 @@ services:
     ports: 
       - "9000:9000"
     depends_on:
-      - web
+      - postgres_db
+      # - web
 
   web:
     container_name: "web"
     build:
-      context: .  # This is the root directory where both 'data' and 'User_manage' exist
+      context: .  # This is the root directory
       dockerfile: ./data/dockerfile  # Specify where the Dockerfile is located
     ports:
       - "8001:8001"
