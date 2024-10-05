@@ -5,3 +5,33 @@ services:
     build: .
     ports: 
       - "9000:9000"
+    depends_on:
+      - web
+
+  web:
+    container_name: "web"
+    build:
+      context: .  # This is the root directory where both 'data' and 'User_manage' exist
+      dockerfile: ./data/dockerfile  # Specify where the Dockerfile is located
+    ports:
+      - "8001:8001"
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    depends_on:
+      - postgres_db
+    
+
+  postgres_db:
+    container_name: "postgres"
+    image: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+
+volumes:
+  postgres_data:
