@@ -2,25 +2,23 @@ FROM ubuntu:22.04
 
 WORKDIR /usr/src/app
 
-# This copies all files including start.sh to /app in the container
 RUN mkdir User_manage
 
 COPY ./User_manage ./User_manage
-COPY ./data/start.sh . 
+COPY ./data/start.sh .
+COPY ./data/requirements.txt .
+COPY ./.env ./
+COPY ./wait-for-postgres.sh ./
 
-# Make sure start.sh is executable
 RUN chmod +x /usr/src/app/start.sh
 
-# Install dependencies (example: Python and others)
-RUN apt-get update && apt-get install -y --no-install-recommends python3.10 python3-pip curl libpq-dev vim
-
-# Install Python dependencies (assuming you have a requirements.txt)
-COPY ./data/requirements.txt .
-
+RUN apt-get update && apt-get install -y --no-install-recommends python3.10 python3-pip curl libpq-dev vim postgresql-client
+    
 RUN pip install -r requirements.txt
 
-# Expose the port Django will run on
+RUN chmod +x ./wait-for-postgres.sh
+ENTRYPOINT ["./wait-for-postgres.sh"]
+
 EXPOSE 8001
 
-# Start the app with start.sh
 CMD ["sh", "/usr/src/app/start.sh"]
