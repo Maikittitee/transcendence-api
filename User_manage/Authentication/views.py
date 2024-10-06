@@ -6,6 +6,7 @@ from decouple import config
 import json, jwt, datetime, requests
 from . import models
 from . import utils
+from django.contrib.auth.hashers import make_password, check_password  # Import password hasher
 
 @csrf_exempt
 def index(request):
@@ -20,9 +21,12 @@ def register(request):
 		except json.JSONDecodeError:
 			data = request.POST
 		username = data["username"]
-		password = data["password"]
-		email = data["email"]
-		new_user = models.User(username = username.lower(), password = password, email=email)
+		password = data["password"] + "43"
+		email = data['email']  # Get the email from the body
+		
+		hashed_password = make_password(password)
+
+		new_user = models.User(username = username.lower(), password = hashed_password, email=email)
 		new_user.save() # save into DB
 		print(f"DB {models.User.objects.all()}")
 		return JsonResponse({"message":"Successful"})
@@ -37,11 +41,11 @@ def login(request):
 		except json.JSONDecodeError:
 			data = request.POST
 		username = data["username"]
-		password = data["password"]
+		password = data["password"] + "43"
 
 		login_user = models.User.objects.filter(username=username).first()
-		if (not login_user or login_user.password != password):
-			return (JsonResponse({"message": "incorrect username, password"}))
+		if not login_user or not check_password(password, login_user.password):
+			return JsonResponse({"message": "Incorrect username or password"})
 		if (login_user.is_42):
 			return JsonResponse({"message": "42 User must login by 42 Authentication"})	
 		return (JsonResponse(login_user.login()))
