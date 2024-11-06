@@ -1,4 +1,9 @@
 from django.shortcuts import render
+
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseNotAllowed, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse
@@ -9,7 +14,6 @@ from . import utils
 
 @csrf_exempt
 def index(request):
-	# return HttpResponse("Hello index")
 	return JsonResponse({"message":"you can use /register and /login"})
 
 @csrf_exempt
@@ -48,17 +52,6 @@ def login(request):
 	except Exception as e:
 		return JsonResponse({"message": e})
 
-@csrf_exempt
-def get_user(request):
-	try: 
-
-		encoded_token = request.headers.get("Authorization").split(' ')[1]
-		identity = jwt.decode(encoded_token, "secret", algorithms=["HS256"])
-		username = identity.get("username") 
-		user = models.User.objects.filter(username=username).first()
-		return JsonResponse(user.to_dict())
-	except Exception as e:
-		return JsonResponse({"message": e})
 
 @csrf_exempt
 def oauth_callback(request):
