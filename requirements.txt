@@ -5,4 +5,7 @@ django-cors-headers==4.2.0
 pyJWT==2.8.0
 drf-yasg
 djangorestframework
+pyotp
+qrcode
+pillow
 
