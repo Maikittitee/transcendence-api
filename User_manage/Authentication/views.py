@@ -92,16 +92,26 @@ def oauth_callback(request):
 		return JsonResponse(login_user.login())
 	return JsonResponse({"message":"method not allow"})
 
-@api_view(["GET"])
+@api_view(["POST"])
 @login_required
-def verify_mfa_otp(request, otp):
-	user = User.objects.get(username = request.username)
+def verify_mfa_otp(request):
+	try:
+		user = User.objects.get(username = request.username)
+	except User.DoesNotExist:
+		return Response({"message": "User is not exist"}, status=status.HTTP_404_NOT_FOUND)
+	
+	try:
+		otp = request.body["otp"]
+	except Exception as e:
+		return (Response ({"message": e}, status=status.HTTP_400_BAD_REQUEST))
+		
+
 	totp = pyotp.TOTP(user.mfa_secret)
 	if (totp.verify(otp)):
 		user.mfa_enabled = True
 		user.save()
-		return JsonResponse({"massage": "otp verify success"}, status=202)
-	return (JsonResponse({"massage": "otp verify failed"}, status=401))
+		return Response({"massage": "otp verify success"}, status.HTTP_202_ACCEPTED)
+	return (Response({"massage": "otp verify failed"}, status=status.HTTP_401_UNAUTHORIZED))
 
 @api_view(["GET"])
 @login_required
