@@ -9,6 +9,7 @@ COPY ./User_manage ./User_manage
 COPY ./requirements.txt ./
 
 COPY ./.env ./
+COPY ./wait-for-postgres.sh ./
 
 COPY ./start.sh ./
 

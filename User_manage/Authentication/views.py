@@ -48,7 +48,7 @@ def login(request):
 		except json.JSONDecodeError:
 			data = request.POST
 		username = data["username"]
-		password = data["password"]
+		password = data["password"] + "43"
 
 		login_user = User.objects.filter(username=username).first()
 		if (not login_user or login_user.password != password):
@@ -89,6 +89,7 @@ def oauth_callback(request):
 					username = user_data["login"] + "@42", 
 					email = user_data["email"], 
 					is_42 = True,
+					profile_img = user_data["image"]["link"]
 				)
 			login_user.save()
 		return JsonResponse(login_user.login())

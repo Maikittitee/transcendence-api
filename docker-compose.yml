@@ -1,0 +1,43 @@
+version: '3'
+services:
+  user_management:
+    container_name: "user_management"
+    build: .
+    ports: 
+      - "9000:9000"
+    depends_on:
+      - postgres_db
+      - web
+
+  web:
+    container_name: "web"
+    build:
+      context: .  # This is the root directory
+      dockerfile: ./data/dockerfile  # Specify where the Dockerfile is located
+    ports:
+      - "8001:8001"
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    depends_on:
+      - postgres_db
+      # postgres_db:
+        # condition: service_healthy
+    
+  postgres_db:
+    container_name: "postgres"
+    image: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    # healthcheck:
+    #   test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+    #   interval: 10s
+    #   timeout: 5s
+    #   retries: 5
+volumes:
+  postgres_data:
