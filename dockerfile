@@ -8,7 +8,7 @@ COPY ./User_manage ./User_manage
 
 COPY ./requirements.txt ./
 
-COPY ./.env ./
+COPY ../.env ./
 
 RUN apt-get update && apt-get install -y --no-install-recommends python3.10 python3-pip curl
 	
