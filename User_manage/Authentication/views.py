@@ -48,7 +48,7 @@ def login(request):
 		except json.JSONDecodeError:
 			data = request.POST
 		username = data["username"]
-		password = data["password"] + "43"
+		password = data["password"]
 
 		login_user = User.objects.filter(username=username).first()
 		if (not login_user or login_user.password != password):

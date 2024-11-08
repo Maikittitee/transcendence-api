@@ -4,7 +4,7 @@ all: makemigrations migrate run
 
 # Run the Django development server on the specified port and host
 run:
-	python3 User_manage/manage.py runserver $(HOST):$(PORT)
+	python3 User_manage/manage.py runserver $(PORT)
 
 # Run migrations
 migrate:
