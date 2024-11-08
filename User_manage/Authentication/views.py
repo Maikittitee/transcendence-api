@@ -13,6 +13,7 @@ from Account.models import User
 from . import utils
 from .decorator import login_required
 import pyotp, qrcode, io
+from .mfa import MFA
 
 
 @csrf_exempt
@@ -92,6 +93,8 @@ def oauth_callback(request):
 		return JsonResponse(login_user.login())
 	return JsonResponse({"message":"method not allow"})
 
+
+
 @api_view(["POST"])
 @login_required
 def verify_mfa_otp(request):
@@ -104,12 +107,32 @@ def verify_mfa_otp(request):
 		otp = request.body["otp"]
 	except Exception as e:
 		return (Response ({"message": e}, status=status.HTTP_400_BAD_REQUEST))
-		
 
-	totp = pyotp.TOTP(user.mfa_secret)
-	if (totp.verify(otp)):
+	if not user.mfa_secret or not user.mfa_enabled:
+		return Response({"massage": "no 2fa require with this users"}, status.HTTP_403_FORBIDDEN)
+	mfa = MFA(user.mfa_secret)
+	if (mfa.verify(otp)):
+		return Response({"massage": "otp verify success"}, status.HTTP_202_ACCEPTED)
+	return (Response({"massage": "otp verify failed"}, status=status.HTTP_401_UNAUTHORIZED))
+
+@api_view(["POST"])
+@login_required
+def enable_mfa_otp(request):
+	try:
+		user = User.objects.get(username = request.username)
+	except User.DoesNotExist:
+		return Response({"message": "User is not exist"}, status=status.HTTP_404_NOT_FOUND)
+	
+	try:
+		otp = request.body["otp"]
+	except Exception as e:
+		return (Response ({"message": e}, status=status.HTTP_400_BAD_REQUEST))
+
+	if not user.mfa_secret or not user.mfa_enabled:
+		return Response({"massage": "no 2fa require with this users"}, status.HTTP_403_FORBIDDEN)
+	mfa = MFA(user.mfa_secret)
+	if (mfa.verify(otp)):
 		user.mfa_enabled = True
-		user.save()
 		return Response({"massage": "otp verify success"}, status.HTTP_202_ACCEPTED)
 	return (Response({"massage": "otp verify failed"}, status=status.HTTP_401_UNAUTHORIZED))
 
