@@ -16,8 +16,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends python3.10 pyth
 	
 RUN pip install -r requirements.txt
 
-
-
 RUN chmod +x ./start.sh
 
 EXPOSE 9000
