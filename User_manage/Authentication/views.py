@@ -20,9 +20,10 @@ from .mfa import MFA
 def index(request):
 	return JsonResponse({"message":"you can use /register and /login"})
 
-@csrf_exempt
+@api_view(["POST"])
 def register(request):
 	try:
+		print("hello register")
 		try: 
 			data = json.loads(request.body)
 		except json.JSONDecodeError:

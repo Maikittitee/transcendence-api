@@ -1,9 +1,9 @@
 PORT = 9000
 
-all: run
+all: makemigrations migrate run
 
 run:
-	python3 User_manage/manage.py runserver $(PORT)
+	python3 User_manage/manage.py runserver $(PORT) --noreload
 
 makemigrations:
 	python3 User_manage/manage.py makemigrations
