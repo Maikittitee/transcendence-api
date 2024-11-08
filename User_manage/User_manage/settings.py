@@ -34,6 +34,7 @@ DEBUG = True
 INSTALLED_APPS = [
     "Authentication",
     "Account",
+	"Profile",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",

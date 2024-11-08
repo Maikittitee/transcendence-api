@@ -74,11 +74,11 @@ def oauth_callback(request):
 			"code": code,
 			"redirect_uri": config("REDIRECT_URI")
 		}
-		print(base_params)
+		print("fetch to 42 with body: ", base_params)
 		response = requests.post(base_url, json=base_params)
 		results = response.json()
 		results = dict(results)
-		print(f"response: {results}")
+		print(f"response from 42 token: {results}")
 		user_data = utils.fetch_42user_data(results.get("access_token"))
 		if (not user_data):
 			return JsonResponse({"message": "fetch user error"})
@@ -101,20 +101,22 @@ def oauth_callback(request):
 def verify_mfa_otp(request):
 	try:
 		user = User.objects.get(username = request.username)
-	except User.DoesNotExist:
-		return Response({"message": "User is not exist"}, status=status.HTTP_404_NOT_FOUND)
-	
+	except Exception as e:
+		return Response({"message": e}, status=status.HTTP_404_NOT_FOUND)
+	print(f"user: {user}")
 	try:
-		otp = request.body["otp"]
+		otp = request.data["otp"]
 	except Exception as e:
 		return (Response ({"message": e}, status=status.HTTP_400_BAD_REQUEST))
-
-	if not user.mfa_secret or not user.mfa_enabled:
-		return Response({"massage": "no 2fa require with this users"}, status.HTTP_403_FORBIDDEN)
-	mfa = MFA(user.mfa_secret)
-	if (mfa.verify(otp)):
-		return Response({"massage": "otp verify success"}, status.HTTP_202_ACCEPTED)
-	return (Response({"massage": "otp verify failed"}, status=status.HTTP_401_UNAUTHORIZED))
+	try:
+		if not user.mfa_secret or not user.mfa_enabled:
+			return Response({"massage": "no 2fa require with this users"}, status.HTTP_403_FORBIDDEN)
+		mfa = MFA(user.mfa_secret)
+		if (mfa.verify(otp)):
+			return Response({"massage": "otp verify success"}, status.HTTP_202_ACCEPTED)
+		return (Response({"massage": "otp verify failed"}, status=status.HTTP_401_UNAUTHORIZED))
+	except Exception as e:
+		return (Response({"massage": e}, 500))
 
 @api_view(["POST"])
 @login_required
@@ -125,28 +127,28 @@ def enable_mfa_otp(request):
 		return Response({"message": "User is not exist"}, status=status.HTTP_404_NOT_FOUND)
 	
 	try:
-		otp = request.body["otp"]
+		try: 
+			data = json.loads(request.body)
+		except json.JSONDecodeError:
+			data = request.POST
+		otp = data["otp"]
 	except Exception as e:
 		return (Response ({"message": e}, status=status.HTTP_400_BAD_REQUEST))
 
-	if not user.mfa_secret or not user.mfa_enabled:
-		return Response({"massage": "no 2fa require with this users"}, status.HTTP_403_FORBIDDEN)
-	mfa = MFA(user.mfa_secret)
-	if (mfa.verify(otp)):
-		user.mfa_enabled = True
-		return Response({"massage": "otp verify success"}, status.HTTP_202_ACCEPTED)
-	return (Response({"massage": "otp verify failed"}, status=status.HTTP_401_UNAUTHORIZED))
+	try: 
+		mfa = MFA(user.mfa_secret)
+		if (mfa.verify(otp)):
+			user.mfa_enabled = True
+			user.save()
+			return Response({"massage": "otp verify success"}, status.HTTP_202_ACCEPTED)
+		return (Response({"massage": "otp verify failed"}, status=status.HTTP_401_UNAUTHORIZED))
+	except Exception as e:
+		return (Response({"massage": e}, 500))
 
 @api_view(["GET"])
 @login_required
 def setup_mfa(request):
 	user = User.objects.get(username = request.username)
-	print("logined user: " , user)
-	if not user.mfa_enabled:
-		return JsonResponse({
-			"user": request.username,
-			"massage": "MFA is not enable"
-		})
 	if not user.mfa_secret:
 		user.mfa_secret = pyotp.random_base32()
 		user.save()
@@ -157,10 +159,13 @@ def setup_mfa(request):
 	)
 
 	qr = qrcode.make(otp_uri)
-	buffer = io.BytesIO()
-	qr.save(buffer, format="PNG")
 
-	buffer.seek(0)
+	filename = f"{user.email.replace('@', '_').replace('.', '_')}.png"
+
+    # Save the QR code as a PNG image file
+	qr.save(filename)
+
+# Print the QR code to the console
 
 	return JsonResponse({"user": request.username,
 					   "qr": otp_uri})

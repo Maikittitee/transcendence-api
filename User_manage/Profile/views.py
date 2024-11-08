@@ -1,9 +1,9 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from ..Authentication.decorator import login_required
-from ..Account.models import User
-from ..Account.serializer import UserSerializer
+from Authentication.decorator import login_required
+from Account.models import User
+from Account.serializer import UserSerializer
 
 @api_view(["GET"])
 @login_required
