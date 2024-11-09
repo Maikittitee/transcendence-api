@@ -1,26 +1,10 @@
-# PORT = 9000
-
-# all: run
-
-# run:
-# 	python3 User_manage/manage.py runserver $(PORT)
-
-# makemigrations:
-# 	python3 User_manage/manage.py makemigrations
-
-# migrate:
-# 	python3 User_manage/manage.py migrate
-
-# Default port and host
 PORT = 9000
-HOST = 127.0.0.1
 
-# Default target is to run the server
-all: run
+all: makemigrations migrate run
 
 # Run the Django development server on the specified port and host
 run:
-	python3 User_manage/manage.py runserver $(HOST):$(PORT)
+	python3 User_manage/manage.py runserver $(PORT)
 
 # Run migrations
 migrate:
