@@ -3,6 +3,7 @@ python-decouple==3.8
 requests==2.31.0
 django-cors-headers==4.2.0
 pyJWT==2.8.0
+setuptools
 drf-yasg
 djangorestframework
 pyotp
