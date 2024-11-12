@@ -9,7 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse
 from decouple import config
 import json, jwt, datetime, requests
-from Account.models import User
+from core.models import User
 from . import utils
 from .decorator import login_required
 import pyotp, qrcode, io

@@ -9,4 +9,6 @@ djangorestframework
 pyotp
 qrcode
 pillow
+djoser
+djangorestframework_simplejwt
 
