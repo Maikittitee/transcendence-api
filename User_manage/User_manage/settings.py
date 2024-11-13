@@ -40,9 +40,6 @@ REST_FRAMEWORK = {
 # Application definition
 
 INSTALLED_APPS = [
-    "Authentication",
-    "Account",
-	"Profile",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -53,6 +50,9 @@ INSTALLED_APPS = [
     'rest_framework',
 	'drf_yasg',
 	'djoser',
+    "Account",
+    "Authentication",
+	# "Profile",
 ]
 
 
@@ -168,4 +168,16 @@ DJOSER = {
 SIMPLE_JWT = {
 	'AUTH_HEADER_TYPES': ('Bearer',),
     "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
+	'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+}
+
+SWAGGER_SETTINGS = {
+   'SECURITY_DEFINITIONS': {
+      'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+      }
+   },
+   'SECURITY': [{'Bearer': []}]
 }

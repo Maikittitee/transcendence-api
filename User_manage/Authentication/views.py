@@ -1,19 +1,21 @@
-from django.shortcuts import render
-
+from django.shortcuts import render, get_object_or_404
+from django.contrib.auth import authenticate
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from django.contrib.auth.decorators import login_required
 from rest_framework import status
-
+from rest_framework_simplejwt.tokens import RefreshToken
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseNotAllowed, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse
 from decouple import config
 import json, jwt, datetime, requests
-from core.models import User
+from Account.models import User
 from . import utils
-from .decorator import login_required
 import pyotp, qrcode, io
 from .mfa import MFA
+from Account.serializers import UserSerializer
+from drf_yasg.utils import swagger_auto_schema
 
 
 @csrf_exempt
@@ -23,7 +25,6 @@ def index(request):
 @api_view(["POST"])
 def register(request):
 	try:
-		print("hello register")
 		try: 
 			data = json.loads(request.body)
 		except json.JSONDecodeError:
@@ -38,24 +39,37 @@ def register(request):
 			password = password).save()
 		return JsonResponse({"message":"Successful"})
 	except Exception as e:
-		return JsonResponse({"message": f"Failed: {e}"})
+		return JsonResponse({"message": e})
 
 @csrf_exempt
+@api_view(["POST"])
 def login(request):
 	try:
-		try: 
-			data = json.loads(request.body)
-		except json.JSONDecodeError:
-			data = request.POST
-		username = data["username"]
-		password = data["password"]
-
-		login_user = User.objects.filter(username=username).first()
-		if (not login_user or login_user.password != password):
-			return (JsonResponse({"message": "incorrect username, password"}))
+		username = request.data["username"]
+		password = request.data["password"]
+		login_user = authenticate(username=username, password=password)
+		if (not login_user):
+			return Response({"detail": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
+		print("here1")
 		if (login_user.is_42):
-			return JsonResponse({"message": "42 User must login by 42 Authentication"})	
-		return (JsonResponse(login_user.login()))
+			return Response({"message": "42 User must login through intra42."} , status=status.HTTP_400_BAD_REQUEST)
+		print("here2")
+		if (login_user.mfa_enabled):
+			otp_token = request.data.get('otp')
+			if not otp_token:
+				return Response({"detail": "2FA token required"}, status=400)
+
+			mfa = MFA(login_user.mfa_secret)
+			if not mfa.verify(otp_token):
+				return Response({"detail": "Invalid 2FA token"}, status=400)
+		refresh = RefreshToken.for_user(login_user)
+		access_token = str(refresh.access_token)
+
+		return Response({
+			'refresh': str(refresh),
+			'access': access_token
+		})
+
 	except Exception as e:
 		return JsonResponse({"message": e})
 
@@ -95,16 +109,33 @@ def oauth_callback(request):
 		return JsonResponse(login_user.login())
 	return JsonResponse({"message":"method not allow"})
 
+@api_view(["GET"])
+@login_required
+def setup_mfa(request):
+	try: 
+		user = get_object_or_404(User, username=request.user.username)
+		serializer = UserSerializer(user)
+		if not user.mfa_secret:
+			user.mfa_secret = pyotp.random_base32()
+			user.save()
 
+		otp_uri = pyotp.totp.TOTP(user.mfa_secret).provisioning_uri(
+			name = user.email,
+			issuer_name="Transcendence 42"
+		)
+		return Response({
+			"user": serializer.data,
+			"otp_uri": otp_uri
+		})
+	except Exception as e:
+		return Response({
+			"massage": e
+		}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(["POST"])
 @login_required
 def verify_mfa_otp(request):
-	try:
-		user = User.objects.get(username = request.username)
-	except Exception as e:
-		return Response({"message": e}, status=status.HTTP_404_NOT_FOUND)
-	print(f"user: {user}")
+	user = get_object_or_404(User, username=request.username)
 	try:
 		otp = request.data["otp"]
 	except Exception as e:
@@ -123,50 +154,17 @@ def verify_mfa_otp(request):
 @login_required
 def enable_mfa_otp(request):
 	try:
-		user = User.objects.get(username = request.username)
-	except User.DoesNotExist:
-		return Response({"message": "User is not exist"}, status=status.HTTP_404_NOT_FOUND)
-	
-	try:
-		try: 
-			data = json.loads(request.body)
-		except json.JSONDecodeError:
-			data = request.POST
-		otp = data["otp"]
+		user = get_object_or_404(User, username=request.user.username)
+		otp = request.data["otp"]
 	except Exception as e:
 		return (Response ({"message": e}, status=status.HTTP_400_BAD_REQUEST))
-
 	try: 
 		mfa = MFA(user.mfa_secret)
 		if (mfa.verify(otp)):
 			user.mfa_enabled = True
 			user.save()
-			return Response({"massage": "otp verify success"}, status.HTTP_202_ACCEPTED)
-		return (Response({"massage": "otp verify failed"}, status=status.HTTP_401_UNAUTHORIZED))
+			return Response({"otp": "success"}, status.HTTP_202_ACCEPTED)
+		return (Response({"otp": "failed"}, status=status.HTTP_401_UNAUTHORIZED))
 	except Exception as e:
 		return (Response({"massage": e}, 500))
 
-@api_view(["GET"])
-@login_required
-def setup_mfa(request):
-	user = User.objects.get(username = request.username)
-	if not user.mfa_secret:
-		user.mfa_secret = pyotp.random_base32()
-		user.save()
-
-	otp_uri = pyotp.totp.TOTP(user.mfa_secret).provisioning_uri(
-		name = user.email,
-		issuer_name="PONG 42"
-	)
-
-	qr = qrcode.make(otp_uri)
-
-	filename = f"{user.email.replace('@', '_').replace('.', '_')}.png"
-
-    # Save the QR code as a PNG image file
-	qr.save(filename)
-
-# Print the QR code to the console
-
-	return JsonResponse({"user": request.username,
-					   "qr": otp_uri})

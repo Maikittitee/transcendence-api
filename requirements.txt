@@ -11,4 +11,5 @@ qrcode
 pillow
 djoser
 djangorestframework_simplejwt
+django-rest-swagger
 
