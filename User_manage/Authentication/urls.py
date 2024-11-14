@@ -4,8 +4,8 @@ from djoser import views as djoser_views
 from rest_framework_simplejwt import views as simplejwt_views
 
 urlpatterns = [
+	
     path("", views.index),
-
     path("login/", views.login),
 	path("users/", djoser_views.UserViewSet.as_view({'get': 'list'})),
 	path("users/me", djoser_views.UserViewSet.as_view({'get': 'me'})),

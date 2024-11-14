@@ -4,6 +4,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.contrib.auth.decorators import login_required
 from rest_framework import status
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseNotAllowed, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -16,6 +17,7 @@ import pyotp, qrcode, io
 from .mfa import MFA
 from Account.serializers import UserSerializer
 from drf_yasg.utils import swagger_auto_schema
+from .serializers import UserLoginSerializer
 
 
 @csrf_exempt
@@ -41,10 +43,13 @@ def register(request):
 	except Exception as e:
 		return JsonResponse({"message": e})
 
-@csrf_exempt
-@api_view(["POST"])
+@swagger_auto_schema(method="post",request_body=UserLoginSerializer, operation_description="Login a user and return JWT tokens")
+@api_view(["post"])
 def login(request):
 	try:
+		serializer = UserLoginSerializer(data=request.data)
+		serializer.is_valid(raise_exception=True)
+		print("validate: ", serializer.validated_data)
 		username = request.data["username"]
 		password = request.data["password"]
 		login_user = authenticate(username=username, password=password)
@@ -71,7 +76,9 @@ def login(request):
 		})
 
 	except Exception as e:
-		return JsonResponse({"message": e})
+		print("hello exception")
+		# return Response("ko");
+		return Response({"detail": "Exception error"}, status=status.HTTP_400_BAD_REQUEST)
 
 @csrf_exempt
 def oauth_callback(request):
