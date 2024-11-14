@@ -32,9 +32,9 @@ DEBUG = True
 # ALLOWED_HOSTS = ["http://127.0.0.1:5500"]
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
+    'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ),
+    ],
 }
 
 # Application definition

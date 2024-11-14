@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth import authenticate
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, action
 from rest_framework.response import Response
 from django.contrib.auth.decorators import login_required
 from rest_framework import status
@@ -17,10 +17,8 @@ import pyotp, qrcode, io
 from .mfa import MFA
 from Account.serializers import UserSerializer
 from drf_yasg.utils import swagger_auto_schema
-from .serializers import UserLoginSerializer
+from .serializers import UserLoginSerializer, VerifyOtpSerializer
 
-
-@csrf_exempt
 def index(request):
 	return JsonResponse({"message":"you can use /register and /login"})
 
@@ -43,7 +41,8 @@ def register(request):
 	except Exception as e:
 		return JsonResponse({"message": e})
 
-@swagger_auto_schema(method="post",request_body=UserLoginSerializer, operation_description="Login a user and return JWT tokens")
+@csrf_exempt
+@swagger_auto_schema(method="post",request_body=UserLoginSerializer, operation_description="Login a user and return acces and refresh tokens")
 @api_view(["post"])
 def login(request):
 	try:
@@ -76,11 +75,9 @@ def login(request):
 		})
 
 	except Exception as e:
-		print("hello exception")
 		# return Response("ko");
 		return Response({"detail": "Exception error"}, status=status.HTTP_400_BAD_REQUEST)
 
-@csrf_exempt
 def oauth_callback(request):
 	if (request.method == "GET"):
 		qd = request.GET
@@ -116,10 +113,12 @@ def oauth_callback(request):
 		return JsonResponse(login_user.login())
 	return JsonResponse({"message":"method not allow"})
 
-@api_view(["GET"])
-@login_required
+@csrf_exempt
+@swagger_auto_schema(method="POST", operation_description="Get OTP URI of Two Factor Authentication")
+@api_view(["POST"])
 def setup_mfa(request):
 	try: 
+		print("hello")
 		user = get_object_or_404(User, username=request.user.username)
 		serializer = UserSerializer(user)
 		if not user.mfa_secret:
@@ -139,6 +138,7 @@ def setup_mfa(request):
 			"massage": e
 		}, status=status.HTTP_400_BAD_REQUEST)
 
+@swagger_auto_schema(method="POST", operation_description="Verify OTP")
 @api_view(["POST"])
 @login_required
 def verify_mfa_otp(request):
@@ -157,6 +157,7 @@ def verify_mfa_otp(request):
 	except Exception as e:
 		return (Response({"massage": e}, 500))
 
+@swagger_auto_schema(method="POST", request_body=VerifyOtpSerializer, operation_description="enable Two Factor Authentication")
 @api_view(["POST"])
 @login_required
 def enable_mfa_otp(request):
