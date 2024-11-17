@@ -1,4 +1,39 @@
 ```mermaid
+flowchart TD
+    subgraph Authentication
+        JWT[JWT Token] --> Auth[Auth Middleware]
+        Auth --> User[User Service]
+    end
+
+    subgraph UserService[User Management]
+        User --> UserDB[(User Database)]
+        User --> Stats[Player Stats]
+        Stats --> Rating[Rating System]
+    end
+
+    subgraph Matchmaking
+        Queue[Match Queue]
+        MM[Matchmaker]
+        Room[Game Room]
+        
+        Rating --> Queue
+        Queue --> MM
+        MM --> Room
+    end
+
+    subgraph GameState
+        Room --> Game[Game Session]
+        Game --> Results[Game Results]
+        Results --> Stats
+    end
+
+    style Authentication fill:#f9f,stroke:#333
+    style UserService fill:#bbf,stroke:#333
+    style Matchmaking fill:#bfb,stroke:#333
+    style GameState fill:#dfd,stroke:#333
+```
+
+```mermaid
 sequenceDiagram
     participant Client
     participant GameConsumer
