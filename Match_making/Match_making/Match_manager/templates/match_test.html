@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <button onclick="testWS('matchmaking')">matchmaking</button>
+    <button onclick="testWS('tournament', 'create/')">tournament</button>
+</body>
+<script>
+    function testWS(endpoint, room="") {
+        var ws = new WebSocket(`ws://localhost:8000/ws/${endpoint}/${room}`);
+        console.log(`try to connect ${ws}`);
+        ws.onopen = function() {
+            console.log("connected");
+            ws.send("test");
+        }
+        ws.onmessage = function(e) {
+            console.log(e.data);
+        }
+    }
+</script>
+</html>
