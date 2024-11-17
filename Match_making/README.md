@@ -1,5 +1,5 @@
 
-```
+```mermaid
 stateDiagram-v2
     [*] --> Waiting: Player Joins
     
