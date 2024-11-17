@@ -11,6 +11,12 @@ import os
 
 from channels.routing import ProtocolTypeRouter, URLRouter # add URLRouter and ProtocolTypeRouter
 
+# may have to change the AUTH 
+from channels.auth import AuthMiddlewareStack
+from channels.security.websocket import AllowedHostsOriginValidator
+# import the websocket_urlpatterns from Match_manager.routing
+from Match_manager.routing import websocket_urlpatterns
+
 from django.core.asgi import get_asgi_application
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Match_making.settings')
@@ -20,5 +26,8 @@ django_asgi_app = get_asgi_application()
 # defien the type of handler depend on the protocol
 application = ProtocolTypeRouter({
     "http": django_asgi_app,
-    "websocket": URLRouter([])
-})
+    'websocket': AllowedHostsOriginValidator(
+            AuthMiddlewareStack(URLRouter(websocket_urlpatterns))
+        )
+    })
+
