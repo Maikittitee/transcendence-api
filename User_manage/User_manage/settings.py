@@ -52,7 +52,7 @@ INSTALLED_APPS = [
 	'djoser',
     "Account",
     "Authentication",
-	# "Profile",
+	"Profile",
 ]
 
 
@@ -181,3 +181,6 @@ SWAGGER_SETTINGS = {
    },
    'SECURITY': [{'Bearer': []}]
 }
+
+MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_URL = '/media/'
