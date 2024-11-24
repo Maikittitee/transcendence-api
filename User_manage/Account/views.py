@@ -1,17 +1,21 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from .serializer import UserSerializer
+from drf_yasg.utils import swagger_auto_schema
+from .serializers import UserSerializer
 from .models import User
 # Create your views here.
-# CRUD
+
 
 @api_view(['GET', 'POST'])
 def get_post_users(request):
 	if request.method == 'GET':
+		# return (Response({"hello": "world"}))
 		users = User.objects.all()
+		print("user: ", users)
 		serializer = UserSerializer(users, many=True)
+		print("serializer data: ", serializer.data)
 		return Response(serializer.data)
 
 	if request.method == 'POST':
@@ -23,21 +27,14 @@ def get_post_users(request):
 
 @api_view(['GET', 'PUT', 'DELETE'])
 def user_detail(request, id):
-	try:
-		user = User.objects.get(id=id)
-	except User.DoesNotExist:
-		return Response(status=status.HTTP_404_NOT_FOUND)
-
+	user = get_object_or_404(User, id=id)
 	if request.method == 'GET':
 		serializer = UserSerializer(user)
 		return Response(serializer.data)
 	elif request.method == 'PUT':
-		print("bp0")
 		serializer = UserSerializer(user, data=request.data)
-		print("bp1")
 		if serializer.is_valid():
 			serializer.save()
-			print("hi")
 			return Response(serializer.data)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 	elif request.method == 'DELETE':
