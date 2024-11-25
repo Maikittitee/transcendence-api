@@ -3,12 +3,18 @@ from Account.models import User
 # Create your models here.
 
 class UserProfile(models.Model):
-	# user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
+
+	user = models.OneToOneField(
+		User, 
+		on_delete=models.CASCADE, 
+		related_name="profile"
+	)
 	avatar = models.FileField(upload_to="upload/", null=True, blank=True)
-	upload_at = models.DateField(null=True, blank=True)
-	# win = models.IntegerField()
-	# loss = models.IntegerField()
-	# total_match = models.IntegerField()
+	bio = models.CharField(default="Hello Everyone, Nice to meet you guy!", max_length=1000)
+	win = models.IntegerField(default=0)
+	loss = models.IntegerField(default=0)
+	draw = models.IntegerField(default=0)
+	total_match = models.IntegerField(default=0)
 
 	# def __str__(self):
 	# 	return f"{self.user.username}'s Profile"

@@ -10,3 +10,8 @@ class UserLoginSerializer(serializers.Serializer):
 class VerifyOtpSerializer(serializers.Serializer):
     otp = serializers.CharField(max_length=6)
     
+class UserRegisterSerializer(serializers.Serializer):
+    username = serializers.CharField(max_length=255) 
+    password = serializers.CharField(write_only=True)
+    confirm_password = serializers.CharField(write_only=True)
+    email = serializers.CharField(max_length=255) 
