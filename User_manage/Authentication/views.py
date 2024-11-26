@@ -14,14 +14,13 @@ from django.urls import reverse
 from decouple import config
 import json, jwt, datetime, requests
 from Account.models import User
-from Account.serializers import UserCreateSerializer
+from Account.serializers import UserCreateSerializer, UserSerializer
 from . import utils
 import pyotp, qrcode, io
 from .mfa import MFA
 from Account.serializers import UserSerializer
 from drf_yasg.utils import swagger_auto_schema
 from .serializers import UserLoginSerializer, VerifyOtpSerializer
-from Profile.serializers import ProfileCreateSerializer
 
 def index(request):
 	return JsonResponse({"message":"you can use /register and /login"})
@@ -29,31 +28,21 @@ def index(request):
 class RegisterView(APIView):
 	permission_classes = [AllowAny]
 	serializer_class = UserCreateSerializer
-	profile_serializer_class = ProfileCreateSerializer
 
 	def post(self, request, *args, **kwargs):
 		serializer = self.serializer_class(data=request.data)
-		profile_serializer = self.profile_serializer_class(data=request.data)
 
-		if serializer.is_valid() and profile_serializer.is_valid():
+		if serializer.is_valid():
 			try:
 				user = serializer.save()
-				profile = profile_serializer.save()
-				profile.user = user
-				profile.save()
-				return Response({
-					"user": {
-						"id": user.id,
-						"username": user.username,
-						"email": user.email
-					},
-				}, status=status.HTTP_201_CREATED)
+				return Response(
+					UserSerializer(user).data,
+					status=status.HTTP_201_CREATED)
 				
 			except Exception as e:
 				return Response({
 					"error": str(e)
 				}, status=status.HTTP_400_BAD_REQUEST)
-		print("hi2");	
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 	
 

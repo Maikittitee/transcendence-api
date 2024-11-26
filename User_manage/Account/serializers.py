@@ -11,20 +11,16 @@ class UserCreateSerializer(BaseUserCreateSerializer):
         fields = ['id', 'username', 'email', 'password', 'confirm_password']
 
     def validate(self, attrs):
-        # First run the parent's validation
-        print("attrs0", attrs)
         confirm_password = attrs.pop("confirm_password")
         attrs = super().validate(attrs)
-        print("attrs1", attrs)  
-        # Add your custom validation
         if attrs['password'] != confirm_password:
             raise serializers.ValidationError({
                 "password": "Password fields didn't match."
             })
-        print("attrs", attrs) 
         return attrs
     
 	
 class UserSerializer(BaseUserSerializer):
     class Meta(BaseUserSerializer.Meta):
-        field = "__all__"
+        model = User
+        fields = ["id", "username", "email", "is_42", "mfa_enabled", "avatar", "bio", "win", "loss", "draw", "total_match"]
