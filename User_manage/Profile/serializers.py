@@ -4,9 +4,9 @@ from .models import UserProfile
 class AvatarUploadSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = UserProfile
-		fields = ['avatar']
+		fields = '__all__'
 
-class CreateProfileSerializer(serializers.ModelSerializer):
+class ProfileCreateSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = UserProfile
-		fields = ["bio"]
+		fields = []

@@ -1,5 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth import authenticate
+from rest_framework.views import APIView
+from rest_framework.permissions import AllowAny
 from rest_framework.decorators import api_view, action
 from rest_framework.response import Response
 from django.contrib.auth.decorators import login_required
@@ -12,34 +14,48 @@ from django.urls import reverse
 from decouple import config
 import json, jwt, datetime, requests
 from Account.models import User
+from Account.serializers import UserCreateSerializer
 from . import utils
 import pyotp, qrcode, io
 from .mfa import MFA
 from Account.serializers import UserSerializer
 from drf_yasg.utils import swagger_auto_schema
 from .serializers import UserLoginSerializer, VerifyOtpSerializer
+from Profile.serializers import ProfileCreateSerializer
 
 def index(request):
 	return JsonResponse({"message":"you can use /register and /login"})
 
-@api_view(["POST"])
-def register(request):
-	try:
-		try: 
-			data = json.loads(request.body)
-		except json.JSONDecodeError:
-			data = request.POST
-		username = data["username"]
-		password = data["password"]
-		email = data["email"]
-		
-		User(
-			username = username.lower(), 
-			email=email, 
-			password = password).save()
-		return JsonResponse({"message":"Successful"})
-	except Exception as e:
-		return JsonResponse({"message": e})
+class RegisterView(APIView):
+	permission_classes = [AllowAny]
+	serializer_class = UserCreateSerializer
+	profile_serializer_class = ProfileCreateSerializer
+
+	def post(self, request, *args, **kwargs):
+		serializer = self.serializer_class(data=request.data)
+		profile_serializer = self.profile_serializer_class(data=request.data)
+
+		if serializer.is_valid() and profile_serializer.is_valid():
+			try:
+				user = serializer.save()
+				profile = profile_serializer.save()
+				profile.user = user
+				profile.save()
+				return Response({
+					"user": {
+						"id": user.id,
+						"username": user.username,
+						"email": user.email
+					},
+				}, status=status.HTTP_201_CREATED)
+				
+			except Exception as e:
+				return Response({
+					"error": str(e)
+				}, status=status.HTTP_400_BAD_REQUEST)
+		print("hi2");	
+		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+	
 
 @csrf_exempt
 @swagger_auto_schema(method="post",request_body=UserLoginSerializer, operation_description="Login a user and return acces and refresh tokens")

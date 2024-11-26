@@ -20,7 +20,6 @@ class UploadAvatarView(APIView):
 		return Response({"msg": "error"}, 400)
 
 
-
 # @api_view(["GET"])
 # @login_required
 # def view_profile(request):

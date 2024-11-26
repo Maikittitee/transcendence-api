@@ -9,7 +9,8 @@ urlpatterns = [
     path("login/", views.login),
 	path("users/", djoser_views.UserViewSet.as_view({'get': 'list'})),
 	path("users/me", djoser_views.UserViewSet.as_view({'get': 'me'})),
-    path("register/", djoser_views.UserViewSet.as_view({'post':'create'}), ),
+    # path("register/", djoser_views.UserViewSet.as_view({'post':'create'}), ),
+	path("register/", views.RegisterView.as_view()),
 	# path('token/', djoser_views.TokenCreateView.as_view(), name='token_create'),
     path('token/refresh/', simplejwt_views.TokenRefreshView.as_view(), name='token_refresh'),
 
