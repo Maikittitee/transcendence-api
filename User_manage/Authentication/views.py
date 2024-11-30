@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth import authenticate
 from rest_framework.views import APIView
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.decorators import api_view, action
 from rest_framework.response import Response
 from django.contrib.auth.decorators import login_required
@@ -26,22 +26,24 @@ def index(request):
 	return JsonResponse({"message":"you can use /register and /login"})
 
 class ProfileConfigView(APIView):
-	permission_classes = [AllowAny]
+	permission_classes = [IsAuthenticated]
 	serializer_class = ProfileConfigSerializer
 
-	def put(self, request, pk):
-		# return Response({"hi": "hello"})
-		print("hello")
-		user = User.objects.get(id=pk)
-		print("put user: ", user)
-		print("request data: ", request.data)
-		serializer = self.serializer_class(instance=user, data=request.data, partial=True)
-		print("Is valid:", serializer.is_valid())  # debug is_valid
-		print("Validation errors:", serializer.errors)  # debug errors
-		if (serializer.is_valid()):
-			serializer.save()
-			return Response(serializer.data)
-		return Response(serializer.errors, status=400)
+	# @login_required
+	def put(self, request):
+		try: 
+			user = request.user
+			print("put user: ", user)
+			print("request data: ", request.data)
+			serializer = self.serializer_class(instance=user, data=request.data, partial=True)
+			print("Is valid:", serializer.is_valid())  # debug is_valid
+			print("Validation errors:", serializer.errors)  # debug errors
+			if (serializer.is_valid()):
+				serializer.save()
+				return Response(serializer.data)
+			return Response(serializer.errors, status=400)
+		except Exception as e:
+			return (Response({"massage": e}, 500))
 
 
 class RegisterView(APIView):
