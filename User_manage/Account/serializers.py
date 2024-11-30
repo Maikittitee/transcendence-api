@@ -3,6 +3,7 @@ from djoser.serializers import UserCreateSerializer as BaseUserCreateSerializer
 from djoser.serializers import UserSerializer as BaseUserSerializer
 from .models import User
 
+
 class UserCreateSerializer(BaseUserCreateSerializer):
     confirm_password = serializers.CharField()
     

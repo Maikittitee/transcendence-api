@@ -10,4 +10,8 @@ class UserLoginSerializer(serializers.Serializer):
 
 class VerifyOtpSerializer(serializers.Serializer):
 	otp = serializers.CharField(max_length=6)
-	
+
+class ProfileConfigSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = User
+		fields = ['bio']

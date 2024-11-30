@@ -20,10 +20,29 @@ import pyotp, qrcode, io
 from .mfa import MFA
 from Account.serializers import UserSerializer
 from drf_yasg.utils import swagger_auto_schema
-from .serializers import UserLoginSerializer, VerifyOtpSerializer
+from .serializers import UserLoginSerializer, VerifyOtpSerializer, ProfileConfigSerializer
 
 def index(request):
 	return JsonResponse({"message":"you can use /register and /login"})
+
+class ProfileConfigView(APIView):
+	permission_classes = [AllowAny]
+	serializer_class = ProfileConfigSerializer
+
+	def put(self, request, pk):
+		# return Response({"hi": "hello"})
+		print("hello")
+		user = User.objects.get(id=pk)
+		print("put user: ", user)
+		print("request data: ", request.data)
+		serializer = self.serializer_class(instance=user, data=request.data, partial=True)
+		print("Is valid:", serializer.is_valid())  # debug is_valid
+		print("Validation errors:", serializer.errors)  # debug errors
+		if (serializer.is_valid()):
+			serializer.save()
+			return Response(serializer.data)
+		return Response(serializer.errors, status=400)
+
 
 class RegisterView(APIView):
 	permission_classes = [AllowAny]
