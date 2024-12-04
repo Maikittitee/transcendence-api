@@ -20,11 +20,12 @@ import pyotp, qrcode, io
 from .mfa import MFA
 from Account.serializers import UserSerializer
 from drf_yasg.utils import swagger_auto_schema
-from .serializers import UserLoginSerializer, VerifyOtpSerializer, ProfileConfigSerializer
+from .serializers import UserLoginSerializer, VerifyOtpSerializer, ProfileConfigSerializer, AvatarUploadSerializer
 
 def index(request):
 	return JsonResponse({"message":"you can use /register and /login"})
 
+@swagger_auto_schema(method="post",request_body=UserLoginSerializer, operation_description="Login a user and return acces and refresh tokens")
 class ProfileConfigView(APIView):
 	permission_classes = [IsAuthenticated]
 	serializer_class = ProfileConfigSerializer
@@ -46,6 +47,7 @@ class ProfileConfigView(APIView):
 			return (Response({"massage": e}, 500))
 
 
+@swagger_auto_schema(method="post",request_body=UserLoginSerializer, operation_description="Login a user and return acces and refresh tokens")
 class RegisterView(APIView):
 	permission_classes = [AllowAny]
 	serializer_class = UserCreateSerializer
@@ -168,7 +170,7 @@ def setup_mfa(request):
 @api_view(["POST"])
 @login_required
 def verify_mfa_otp(request):
-	user = get_object_or_404(User, username=request.username)
+	user = get_object_or_404(User, username=request.user.username)
 	try:
 		otp = request.data["otp"]
 	except Exception as e:
@@ -202,3 +204,16 @@ def enable_mfa_otp(request):
 	except Exception as e:
 		return (Response({"massage": e}, 500))
 
+
+class UploadAvatarView(APIView):
+	permission_classes = [IsAuthenticated]
+	serializer_class = AvatarUploadSerializer
+
+	def put(self, request):
+		user = request.user
+
+		serializer = self.serializer_class(instance=user, data=request.data, partial=True)
+		if (serializer.is_valid()):
+			serializer.save()
+			return Response(serializer.data)
+		return Response(serializer.errors, 400)

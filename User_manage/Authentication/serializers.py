@@ -15,3 +15,8 @@ class ProfileConfigSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = User
 		fields = ['bio']
+
+class AvatarUploadSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = User
+		fields = ['avatar']
