@@ -1,5 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth import authenticate
+from rest_framework.views import APIView
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.decorators import api_view, action
 from rest_framework.response import Response
 from django.contrib.auth.decorators import login_required
@@ -12,34 +14,58 @@ from django.urls import reverse
 from decouple import config
 import json, jwt, datetime, requests
 from Account.models import User
+from Account.serializers import UserCreateSerializer, UserSerializer
 from . import utils
 import pyotp, qrcode, io
 from .mfa import MFA
 from Account.serializers import UserSerializer
 from drf_yasg.utils import swagger_auto_schema
-from .serializers import UserLoginSerializer, VerifyOtpSerializer
+from .serializers import UserLoginSerializer, VerifyOtpSerializer, ProfileConfigSerializer, AvatarUploadSerializer
 
 def index(request):
 	return JsonResponse({"message":"you can use /register and /login"})
 
-@api_view(["POST"])
-def register(request):
-	try:
+class ProfileConfigView(APIView):
+	permission_classes = [IsAuthenticated]
+	serializer_class = ProfileConfigSerializer
+
+	# @login_required
+	def put(self, request):
 		try: 
-			data = json.loads(request.body)
-		except json.JSONDecodeError:
-			data = request.POST
-		username = data["username"]
-		password = data["password"]
-		email = data["email"]
-		
-		User(
-			username = username.lower(), 
-			email=email, 
-			password = password).save()
-		return JsonResponse({"message":"Successful"})
-	except Exception as e:
-		return JsonResponse({"message": e})
+			user = request.user
+			print("put user: ", user)
+			print("request data: ", request.data)
+			serializer = self.serializer_class(instance=user, data=request.data, partial=True)
+			print("Is valid:", serializer.is_valid())  # debug is_valid
+			print("Validation errors:", serializer.errors)  # debug errors
+			if (serializer.is_valid()):
+				serializer.save()
+				return Response(serializer.data)
+			return Response(serializer.errors, status=400)
+		except Exception as e:
+			return (Response({"massage": e}, 500))
+
+
+class RegisterView(APIView):
+	permission_classes = [AllowAny]
+	serializer_class = UserCreateSerializer
+
+	def post(self, request, *args, **kwargs):
+		serializer = self.serializer_class(data=request.data)
+
+		if serializer.is_valid():
+			try:
+				user = serializer.save()
+				return Response(
+					UserSerializer(user).data,
+					status=status.HTTP_201_CREATED)
+				
+			except Exception as e:
+				return Response({
+					"error": str(e)
+				}, status=status.HTTP_400_BAD_REQUEST)
+		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+	
 
 @csrf_exempt
 @swagger_auto_schema(method="post",request_body=UserLoginSerializer, operation_description="Login a user and return acces and refresh tokens")
@@ -114,8 +140,8 @@ def oauth_callback(request):
 	return JsonResponse({"message":"method not allow"})
 
 @csrf_exempt
-@swagger_auto_schema(method="POST", operation_description="Get OTP URI of Two Factor Authentication")
-@api_view(["POST"])
+@swagger_auto_schema(method="GET", operation_description="Get OTP URI of Two Factor Authentication")
+@api_view(["GET"])
 def setup_mfa(request):
 	try: 
 		print("hello")
@@ -138,11 +164,11 @@ def setup_mfa(request):
 			"massage": e
 		}, status=status.HTTP_400_BAD_REQUEST)
 
-@swagger_auto_schema(method="POST", operation_description="Verify OTP")
+@swagger_auto_schema(method="POST", request_body=VerifyOtpSerializer, operation_description="Verify OTP")
 @api_view(["POST"])
 @login_required
 def verify_mfa_otp(request):
-	user = get_object_or_404(User, username=request.username)
+	user = get_object_or_404(User, username=request.user.username)
 	try:
 		otp = request.data["otp"]
 	except Exception as e:
@@ -176,3 +202,37 @@ def enable_mfa_otp(request):
 	except Exception as e:
 		return (Response({"massage": e}, 500))
 
+
+@swagger_auto_schema(method="POST", request_body=VerifyOtpSerializer, operation_description="disable Two Factor Authentication")
+@api_view(["POST"])
+@login_required
+def disable_mfa_otp(request):
+	try:
+		user = get_object_or_404(User, username=request.user.username)
+		otp = request.data["otp"]
+	except Exception as e:
+		return (Response ({"message": e}, status=status.HTTP_400_BAD_REQUEST))
+	try: 
+		mfa = MFA(user.mfa_secret)
+		if (mfa.verify(otp)):
+			user.mfa_enabled = False
+			user.save()
+			return Response({"otp": "success"}, status.HTTP_202_ACCEPTED)
+		return (Response({"otp": "failed"}, status=status.HTTP_401_UNAUTHORIZED))
+	except Exception as e:
+		return (Response({"massage": e}, 500))
+
+
+
+class UploadAvatarView(APIView):
+	permission_classes = [IsAuthenticated]
+	serializer_class = AvatarUploadSerializer
+
+	def put(self, request):
+		user = request.user
+
+		serializer = self.serializer_class(instance=user, data=request.data, partial=True)
+		if (serializer.is_valid()):
+			serializer.save()
+			return Response(serializer.data)
+		return Response(serializer.errors, 400)

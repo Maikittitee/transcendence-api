@@ -52,7 +52,6 @@ INSTALLED_APPS = [
 	'djoser',
     "Account",
     "Authentication",
-	"Profile",
 ]
 
 
@@ -161,7 +160,8 @@ AUTH_USER_MODEL = 'Account.User'
 
 DJOSER = {
 	'SERIALIZERS':{
-		'user_create': 'Account.serializers.UserCreateSerializer'
+		'user_create': 'Account.serializers.UserCreateSerializer',
+		'user': 'Account.serializers.UserSerializer',
 	}
 }
 
