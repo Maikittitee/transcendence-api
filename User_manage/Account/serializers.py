@@ -25,3 +25,4 @@ class UserSerializer(BaseUserSerializer):
     class Meta(BaseUserSerializer.Meta):
         model = User
         fields = ["id", "username", "email", "is_42", "mfa_enabled", "avatar", "bio", "win", "loss", "draw", "total_match"]
+        ref_name = "CustomUserSerializer"

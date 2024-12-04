@@ -25,7 +25,6 @@ from .serializers import UserLoginSerializer, VerifyOtpSerializer, ProfileConfig
 def index(request):
 	return JsonResponse({"message":"you can use /register and /login"})
 
-@swagger_auto_schema(method="post",request_body=UserLoginSerializer, operation_description="Login a user and return acces and refresh tokens")
 class ProfileConfigView(APIView):
 	permission_classes = [IsAuthenticated]
 	serializer_class = ProfileConfigSerializer
@@ -47,7 +46,6 @@ class ProfileConfigView(APIView):
 			return (Response({"massage": e}, 500))
 
 
-@swagger_auto_schema(method="post",request_body=UserLoginSerializer, operation_description="Login a user and return acces and refresh tokens")
 class RegisterView(APIView):
 	permission_classes = [AllowAny]
 	serializer_class = UserCreateSerializer
@@ -142,8 +140,8 @@ def oauth_callback(request):
 	return JsonResponse({"message":"method not allow"})
 
 @csrf_exempt
-@swagger_auto_schema(method="POST", operation_description="Get OTP URI of Two Factor Authentication")
-@api_view(["POST"])
+@swagger_auto_schema(method="GET", operation_description="Get OTP URI of Two Factor Authentication")
+@api_view(["GET"])
 def setup_mfa(request):
 	try: 
 		print("hello")
@@ -166,7 +164,7 @@ def setup_mfa(request):
 			"massage": e
 		}, status=status.HTTP_400_BAD_REQUEST)
 
-@swagger_auto_schema(method="POST", operation_description="Verify OTP")
+@swagger_auto_schema(method="POST", request_body=VerifyOtpSerializer, operation_description="Verify OTP")
 @api_view(["POST"])
 @login_required
 def verify_mfa_otp(request):
@@ -203,6 +201,27 @@ def enable_mfa_otp(request):
 		return (Response({"otp": "failed"}, status=status.HTTP_401_UNAUTHORIZED))
 	except Exception as e:
 		return (Response({"massage": e}, 500))
+
+
+@swagger_auto_schema(method="POST", request_body=VerifyOtpSerializer, operation_description="disable Two Factor Authentication")
+@api_view(["POST"])
+@login_required
+def disable_mfa_otp(request):
+	try:
+		user = get_object_or_404(User, username=request.user.username)
+		otp = request.data["otp"]
+	except Exception as e:
+		return (Response ({"message": e}, status=status.HTTP_400_BAD_REQUEST))
+	try: 
+		mfa = MFA(user.mfa_secret)
+		if (mfa.verify(otp)):
+			user.mfa_enabled = False
+			user.save()
+			return Response({"otp": "success"}, status.HTTP_202_ACCEPTED)
+		return (Response({"otp": "failed"}, status=status.HTTP_401_UNAUTHORIZED))
+	except Exception as e:
+		return (Response({"massage": e}, 500))
+
 
 
 class UploadAvatarView(APIView):
