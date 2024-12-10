@@ -158,6 +158,7 @@ class OauthView(APIView):
 		last_name = user_info.get("last_name")
 		avatar_url = user_info.get("image").get("link")
 		# Create or update user
+		print("eiei1")
 		user, created = User.objects.update_or_create(
 			provider_id=provider_id,
 			is_oauth_user = True,
@@ -171,11 +172,12 @@ class OauthView(APIView):
 				"avatar_url": avatar_url
 			}
 		)
+		print("eiei2")
 		# Generate JWT tokens
 		refresh = RefreshToken.for_user(user)
 		
 		return Response({
-			'user': UserSerializer(user).data,
+			# 'user': UserSerializer(user).data,
 			'tokens': {
 				'refresh': str(refresh),
 				'access': str(refresh.access_token),

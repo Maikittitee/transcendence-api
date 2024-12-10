@@ -60,9 +60,10 @@
 
                 const data = await response.json();
 				// localStorage.setItem('name', "hi");
-                localStorage.setItem('access_token', JSON.stringify({data}));
+                localStorage.setItem('access', data.tokens.access);
+                localStorage.setItem('refresh', data.tokens.refresh);
                 window.history.replaceState({}, '', window.location.pathname);
-                window.location.href = '/index.html';
+                window.location.href = '/hello.html';
             } catch (err) {
                 showStatus(err.message, true);
                 sessionStorage.removeItem('oauth_processed');
