@@ -15,6 +15,7 @@ from decouple import config
 import os
 from datetime import timedelta
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -184,3 +185,16 @@ SWAGGER_SETTINGS = {
 
 MEDIA_ROOT = BASE_DIR / 'media'
 MEDIA_URL = '/media/'
+
+OAUTH2_SETTINGS = {
+    'CLIENT_ID': config("UID"),
+    'CLIENT_SECRET': config("FT_CLIENT_SECRET"),
+    'AUTHORIZATION_URL': 'https://api.intra.42.fr/oauth/authorize',
+    'TOKEN_URL': 'https://api.intra.42.fr/oauth/token',
+    'USER_INFO_URL': 'https://api.intra.42.fr/v2/me',
+    'REDIRECT_URI': config("REDIRECT_URI"),
+    'SCOPE': 'read'
+}
+print(f"UID {OAUTH2_SETTINGS["CLIENT_ID"]}")
+print(f"SECRET {OAUTH2_SETTINGS["CLIENT_SECRET"]}")
+print(f"REDIRECT URI {OAUTH2_SETTINGS['REDIRECT_URI']}")
