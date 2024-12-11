@@ -21,6 +21,7 @@ pyasn1_modules==0.4.1
 pycparser==2.22
 pyOpenSSL==24.2.1
 service-identity==24.2.0
+shortuuid==1.0.13
 sqlparse==0.5.2
 tomli==2.1.0
 Twisted==24.10.0

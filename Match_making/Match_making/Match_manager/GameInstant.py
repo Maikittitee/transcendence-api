@@ -13,8 +13,8 @@ class GameSettings:
     ballSpeed: float = 2.0
     maxScore: int = 10
     frameRate: int = 60
-    paddleRadius: int = 20
-    ballRadius: int = 2
+    paddleRadius: int = 50
+    ballRadius: int = 5
     speedIncrement : float = 0.2
     paddleOffset : int = 50
     timePerFrame : float = 1.0 / frameRate
