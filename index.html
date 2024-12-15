@@ -3,46 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
+    <title>42 OAuth Login</title>
+    <style>
+        .container { 
+            text-align: center; 
+            padding: 20px; 
+        }
+        .error { color: red; }
+        .loading { color: gray; }
+        button { 
+            padding: 10px 20px;
+            background: #00babc;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
-    <h2>Register</h2>
-    <form id="registerForm">
-        <label for="username">Username:</label><br>
-        <input type="text" id="username" name="username" required><br><br>
-
-        <label for="password">Password:</label><br>
-        <input type="password" id="password" name="password" required><br><br>
-
-        <button type="submit">Register</button>
-    </form>
+    <div class="container">
+        <h2>Login</h2>
+        <div id="status"></div>
+        <button onclick="handleLogin()">Login with 42</button>
+    </div>
 
     <script>
-		async function fetch_data(params) {
-			const response = await fetch('http://localhost:9000/auth/register', {
-				method:"POST",
-				body: JSON.stringify(params)
-			});
-			response_data = await response.json();
-			console.log(response_data);
-		}
+        const CONFIG = {
+            CLIENT_ID: 'your-client-id',
+            REDIRECT_URI: 'http://localhost:8000/',
+            BACKEND_URL: 'http://localhost:9000'
+        };
 
-        document.getElementById('registerForm').addEventListener('submit', function(event) {
-            event.preventDefault();  // Prevent the default form submission
+        function showStatus(message, isError = false) {
+            const status = document.getElementById('status');
+            status.className = isError ? 'error' : 'loading';
+            status.textContent = message;
+        }
 
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-
-            const data = {
-                username: username,
-                password: password
-            };
-	
-			fetch_data(data);
-
-
+        async function handleOAuthCallback(code) {
+            if (sessionStorage.getItem('oauth_processed')) return;
             
-        });
+            try {
+                showStatus('Authenticating...');
+                sessionStorage.setItem('oauth_processed', 'true');
+
+                const response = await fetch(`${CONFIG.BACKEND_URL}/auth/callback/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ code })
+                });
+
+                if (!response.ok) throw new Error('Authentication failed');
+
+                const data = await response.json();
+				// localStorage.setItem('name', "hi");
+                localStorage.setItem('access', data.tokens.access);
+                localStorage.setItem('refresh', data.tokens.refresh);
+                window.history.replaceState({}, '', window.location.pathname);
+                window.location.href = '/hello.html';
+            } catch (err) {
+                showStatus(err.message, true);
+                sessionStorage.removeItem('oauth_processed');
+            }
+        }
+
+        function handleLogin() {
+            const oauthUrl = "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-88eb36033a1e7d562816f36f790d97a4b1230a033379b3d35311e4099b6ff355&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2Findex.html&response_type=code";
+            window.location.href = oauthUrl;
+        }
+
+        // Check for OAuth callback
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
+        if (code) handleOAuthCallback(code);
     </script>
 </body>
 </html>

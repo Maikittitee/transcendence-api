@@ -21,6 +21,7 @@ from .mfa import MFA
 from Account.serializers import UserSerializer
 from drf_yasg.utils import swagger_auto_schema
 from .serializers import UserLoginSerializer, VerifyOtpSerializer, ProfileConfigSerializer, AvatarUploadSerializer
+from django.conf import settings
 
 def index(request):
 	return JsonResponse({"message":"you can use /register and /login"})
@@ -104,40 +105,84 @@ def login(request):
 		# return Response("ko");
 		return Response({"detail": "Exception error"}, status=status.HTTP_400_BAD_REQUEST)
 
-def oauth_callback(request):
-	if (request.method == "GET"):
-		qd = request.GET
-		code = qd.get('code')
-		if (not code):
-			return JsonResponse({"massage":"Authorization code is invalid."})
-		base_url = "https://api.intra.42.fr/oauth/token"
-		base_params = {
-			"grant_type": "authorization_code",
-			"client_id": config("UID"),
-			"client_secret": config("CLIENT_SECRET"),
-			"code": code,
-			"redirect_uri": config("REDIRECT_URI")
-		}
-		print("fetch to 42 with body: ", base_params)
-		response = requests.post(base_url, json=base_params)
-		results = response.json()
-		results = dict(results)
-		print(f"response from 42 token: {results}")
-		user_data = utils.fetch_42user_data(results.get("access_token"))
-		if (not user_data):
-			return JsonResponse({"message": "fetch user error"})
-		login_user = User.objects.filter(email=user_data["email"]).first()
-		print(f"login user: {login_user}")
-		if (not login_user):
-			login_user = User(
-					username = user_data["login"] + "@42", 
-					email = user_data["email"], 
-					is_42 = True,
-					profile_img = user_data["image"]["link"]
-				)
-			login_user.save()
-		return JsonResponse(login_user.login())
-	return JsonResponse({"message":"method not allow"})
+class OauthView(APIView):
+	permission_classes = [AllowAny]
+	# authentication_classes  = []
+	def post(self, request):
+		print("hiiiii")
+		code = request.data.get('code')
+		print(f"code: {code}")
+		if not code:
+			return Response(
+				{'error': 'Authorization code not provided'}, 
+				status=status.HTTP_400_BAD_REQUEST
+		)
+		data={
+					'client_id': settings.OAUTH2_SETTINGS['CLIENT_ID'],
+					'client_secret': settings.OAUTH2_SETTINGS['CLIENT_SECRET'],
+					'code': code,
+					'grant_type': 'authorization_code',
+					'redirect_uri': settings.OAUTH2_SETTINGS['REDIRECT_URI']
+				}
+		print("send data: ", data)
+		# Exchange authorization code for access token
+		token_response = requests.post(
+			settings.OAUTH2_SETTINGS['TOKEN_URL'],
+			data=data
+		)
+		print("token: ", token_response.json())
+		if token_response.status_code != 200:
+			return Response(
+				{'error': 'Failed to obtain access token'},
+				status=status.HTTP_400_BAD_REQUEST
+			)
+
+		tokens = token_response.json()
+		access_token = tokens.get('access_token')
+		refresh_token = tokens.get('refresh_token')
+
+		user_response = requests.get(
+			settings.OAUTH2_SETTINGS['USER_INFO_URL'],
+			headers={'Authorization': f'Bearer {access_token}'}
+   		)
+		# print(user_response.json())
+
+		if (user_response.status_code != 200):
+			return Response({'error': 'Failed to get use info'}, status=status.HTTP_400_BAD_REQUEST)
+
+		user_info = user_response.json()
+		provider_id = user_info.get('id')  # Adjust based on provider's response
+		username = user_info.get("login") + "@42"  # Adjust based on provider's response
+		email = user_info.get("email")
+		first_name = user_info.get("first_name")
+		last_name = user_info.get("last_name")
+		avatar_url = user_info.get("image").get("link")
+		# Create or update user
+		print("eiei1")
+		user, created = User.objects.update_or_create(
+			provider_id=provider_id,
+			is_oauth_user = True,
+			defaults={
+				'username': username,
+				'access_token': access_token,
+				'refresh_token': refresh_token,
+				'email': email,
+				"first_name": first_name,
+				"last_name": last_name,
+				"avatar_url": avatar_url
+			}
+		)
+		print("eiei2")
+		# Generate JWT tokens
+		refresh = RefreshToken.for_user(user)
+		
+		return Response({
+			# 'user': UserSerializer(user).data,
+			'tokens': {
+				'refresh': str(refresh),
+				'access': str(refresh.access_token),
+			}
+		})
 
 @csrf_exempt
 @swagger_auto_schema(method="GET", operation_description="Get OTP URI of Two Factor Authentication")
