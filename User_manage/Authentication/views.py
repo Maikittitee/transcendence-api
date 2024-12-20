@@ -51,6 +51,7 @@ class RegisterView(APIView):
 	permission_classes = [AllowAny]
 	serializer_class = UserCreateSerializer
 
+	@swagger_auto_schema(request_body=UserCreateSerializer)
 	def post(self, request, *args, **kwargs):
 		serializer = self.serializer_class(data=request.data)
 
@@ -82,8 +83,8 @@ def login(request):
 		if (not login_user):
 			return Response({"detail": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
 		print("here1")
-		if (login_user.is_42):
-			return Response({"message": "42 User must login through intra42."} , status=status.HTTP_400_BAD_REQUEST)
+		if (login_user.is_oauth_user):
+			return Response({"message": "42 User must login through intra."} , status=status.HTTP_400_BAD_REQUEST)
 		print("here2")
 		if (login_user.mfa_enabled):
 			otp_token = request.data.get('otp')
@@ -102,6 +103,7 @@ def login(request):
 		})
 
 	except Exception as e:
+		print("exception error: ", e)
 		# return Response("ko");
 		return Response({"detail": "Exception error"}, status=status.HTTP_400_BAD_REQUEST)
 

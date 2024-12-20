@@ -34,5 +34,6 @@ urlpatterns = [
     path("auth/", include("Authentication.urls")),
     path("admin/", admin.site.urls),
     path("account/", include("Account.urls")),
+	path('friends/', include('Friend.urls')),
 	# path("profile/", include("Profile.urls")),
 ]

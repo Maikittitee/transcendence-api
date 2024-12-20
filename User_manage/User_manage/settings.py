@@ -53,6 +53,7 @@ INSTALLED_APPS = [
 	'djoser',
     "Account",
     "Authentication",
+	"Friend",
 ]
 
 
@@ -132,7 +133,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# AUTH_USER_MODEL = "Account.User"
+AUTH_USER_MODEL = "Account.User"
 LOGIN_URL = '/auth/login/'
 
 # Internationalization
@@ -195,6 +196,6 @@ OAUTH2_SETTINGS = {
     'REDIRECT_URI': config("REDIRECT_URI"),
     'SCOPE': 'read'
 }
-print(f"UID {OAUTH2_SETTINGS["CLIENT_ID"]}")
-print(f"SECRET {OAUTH2_SETTINGS["CLIENT_SECRET"]}")
+print(f"UID {OAUTH2_SETTINGS['CLIENT_ID']}")
+print(f"SECRET {OAUTH2_SETTINGS['CLIENT_SECRET']}")
 print(f"REDIRECT URI {OAUTH2_SETTINGS['REDIRECT_URI']}")
