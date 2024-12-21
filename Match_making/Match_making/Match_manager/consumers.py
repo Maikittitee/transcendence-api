@@ -9,6 +9,8 @@ class PongConsumer(AsyncWebsocketConsumer):
     
     async def connect(self):
         self.player_id = shortuuid.uuid()
+        self.player_id = self.player_id[:5]
+        print(f"Player {self.player_id} connected")
         self.game_id = ""  # Generate player ID
         await self.accept()
         await self.send(json.dumps(
