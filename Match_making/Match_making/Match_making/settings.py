@@ -26,14 +26,15 @@ SECRET_KEY = 'django-insecure-$jfl(b@qwk*&6$vty#b!^ao3+t@kt7_tadx!(os%k%r%mgvydt
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-
+CORS_ALLOW_ALL_ORIGINS = True #CORS BYPASS THIS IS DNAGER!!!
 
 # Application definition
 
 INSTALLED_APPS = [
     #ASGI_SERVER
     'daphne',
-    #
+    # CORS BYPASS
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -48,8 +49,10 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',   #CORS BYPASS
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',

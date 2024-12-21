@@ -92,7 +92,9 @@ class PongGame
                 case 'game_state':
                     console.log("here\n\n\n\n")
                     break;
-                    
+                case 'game_over':
+                    console.log("game over");
+                    break;
                 case 'error':
                     console.error('Game error:', data.message);
                     break;
