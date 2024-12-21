@@ -78,6 +78,7 @@ class PongGame
             "DOWN" : false,
         }
         this.game_id = null;
+        this.setUpWebsocket();
     }
 
     scaleValue(canvasToScaleIn, value)
@@ -166,7 +167,7 @@ class PongGame
 
     setUpWebsocket()
     {
-        this.webSocketConnection = new WebSocket(`ws://${window.location.host}/ws/matchmaking/`);
+        this.webSocketConnection = new WebSocket(`ws://127.0.0.1:25566/ws/matchmaking/`);
         this.webSocketConnection.onopen = function() {
             console.log("connected");
         }
