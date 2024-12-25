@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from rest_framework import status
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework_simplejwt.tokens import RefreshToken
-from django.http import HttpResponse, HttpResponseNotFound, HttpResponseNotAllowed, JsonResponse
+from django.http import HttpResponse, HttpResponseNotFound, HttpResponseNotAllowed, JsonResponse, FileResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse
 from decouple import config
@@ -20,7 +20,7 @@ import pyotp, qrcode, io
 from .mfa import MFA
 from Account.serializers import UserSerializer
 from drf_yasg.utils import swagger_auto_schema
-from .serializers import UserLoginSerializer, VerifyOtpSerializer, ProfileConfigSerializer, AvatarUploadSerializer
+from .serializers import UserLoginSerializer, VerifyOtpSerializer, ProfileConfigSerializer, AvatarUploadSerializer, GetAvatarSerializer
 from django.conf import settings
 
 def index(request):
@@ -283,3 +283,15 @@ class UploadAvatarView(APIView):
 			serializer.save()
 			return Response(serializer.data)
 		return Response(serializer.errors, 400)
+	
+class GetAvatarView(APIView):
+	permission_classes = [IsAuthenticated]
+	serializer_class = GetAvatarSerializer
+
+	def get(self, request):
+		if request.user.avatar:
+			try:
+				return FileResponse(open(request.user.avatar.path, 'rb'))
+			except (FileNotFoundError, ValueError):
+				return Response(status=404)
+		return Response(status=404)

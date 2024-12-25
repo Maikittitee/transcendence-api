@@ -11,6 +11,8 @@ urlpatterns = [
 	path("users/me/", djoser_views.UserViewSet.as_view({'get': 'me'})),
 	path("profile/", views.ProfileConfigView.as_view()),
 	path("profile/upload/", views.UploadAvatarView.as_view()),
+	path("profile/avatar/", views.GetAvatarView.as_view()),
+
 	path("register/", views.RegisterView.as_view()),
     path('token/refresh/', simplejwt_views.TokenRefreshView.as_view(), name='token_refresh'),
 
