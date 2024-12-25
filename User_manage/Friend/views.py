@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from django.db.models import Q
 from .models import FriendRequest, Friendship
 from .serializers import FriendRequestSerializer, FriendshipSerializer
+from Account.models import User
 
 class FriendRequestViewSet(viewsets.ModelViewSet):
     serializer_class = FriendRequestSerializer
@@ -15,11 +16,13 @@ class FriendRequestViewSet(viewsets.ModelViewSet):
         )  
 
     def create(self, request):
-        to_user_id = request.data.get('to_user')
-        if to_user_id:
+        to_username = request.data.get('to_user')
+        to_user = User.objects.filter(username = to_username).first()
+        print("to user is: ", to_user)
+        if to_user:
             friend_request = FriendRequest.objects.create(
                 from_user=request.user,
-                to_user_id=to_user_id
+                to_user_id=to_user.id
             )
             serializer = self.get_serializer(friend_request)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
