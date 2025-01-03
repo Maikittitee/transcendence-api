@@ -20,3 +20,14 @@ class AvatarUploadSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = User
 		fields = ['avatar']
+
+
+class GetAvatarSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = User
+		fields = ['avatar']
+
+		def get_avatar_url(self, obj):
+			request = self.context.get('request')
+			photo_url = obj.fingerprint.url
+			return (request.build_absolute_uri(photo_url))

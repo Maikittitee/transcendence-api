@@ -1,24 +1,32 @@
-FROM ubuntu:22.04
+FROM python:3.11-slim
 
-WORKDIR /usr/src/app
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
 
-RUN mkdir User_manage
+# Set work directory
+WORKDIR /app
 
-COPY ./User_manage ./User_manage
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    postgresql-client \
+    && rm -rf /var/lib/apt/lists/*
 
-COPY ./requirements.txt ./
+# Install Python dependencies
+COPY requirements.txt /app/
+RUN pip install --no-cache-dir -r requirements.txt
 
-COPY ./.env ./
-COPY ./wait-for-postgres.sh ./
+# Copy project
+COPY . /app/
 
-COPY ./start.sh ./
+# Run migrations and collect static files
+CMD ["ls"]
 
-RUN apt-get update && apt-get install -y --no-install-recommends python3.10 python3-pip curl
-	
-RUN pip install -r requirements.txt
+RUN python /app/User_manage/manage.py makemigrations
 
-RUN chmod +x ./start.sh
+RUN python /app/User_manage/manage.py migrate
 
 EXPOSE 9000
 
-CMD ["./start.sh"]
+CMD ["python", "User_manage/manage.py",  "runserver", "0.0.0.0:9000", "--noreload"]

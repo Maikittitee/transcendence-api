@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+    ports:
+      - "9000:9000"
+    environment:
+      - DEBUG=1
+      - DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1
+      - SQL_ENGINE=django.db.backends.postgresql
+      - SQL_DATABASE=django_db
+      - SQL_USER=django_user
+      - SQL_PASSWORD=django_password
+      - SQL_HOST=db
+      - SQL_PORT=5432
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=django_db
+      - POSTGRES_USER=django_user
+      - POSTGRES_PASSWORD=django_password
+
+volumes:
+  postgres_data:
