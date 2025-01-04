@@ -101,8 +101,13 @@ class User(AbstractUser):
 	draw = models.IntegerField(default=0)
 	total_match = models.IntegerField(default=0)
 
-	def __str__(self):
-		return self.email or self.username
+	last_activity = models.DateTimeField(default=timezone.now)
+	is_online = models.BooleanField(default=False)
+
+	def update_last_activity(self):
+		self.last_activity = timezone.now()
+		self.is_online = True
+		self.save(update_fields=['last_activity', 'is_online'])
 
 	@property
 	def is_token_expired(self) -> bool:
