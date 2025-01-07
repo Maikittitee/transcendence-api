@@ -17,9 +17,20 @@ class ProfileConfigSerializer(serializers.ModelSerializer):
 		fields = ['bio']
 
 class AvatarUploadSerializer(serializers.ModelSerializer):
-	class Meta:
-		model = User
-		fields = ['avatar']
+    class Meta:
+        model = User
+        fields = ['avatar_url']
+
+    def update(self, instance, validated_data):
+        if 'avatar' in validated_data:
+            # Save the avatar file first
+            instance.avatar = validated_data['avatar']
+			# instance.avatar_url = 
+            # Generate and save the avatar URL
+            # instance.avatar_url = f"/media/{instance.avatar}"  # Adjust the path according to your MEDIA_URL
+            instance.avatar_url = f"/media/upload/{instance.avatar}"  # Adjust the path according to your MEDIA_URL
+            instance.save()
+        return instance
 
 
 class GetAvatarSerializer(serializers.ModelSerializer):

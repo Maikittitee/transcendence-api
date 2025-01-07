@@ -10,6 +10,7 @@ class UserActivityMiddleware:
 		self.get_response = get_response
 
 	def __call__(self, request):
+		print("hello")
 		if request.user.is_authenticated:
 			# Update last activity time
 			current_time = timezone.now()
@@ -22,7 +23,7 @@ class UserActivityMiddleware:
 		return response
 
 	def update_user_statuses(self):
-		from . import User # Import here to avoid circular import
+		from .models import User # Import here to avoid circular import
 		threshold_time = timezone.now() - self.OFFLINE_THRESHOLD
 		User.objects.filter(
 			last_activity__lt=threshold_time,

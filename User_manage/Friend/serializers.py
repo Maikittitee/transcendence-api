@@ -6,7 +6,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         ref_name = "FriendUserSerializer"
         model = get_user_model()
-        fields = ('id', 'username')
+        fields = ('id', 'username', 'avatar_url', 'display_name', 'is_online')
 
 class FriendRequestSerializer(serializers.ModelSerializer):
     from_user = UserSerializer(read_only=True)

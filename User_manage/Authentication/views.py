@@ -22,6 +22,7 @@ from Account.serializers import UserSerializer
 from drf_yasg.utils import swagger_auto_schema
 from .serializers import UserLoginSerializer, VerifyOtpSerializer, ProfileConfigSerializer, AvatarUploadSerializer, GetAvatarSerializer
 from django.conf import settings
+from rest_framework.parsers import MultiPartParser, FormParser
 
 def index(request):
 	return JsonResponse({"message":"you can use /register and /login"})
@@ -54,10 +55,14 @@ class RegisterView(APIView):
 	@swagger_auto_schema(request_body=UserCreateSerializer)
 	def post(self, request, *args, **kwargs):
 		serializer = self.serializer_class(data=request.data)
-
+		print("hello, register")
 		if serializer.is_valid():
+			print("register data is valid")
 			try:
+				print("saving")
 				user = serializer.save()
+				# print("data: ", serializer.data)
+				print("saved")
 				return Response(
 					UserSerializer(user).data,
 					status=status.HTTP_201_CREATED)
@@ -66,6 +71,7 @@ class RegisterView(APIView):
 				return Response({
 					"error": str(e)
 				}, status=status.HTTP_400_BAD_REQUEST)
+		print("not valid")
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 	
 
@@ -274,16 +280,39 @@ def disable_mfa_otp(request):
 class UploadAvatarView(APIView):
 	permission_classes = [IsAuthenticated]
 	serializer_class = AvatarUploadSerializer
+	parser_classes = (MultiPartParser, FormParser)  # Add support for file uploads
 
 	def put(self, request):
 		user = request.user
+		serializer = self.serializer_class(
+			instance=user,
+			data=request.data,
+			partial=True
+		)
+		print("hi put")
+		if serializer.is_valid():
+			try:
+				user = serializer.save()
+				print("user avatar: ", user.avatar)
+				print("user avatar.url: ", user.avatar.url)
+				print("user avatar_url: ", user.avatar_url)
+				return Response({
+					'avatar': user.avatar.url if user.avatar else None,
+					'avatar_url': user.avatar_url
+				})
+			except Exception as e:
+				return Response(
+					{'error': f'Error uploading avatar: {str(e)}'},
+					status=400
+				)
+		return Response(serializer.errors, status=400)
 
-		serializer = self.serializer_class(instance=user, data=request.data, partial=True)
-		if (serializer.is_valid()):
-			serializer.save()
-			return Response(serializer.data)
-		return Response(serializer.errors, 400)
-	
+	def get(self, request):
+		user = request.user
+		return Response({
+			'avatar': user.avatar.url if user.avatar else None,
+			'avatar_url': user.avatar_url
+		})
 class GetAvatarView(APIView):
 	permission_classes = [IsAuthenticated]
 	serializer_class = GetAvatarSerializer

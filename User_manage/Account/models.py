@@ -26,11 +26,7 @@ class User(AbstractUser):
 		null=True,  # Allow null for OAuth users
 		blank=True  # Allow blank in forms
 	)
-	email = models.CharField(
-		max_length=255, 
-		unique=True,
-		null=True
-	)
+	
 	mfa_enabled  = models.BooleanField(
 		default=False
 	)
@@ -91,10 +87,16 @@ class User(AbstractUser):
 		help_text=_("URL of the user's avatar from OAuth provider")
 	)
 
+	display_name = models.CharField(
+        max_length=25,
+        unique=True,
+        null=True,  # Allow null initially
+        blank=True
+	)
+	
 	# profile
 	avatar = models.FileField(upload_to="upload/", null=True, blank=True)
 	avatar_url = models.URLField(null=True)
-	display_name = models.CharField(default="NoDisplayName", max_length=25)
 	bio = models.CharField(default="Hello Everyone, Nice to meet you guy!", max_length=1000)
 	win = models.IntegerField(default=0)
 	loss = models.IntegerField(default=0)
