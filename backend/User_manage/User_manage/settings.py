@@ -195,8 +195,10 @@ OAUTH2_SETTINGS = {
     'TOKEN_URL': 'https://api.intra.42.fr/oauth/token',
     'USER_INFO_URL': 'https://api.intra.42.fr/v2/me',
     'REDIRECT_URI': config("REDIRECT_URI"),
+	'OAUTH_URL': config("OAUTH_URL"),
     'SCOPE': 'read'
 }
 print(f"UID {OAUTH2_SETTINGS['CLIENT_ID']}")
 print(f"SECRET {OAUTH2_SETTINGS['CLIENT_SECRET']}")
 print(f"REDIRECT URI {OAUTH2_SETTINGS['REDIRECT_URI']}")
+ 

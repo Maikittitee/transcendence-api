@@ -324,3 +324,10 @@ class GetAvatarView(APIView):
 			except (FileNotFoundError, ValueError):
 				return Response(status=404)
 		return Response(status=404)
+
+class GetOAuthUrlView(APIView):
+	permission_classes = [AllowAny]
+	def get(self, request):
+		return Response({
+			'oauth_url': settings.OAUTH2_SETTINGS['OAUTH_URL']
+		})

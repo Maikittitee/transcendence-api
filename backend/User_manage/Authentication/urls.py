@@ -23,5 +23,6 @@ urlpatterns = [
 	path("2fa/verify/", views.verify_mfa_otp),
 
 	# Callback
-    path("callback/", views.OauthView.as_view())
+    path("callback/", views.OauthView.as_view()),
+	path("oauth_url/", views.GetOAuthUrlView.as_view())
 ]
