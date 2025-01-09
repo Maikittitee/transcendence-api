@@ -207,7 +207,7 @@ export class GameMenuPage extends Component {
                         <div class="mini-profile-text mb-1"> profile name </div>
                         <div class="d-flex justify-content-start align-items-center mini-profile-text"> <div class="bg-success bg-gradient rounded-circle dot me-2"></div> online </div>
                     </div>
-                    <span class="bi bi-person-plus"></span>
+                    <span class="bi bi-chat"></span>
                 </li>
                 <li class = "container bg-light h-25 rounded d-flex align-items-center justify-content-between">
                     <div class = "mini-profile bg-secondary bg-gradient rounded-circle"> 
@@ -217,46 +217,19 @@ export class GameMenuPage extends Component {
                         <div class="mini-profile-text mb-1"> profile name </div>
                         <div class="d-flex justify-content-start align-items-center mini-profile-text"> <div class="bg-danger bg-gradient rounded-circle dot me-2"></div> offline </div>
                     </div>
-                    <span class="bi bi-person-plus"></span>
-                </li>
-                <li class = "container bg-light h-25 rounded d-flex align-items-center justify-content-between">
-                    <div class = "mini-profile bg-secondary bg-gradient rounded-circle"> 
-                        <img src=${default_profile}> 
-                    </div>
-                    <div class = "d-flex flex-column justify-content-center align-items-start"> 
-                        <div class="mini-profile-text mb-1"> profile name </div>
-                        <div class="d-flex justify-content-start align-items-center mini-profile-text"> <div class="bg-success bg-gradient rounded-circle dot me-2"></div> online </div>
-                    </div>
-                    <span class="bi bi-person-plus"></span>
-                </li>
-                <li class = "container bg-light h-25 rounded d-flex align-items-center justify-content-between">
-                    <div class = "mini-profile bg-secondary bg-gradient rounded-circle"> 
-                        <img src=${default_profile}> 
-                    </div>
-                    <div class = "d-flex flex-column justify-content-center align-items-start"> 
-                        <div class="mini-profile-text mb-1"> profile name </div>
-                        <div class="d-flex justify-content-start align-items-center mini-profile-text"> <div class="bg-success bg-gradient rounded-circle dot me-2"></div> online </div>
-                    </div>
-                    <span class="bi bi-person-plus"></span>
-                </li>
-                <li class = "container bg-light h-25 rounded d-flex align-items-center justify-content-between">
-                    <div class = "mini-profile bg-secondary bg-gradient rounded-circle"> 
-                        <img src=${default_profile}> 
-                    </div>
-                    <div class = "d-flex flex-column justify-content-center align-items-start"> 
-                        <div class="mini-profile-text mb-1"> profile name </div>
-                        <div class="d-flex justify-content-start align-items-center mini-profile-text"> <div class="bg-success bg-gradient rounded-circle dot me-2"></div> online </div>
-                    </div>
-                    <span class="bi bi-person-plus"></span>
+                    <span class="bi bi-chat"></span>
                 </li>
             </ul>
         </div>
     </div>
     
+    <loading-page> </loading-page>
     `;
   }
 
-  postCreate() {
+  async postCreate() {
+    const loading_page = this.querySelector("loading-page");
+    loading_page.style.display = "block";
     super.addComponentEventListener( this.querySelector("#play"),
                                     "click",
                                     () => window.Router.navigate('/play-menu-page/'));
@@ -268,6 +241,17 @@ export class GameMenuPage extends Component {
     super.addComponentEventListener(this.querySelector(".btn-primary"),
                                     "click",
                                     this.logout);
+    super.addComponentEventListener(this.querySelector(".btn-primary"),
+                                    "click",
+                                    this.logout);
+    await this.load_game_data();
+    loading_page.style.display = "none";
+  }
+
+  async load_game_data()
+  {
+    const res = await fetchData('/friends/friends/');
+    console.log(res);
   }
 
   logout()
