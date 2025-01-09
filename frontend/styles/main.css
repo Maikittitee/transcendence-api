@@ -1,0 +1,21 @@
+/* generalStyles.css */
+
+body {
+    font-family: "Itim", cursive;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* ป้องกันการ scroll */
+    background-color: #f4f4f4;
+}
+
+#video-background {
+    position: fixed; /* ให้ครอบคลุมทั้งหน้าจอ */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* ขยายวิดีโอให้ครอบคลุมพื้นที่ */
+    z-index: -1; /* ทำให้วิดีโออยู่ด้านหลัง */
+}
