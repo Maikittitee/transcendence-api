@@ -1,0 +1,68 @@
+/* generalStyles.css */
+
+body {
+    font-family: "Itim", cursive;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* ป้องกันการ scroll */
+    background-color: #f4f4f4;
+}
+
+#video-background {
+    position: fixed; /* ให้ครอบคลุมทั้งหน้าจอ */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* ขยายวิดีโอให้ครอบคลุมพื้นที่ */
+    z-index: -1; /* ทำให้วิดีโออยู่ด้านหลัง */
+}
+
+.menu {
+    position: absolute; /* วางไว้เหนือวิดีโอ background */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    color: rgb(0, 0, 0);
+    font-family: 'Itim', sans-serif;
+    text-align: center;
+    height: 80%;
+    width: 50%;
+}
+
+.menu ul {
+    list-style: none; /* ลบ bullet points */
+    padding-top: min(25%, 20px); /* ลบ padding ปกติ */
+    margin: 0; /* ลบ margin ปกติ */
+    width: 100%; /* ทำให้ ul ใช้ความกว้างเต็มของ .menu */
+    display: flex; /* ทำให้รายการภายใน ul อยู่ในแนวนอน */
+    flex-direction: column; /* เรียงรายการใน ul เป็นแนวตั้ง */
+    align-items: center; /* จัดให้อยู่กลางแนวนอน */
+}
+
+.menu ul li {
+    margin-bottom: 20px; /* เพิ่มระยะห่างระหว่างลิ้งค์เมนู */
+}
+
+.menu ul li a {
+    text-decoration: none; /* ลบขีดเส้นใต้ */
+    color: rgb(0, 0, 0); /* สีของลิ้งค์ */
+    font-size: max(4vw, 25px); /* ขนาดของตัวหนังสือในเมนู */
+    transition: color 0.3s; /* เพิ่มการเปลี่ยนสีอย่างนุ่มนวล */
+}
+
+.menu ul li a:hover {
+    color: #FFD700; /* เปลี่ยนสีเมื่อ hover */
+}
+
+#MeowPongTitle{
+    padding: 0; /* ลดระยะห่างภายในของ element */
+    margin: 0; /* ลดระยะห่างภายนอกของ element */
+    width: max(100%, 300px);
+}

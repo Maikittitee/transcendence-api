@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang = "en">
+    <head>
+        <meta charset = "UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="./reset.css" rel="stylesheet">
+        <link href="https://fonts.googleapis.com" rel="preconnect">
+        <link href="https://fonts.googleapis.com" rel="preconnect" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Itim&display=swap" rel="stylesheet">
+        <link href="./main.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <title> ~Meow Pong~ </title>
+    </head>
+<body>
+
+    <style>
+
+        .tournament-waiting-room-title{
+            font-size: 5vh;
+            font-weight: bold;
+        }
+
+        .tournament-waiting-room{
+            position: absolute;
+            background-color: rgba(243, 218, 181, 1);
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cat-row{
+            display: flex;
+            align-items: center;
+        }
+
+        .avatar{
+            height: 15vh;
+            margin: 1vh;
+        }
+
+        .avatar-container{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 3vh;
+        }
+
+        .vs{
+            font-size: 5vh;
+            font-weight: bold;
+        }
+
+        .player-name{
+            font-weight: bold;
+            margin-bottom: 0.5vh;
+        }
+
+        .win-status{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(75, 181, 67, 1);
+            height: 3vh;
+            font-weight: bold;
+            color: white;
+            padding: 1vh;
+            border-radius: 15px;
+        }
+
+        .lose-status{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgb(202, 64, 40);
+            height: 3vh;
+            font-weight: bold;
+            color: white;
+            padding: 1vh;
+            border-radius: 15px;
+        }
+
+        .status{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgb(51, 48, 47);
+            height: 3vh;
+            font-weight: bold;
+            color: white;
+            padding: 1vh;
+            border-radius: 15px;
+        }
+
+    </style>
+
+    <div id="DynamicContent">
+
+        <video autoplay loop muted id = "video-background">
+            <source src = "../../BackUp/GraphicElement/BackGroundVideo.mp4" type="video/mp4" />
+        </video>
+
+        <div class = "tournament-waiting-room">
+            <div class = "tournament-waiting-room-title">Tournament</div>
+
+            <div class="cat-row">
+                <div class= "avatar-container">
+                    <img class = "avatar" id = "cat-l" src="../../BackUp/GraphicElement/1.png">
+                    <div class = "player-name"> player-name </div>
+                    <span class="status">Status</span>
+                </div>
+            </div>
+            
+            <div class="cat-row">
+
+                <div class = "avatar-container">
+                    <img class = "avatar" id = "cat-l" src="../../BackUp/GraphicElement/1.png">
+                    <div class = "player-name"> player-name </div>
+                    <span class="win-status">Win</span>
+                </div>
+                
+                <div class = "vs">vs.</div>
+                
+                <div class = "avatar-container">
+                    <img class = "avatar" id = "cat-3" src="../../BackUp/GraphicElement/3.png">
+                    <div class = "player-name"> player-name </div>
+                    <span class="lose-status">Lose</span>
+                </div>
+            </div>
+
+            <div class="cat-row">
+                
+                <div class = "avatar-container">
+                    <img class = "avatar" id = "cat-l" src="../../BackUp/GraphicElement/1.png">
+                    <div class = "player-name"> player-name </div>
+                    <span class="win-status">Win</span>
+                </div>
+
+                <div class = "vs">vs.</div>
+                
+                <div class = "avatar-container">
+                    <img class = "avatar" id = "cat-2" src="../../BackUp/GraphicElement/2.png">
+                    <div class = "player-name"> player-name </div>
+                    <span class="lose-status">Lose</span>
+                </div>
+
+                <div class = "avatar-container">
+                    <img class = "avatar" id = "cat-3" src="../../BackUp/GraphicElement/3.png">
+                    <div class = "player-name"> player-name </div>
+                    <span class="win-status">Win</span>
+                </div>
+
+                <div class = "vs">vs.</div>
+                
+                <div class = "avatar-container">
+                    <img class = "avatar" id = "cat-4" src="../../BackUp/GraphicElement/4.png">
+                    <div class = "player-name"> player-name </div>
+                    <span class="lose-status">Lose</span>
+                </div>
+
+            </div>
+            
+        </div>
+        
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+
+    </script>
+
+</body>
+</html>
