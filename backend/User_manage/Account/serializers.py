@@ -49,5 +49,5 @@ class UserCreateSerializer(BaseUserCreateSerializer):
 class UserSerializer(BaseUserSerializer):
 	class Meta(BaseUserSerializer.Meta):
 		model = User
-		fields = ["id", "username", "email", "first_name", "last_name", "provider_id", "mfa_enabled", "access_token", "refresh_token", "avatar_url", "bio", "win", "loss", "draw", "total_match"]
+		fields = ["id", "username", "email", "display_name", "provider_id", "mfa_enabled", "access_token", "refresh_token", "avatar_url", "bio", "win", "loss", "draw", "total_match"]
 		ref_name = "CustomUserSerializer"
