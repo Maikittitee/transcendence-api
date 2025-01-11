@@ -1,5 +1,5 @@
 import { Component } from "../../Component.js";
-import { getCookie, getProfileData, fetchData, setCookie } from "../../../../utils.js";
+import { getCookie, getProfileData, fetchData, setCookie, updateUserData } from "../../../../utils.js";
 
 const name = 'enable-2fa-modal';
 
@@ -146,6 +146,7 @@ export class Enable2FAModal extends Component {
         };
         const res = await fetchData('auth/login/', requestBody, 'POST', false);
         setCookie("access", 7, res.access);
+        setCookie("refresh", 7, res.refresh);
         window.Router.navigate('/game-menu-page/');
       }
       else{
@@ -168,6 +169,7 @@ export class Enable2FAModal extends Component {
     {
       console.log('enable 2fa!');
       res = await fetchData('/auth/2fa/enable/', requestBody, 'POST');
+      await updateUserData(res);
       const button2fa = document.querySelector('#button_2fa');
       if(button2fa)
       {
@@ -180,6 +182,7 @@ export class Enable2FAModal extends Component {
     {
       console.log('disable 2fa!');
       res = await fetchData('/auth/2fa/disable/', requestBody, 'POST');
+      await updateUserData(res);
       const button2fa = document.querySelector('#button_2fa');
       if(button2fa)
       {
