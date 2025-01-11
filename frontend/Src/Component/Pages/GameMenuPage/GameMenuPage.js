@@ -1,4 +1,5 @@
 import { Component } from "../../Component.js";
+import { updateUserData, getValueFromSession } from "../../../../utils.js";
 
 const name = "game-menu-page";
 
@@ -175,7 +176,6 @@ export class GameMenuPage extends Component {
     const default_profile = window.Images.getFile("1.png");
 
     return `
-
     <div class = "flex-container">
         <div class = "list-Block">
             <img id = "MeowPongTitle" src=${meowTitleSrc}>
@@ -189,12 +189,12 @@ export class GameMenuPage extends Component {
             <div id = "profileFrame">
                 <img id = "profileImage" src=${default_profile}>
             </div>
-            <div id = "profileName"></div>
+            <div id = "profileName"> Meow~ </div>
             <ul id = "stat">
-                <li> <div>win streaks</div> <div>1</div> </li>
-                <li> <div>win rate</div>    <div>1</div> </li>
-                <li> <div>Total Game</div>  <div>1</div> </li>
-                <li> <div>Rank</div>        <div>1</div> </li>
+                <li> <div>win</div>         <div id="win-stat">0</div>          </li>
+                <li> <div>loss</div>        <div id="loss-stat">0</div>         </li>
+                <li> <div>draw</div>        <div id="draw-stat">0</div>         </li>
+                <li> <div>total match</div>  <div id="total-game-stat">0</div>  </li>
             </ul>
             <div id = "profileLine"></div>
             <div id = "profileFriendTiTle">Friend list</div>
@@ -233,25 +233,34 @@ export class GameMenuPage extends Component {
     super.addComponentEventListener( this.querySelector("#play"),
                                     "click",
                                     () => window.Router.navigate('/play-menu-page/'));
-
     super.addComponentEventListener( this.querySelector("#editProfile"),
                                     "click",
                                     () => window.Router.navigate('/edit-profile-page/'));
+    super.addComponentEventListener(this.querySelector(".btn-primary"),
+                                    "click",
+                                    this.logout);
 
-    super.addComponentEventListener(this.querySelector(".btn-primary"),
-                                    "click",
-                                    this.logout);
-    super.addComponentEventListener(this.querySelector(".btn-primary"),
-                                    "click",
-                                    this.logout);
     await this.load_game_data();
     loading_page.style.display = "none";
   }
 
   async load_game_data()
   {
-    const res = await fetchData('/friends/friends/');
-    console.log(res);
+    // const friend_list_res = await fetchData('/friends/friends/');
+    // updateUserData(friend_list_res);
+    await updateUserData();
+    const win = this.querySelector("#win-stat");
+    const loss = this.querySelector("#loss-stat");
+    const draw = this.querySelector("#draw-stat");
+    const total_match = this.querySelector("#total-game-stat");
+    const profile_name = this.querySelector("#profileName");
+    // const profileImage = this.querySelector("#profileImage");
+    win.textContent = getValueFromSession("win");
+    loss.textContent = getValueFromSession("loss");
+    draw.textContent = getValueFromSession("draw");
+    total_match.textContent = getValueFromSession("total_match");
+    profile_name.textContent = getValueFromSession("display_name");
+    // profileImage.src = await getValueFromSession("avatar_url");
   }
 
   logout()

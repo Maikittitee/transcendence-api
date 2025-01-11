@@ -30,31 +30,6 @@ export async function handle_42Redirect()
     setCookie("access", 7, res.tokens.access);
     setCookie("refresh", 7, res.tokens.refresh);
     window.Router.navigate('/game-menu-page/');
-    // const access = getCookie("access");
-    // let requestHeader ={
-    //     method : 'GET',
-    //     headers: {
-    //         'Authorization': `Bearer ${access}`
-    //     }
-    // };
-    // try {
-    //     const profileData = await fetch("http://localhost:9000/auth/user", requestHeader);
-    //     if (profileData.ok) {
-    //       const profileDataJson = profileData.json();
-    //       if (profileDataJson) {
-    //         localStorage.setItem('profileData', JSON.stringify(profileDataJson));
-    //         window.Router.navigate('/game-menu-page/');
-    //       } 
-    //       else {
-    //         console.log("Don't get any data from server");
-    //       }
-    //     }
-    //     else {
-    //       console.log('Error: Response status', profileData);
-    //     }
-    //   } catch (error) {
-    //     console.log('Error:', error);
-    //   }
     sessionStorage.removeItem('oauthRedirectInProgress');
 }
 
@@ -149,4 +124,28 @@ export async function getProfileData(){
   return res[0];
 }
 
+export function sanitizeInput(input) {
+  if (typeof input !== "string") return input; // ไม่ทำอะไรถ้าไม่ใช่ string
+  const temp = document.createElement("div");
+  temp.textContent = input;
+  return temp.innerHTML;
+}
+
+export async function updateUserData(json_user_data) {
+  if (!json_user_data)
+  {
+    json_user_data = await getProfileData();
+  }
+  for (const key in json_user_data) {
+    if (json_user_data.hasOwnProperty(key)) {
+      const sanitizedValue = sanitizeInput(json_user_data[key]);
+      sessionStorage.setItem(key, JSON.stringify(sanitizedValue));
+    }
+  }
+}
+
+export function getValueFromSession(key) {
+  const value = JSON.parse(sessionStorage.getItem(key));
+  return value;
+}
 

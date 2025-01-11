@@ -56,7 +56,7 @@ const componentStyle = `
   }
 
   #profileImage {
-      max-width: 40%;
+      max-width: 45%;
       height: auto;
   }
 
@@ -142,8 +142,8 @@ const componentStyle = `
     }
 
     #profileFriendContainer {
-        margin: 20px;
-        height: 30%;
+        margin: 10px;
+        height: 40%;
     }
 
     #profileFriendContainer li {
@@ -252,14 +252,11 @@ export class PlayMenuPage extends Component {
 
     <div class = "flex-container">
       <div class = "profile-Block">
-          <img id = "profileImage" src=${default_profile}>
-          <div id = "profileName">profile name</div>
-          <ul id = "stat">
-              <li> <div>win streaks</div> <div>1</div> </li>
-              <li> <div>win rate</div>    <div>1</div> </li>
-              <li> <div>Total Game</div>  <div>1</div> </li>
-              <li> <div>Rank</div>        <div>1</div> </li>
-          </ul>
+          <img id="profileImage" src=${default_profile}>
+          <div class = "d-flex flex-column justify-content-center align-items-between">
+              <button id="info" class="btn btn-success btn-lg mb-2"> profile name <span class="bi bi-list ms-2"></span> </button>
+              <button id="add-friend" class="btn btn-secondary btn-lg"> Add Friend <span class="bi bi-person-plus ms-2"></span> </button>
+          </div>
           <div id = "profileLine"></div>
           <div id = "profileFriendTiTle">Friend list</div>
             <ul id = "profileFriendContainer" class = "overflow-auto">
@@ -516,6 +513,7 @@ export class PlayMenuPage extends Component {
       </div>
     </div>
 
+    <add-friend-modal></add-friend-modal>
     `;
   }
 
@@ -524,13 +522,19 @@ export class PlayMenuPage extends Component {
                                     "click",
                                     () => window.Router.navigate('/match-making-page/'));
 
-    super.addComponentEventListener( this.querySelector("#tournament"),
-                                    "click",
-                                    () => window.Router.navigate('/tournament-page/'));
-
     super.addComponentEventListener(this.querySelector("#local-play"),
                                     "click",
                                     () => window.Router.navigate('/game-play-page/'));
+
+    super.addComponentEventListener(this.querySelector("#add-friend"),
+                                    "click",
+                                    this.add_friend_popup);
+  }
+
+  add_friend_popup()
+  {
+    const add_friend_model = this.querySelector("add-friend-modal");
+    add_friend_model.openModal();
   }
 
   logout()
