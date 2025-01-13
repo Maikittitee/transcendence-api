@@ -4,7 +4,7 @@ import { setCookie } from "../../../../utils.js";
 const name = "guest-login-page";
 
 const componentStyle = `
-    .menu {
+  .menu {
       position: absolute;
       top: 50%;
       left: 50%;

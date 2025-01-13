@@ -39,12 +39,14 @@ export class LoadingPage extends Component {
   }
 
   render() {
+    const meow_loading = window.Images.getFile("1.png");
+
     return `
       <div class="back-ground">
           <div class="spinner-border" role="status">
             <span class="visually-hidden">Loading...</span>
           </div>
-          <img class="meow-loading" src="1.png" alt="Meow Loading">
+          <img class="meow-loading" src=${meow_loading} alt="Meow Loading">
       </div>
   `
   }
