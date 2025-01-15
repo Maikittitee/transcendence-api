@@ -293,9 +293,9 @@ class UploadAvatarView(APIView):
 		if serializer.is_valid():
 			try:
 				user = serializer.save()
-				print("user avatar: ", user.avatar)
-				print("user avatar.url: ", user.avatar.url)
-				print("user avatar_url: ", user.avatar_url)
+				# print("user avatar: ", user.avatar)
+				# print("user avatar.url: ", user.avatar.url)
+				# print("user avatar_url: ", user.avatar_url)
 				return Response({
 					'avatar': user.avatar.url if user.avatar else None,
 					'avatar_url': user.avatar_url
@@ -310,7 +310,7 @@ class UploadAvatarView(APIView):
 	def get(self, request):
 		user = request.user
 		return Response({
-			'avatar': user.avatar.url if user.avatar else None,
+			# 'avatar': user.avatar.url if user.avatar else None,
 			'avatar_url': user.avatar_url
 		})
 class GetAvatarView(APIView):
