@@ -233,13 +233,40 @@ const componentStyle = `
     }
 `;
 
-export class PlayMenuPage extends Component { 
-  constructor() {
-    super(componentStyle);
-  }
+export class PlayMenuPage extends Component {
 
-  render ()
-  {
+    #friend_req_list;
+    #friend_list;
+    #friend_action_model;
+    #match_history_template;
+
+    constructor() {
+    super(componentStyle);
+    const default_profile = window.Images.getFile("1.png");
+    this.#match_history_template = `
+    <li id = "match-history-card" class = "rounded d-flex align-items-center justify-content-between bg-light">
+        <div id="match-result" class = "ms-2">
+            WIN 3-1
+        </div>
+
+        <div id="match-date">
+            <div> 03/01/2025 </div>
+            <div> 12:00 </div>
+        </div>                    
+        <div id="profile-card" class="rounded">
+            <div class = "profile-card-image bg-secondary bg-gradient rounded-circle m-1"> 
+                <img src=${default_profile}>
+            </div>
+            <div id="profile-name" class = "m-1">
+                profile name
+            </div>
+        </div>
+    </li>
+    `;
+    }
+
+    render ()
+    {
     const meowTitleSrc = window.Images.getFile("MeowPongTitle.png");
     const default_profile = window.Images.getFile("1.png");
     const meow_pow_l = window.Images.getFile("9.png");
@@ -251,273 +278,42 @@ export class PlayMenuPage extends Component {
     return `
 
     <div class = "flex-container">
-      <div class = "profile-Block">
-          <img id="profileImage" src=${default_profile}>
-          <div class = "d-flex flex-column justify-content-center align-items-between">
-              <button id="info" class="btn btn-success btn-lg mb-2"> profile name <span class="bi bi-list ms-2"></span> </button>
-              <button id="add-friend" class="btn btn-secondary btn-lg"> Add Friend <span class="bi bi-person-plus ms-2"></span> </button>
-          </div>
-          <div id = "profileLine"></div>
-          <div id = "profileFriendTiTle">Friend list</div>
-            <ul id = "profileFriendContainer" class = "overflow-auto">
-                <li class = "container bg-light h-25 rounded d-flex align-items-center justify-content-between">
-                    <div class = "mini-profile bg-secondary bg-gradient rounded-circle"> 
-                        <img src=${default_profile}> 
-                    </div>
-                    <div class = "d-flex flex-column justify-content-center align-items-start"> 
-                        <div class="mini-profile-text mb-1"> profile name </div>
-                        <div class="d-flex justify-content-start align-items-center mini-profile-text"> <div class="bg-success bg-gradient rounded-circle dot me-2"></div> online </div>
-                    </div>
-                    <span class="bi bi-person-plus"></span>
-                </li>
-                <li class = "container bg-light h-25 rounded d-flex align-items-center justify-content-between">
-                    <div class = "mini-profile bg-secondary bg-gradient rounded-circle"> 
-                        <img src=${default_profile}> 
-                    </div>
-                    <div class = "d-flex flex-column justify-content-center align-items-start"> 
-                        <div class="mini-profile-text mb-1"> profile name </div>
-                        <div class="d-flex justify-content-start align-items-center mini-profile-text"> <div class="bg-success bg-gradient rounded-circle dot me-2"></div> online </div>
-                    </div>
-                    <span class="bi bi-person-plus"></span>
-                </li>
-                <li class = "container bg-light h-25 rounded d-flex align-items-center justify-content-between">
-                    <div class = "mini-profile bg-secondary bg-gradient rounded-circle"> 
-                        <img src=${default_profile}> 
-                    </div>
-                    <div class = "d-flex flex-column justify-content-center align-items-start"> 
-                        <div class="mini-profile-text mb-1"> profile name </div>
-                        <div class="d-flex justify-content-start align-items-center mini-profile-text"> <div class="bg-success bg-gradient rounded-circle dot me-2"></div> online </div>
-                    </div>
-                    <span class="bi bi-person-plus"></span>
-                </li>
-                <li class = "container bg-light h-25 rounded d-flex align-items-center justify-content-between">
-                    <div class = "mini-profile bg-secondary bg-gradient rounded-circle"> 
-                        <img src=${default_profile}> 
-                    </div>
-                    <div class = "d-flex flex-column justify-content-center align-items-start"> 
-                        <div class="mini-profile-text mb-1"> profile name </div>
-                        <div class="d-flex justify-content-start align-items-center mini-profile-text"> <div class="bg-success bg-gradient rounded-circle dot me-2"></div> online </div>
-                    </div>
-                    <span class="bi bi-person-plus"></span>
-                </li>
-                <li class = "container bg-light h-25 rounded d-flex align-items-center justify-content-between">
-                    <div class = "mini-profile bg-secondary bg-gradient rounded-circle"> 
-                        <img src=${default_profile}> 
-                    </div>
-                    <div class = "d-flex flex-column justify-content-center align-items-start"> 
-                        <div class="mini-profile-text mb-1"> profile name </div>
-                        <div class="d-flex justify-content-start align-items-center mini-profile-text"> <div class="bg-success bg-gradient rounded-circle dot me-2"></div> online </div>
-                    </div>
-                    <span class="bi bi-person-plus"></span>
-                </li>
+        <div class = "profile-Block">
+            <img id="profileImage" src=${default_profile}>
+            <div class = "d-flex flex-column justify-content-center align-items-between">
+                <button id="info" class="btn btn-success btn-lg mb-2"> profile name <span class="bi bi-list ms-2"></span> </button>
+                <button id="add-friend" class="btn btn-secondary btn-lg"> Add Friend <span class="bi bi-person-plus ms-2"></span> </button>
+            </div>
+            <div id = "profileLine"></div>
+            <div id = "profileFriendTiTle">Friend list</div>
+            <ul id = "profileFriendContainer" class = "overflow-auto">   
             </ul>
-      </div>
+        </div>
 
-      <div class ="history-block">
+        <div class ="history-block">
 
             <h1> Match History </h1>
-
             <ul id = "match-history-container" class = "container overflow-auto">
-
-                <li id = "match-history-card" class = "rounded d-flex align-items-center justify-content-between bg-light">
-                    <div id="match-result" class = "ms-2">
-                        WIN 3-1
-                    </div>
-                    
-                    <div id="match-date">
-                        <div> 03/01/2025 </div>
-                        <div> 12:00 </div>
-                    </div>                    
-                    <div id="profile-card" class="rounded">
-                        <div class = "profile-card-image bg-secondary bg-gradient rounded-circle m-1"> 
-                            <img src=${default_profile}>
-                        </div>
-                        <div id="profile-name" class = "m-1">
-                            profile name
-                        </div>
-                    </div>
-                </li>
-                <li id = "match-history-card" class = "rounded d-flex align-items-center justify-content-between bg-light">
-                    <div id="match-result" class = "ms-2">
-                        WIN 3-1
-                    </div>
-                    
-                    <div id="match-date">
-                        <div> 03/01/2025 </div>
-                        <div> 12:00 </div>
-                    </div>                    
-                    <div id="profile-card" class="rounded">
-                        <div class = "profile-card-image bg-secondary bg-gradient rounded-circle m-1"> 
-                            <img src=${default_profile}>
-                        </div>
-                        <div id="profile-name" class = "m-1">
-                            profile name
-                        </div>
-                    </div>
-                </li>
-                <li id = "match-history-card" class = "rounded d-flex align-items-center justify-content-between bg-light">
-                    <div id="match-result" class = "ms-2">
-                        WIN 3-1
-                    </div>
-                    
-                    <div id="match-date">
-                        <div> 03/01/2025 </div>
-                        <div> 12:00 </div>
-                    </div>                    
-                    <div id="profile-card" class="rounded">
-                        <div class = "profile-card-image bg-secondary bg-gradient rounded-circle m-1"> 
-                            <img src=${default_profile}>
-                        </div>
-                        <div id="profile-name" class = "m-1">
-                            profile name
-                        </div>
-                    </div>
-                </li>
-                <li id = "match-history-card" class = "rounded d-flex align-items-center justify-content-between bg-light">
-                    <div id="match-result" class = "ms-2">
-                        WIN 3-1
-                    </div>
-                    
-                    <div id="match-date">
-                        <div> 03/01/2025 </div>
-                        <div> 12:00 </div>
-                    </div>                    
-                    <div id="profile-card" class="rounded">
-                        <div class = "profile-card-image bg-secondary bg-gradient rounded-circle m-1"> 
-                            <img src=${default_profile}>
-                        </div>
-                        <div id="profile-name" class = "m-1">
-                            profile name
-                        </div>
-                    </div>
-                </li>
-                <li id = "match-history-card" class = "rounded d-flex align-items-center justify-content-between bg-light">
-                    <div id="match-result" class = "ms-2">
-                        WIN 3-1
-                    </div>
-                    
-                    <div id="match-date">
-                        <div> 03/01/2025 </div>
-                        <div> 12:00 </div>
-                    </div>                    
-                    <div id="profile-card" class="rounded">
-                        <div class = "profile-card-image bg-secondary bg-gradient rounded-circle m-1"> 
-                            <img src=${default_profile}>
-                        </div>
-                        <div id="profile-name" class = "m-1">
-                            profile name
-                        </div>
-                    </div>
-                </li>
-                <li id = "match-history-card" class = "rounded d-flex align-items-center justify-content-between bg-light">
-                    <div id="match-result" class = "ms-2">
-                        WIN 3-1
-                    </div>
-                    
-                    <div id="match-date">
-                        <div> 03/01/2025 </div>
-                        <div> 12:00 </div>
-                    </div>                    
-                    <div id="profile-card" class="rounded">
-                        <div class = "profile-card-image bg-secondary bg-gradient rounded-circle m-1"> 
-                            <img src=${default_profile}>
-                        </div>
-                        <div id="profile-name" class = "m-1">
-                            profile name
-                        </div>
-                    </div>
-                </li>
-                <li id = "match-history-card" class = "rounded d-flex align-items-center justify-content-between bg-light">
-                    <div id="match-result" class = "ms-2">
-                        WIN 3-1
-                    </div>
-                    
-                    <div id="match-date">
-                        <div> 03/01/2025 </div>
-                        <div> 12:00 </div>
-                    </div>                    
-                    <div id="profile-card" class="rounded">
-                        <div class = "profile-card-image bg-secondary bg-gradient rounded-circle m-1"> 
-                            <img src=${default_profile}>
-                        </div>
-                        <div id="profile-name" class = "m-1">
-                            profile name
-                        </div>
-                    </div>
-                </li>
-                <li id = "match-history-card" class = "rounded d-flex align-items-center justify-content-between bg-light">
-                    <div id="match-result" class = "ms-2">
-                        WIN 3-1
-                    </div>
-                    
-                    <div id="match-date">
-                        <div> 03/01/2025 </div>
-                        <div> 12:00 </div>
-                    </div>                    
-                    <div id="profile-card" class="rounded">
-                        <div class = "profile-card-image bg-secondary bg-gradient rounded-circle m-1"> 
-                            <img src=${default_profile}>
-                        </div>
-                        <div id="profile-name" class = "m-1">
-                            profile name
-                        </div>
-                    </div>
-                </li>
-                <li id = "match-history-card" class = "rounded d-flex align-items-center justify-content-between bg-light">
-                    <div id="match-result" class = "ms-2">
-                        WIN 3-1
-                    </div>
-                    
-                    <div id="match-date">
-                        <div> 03/01/2025 </div>
-                        <div> 12:00 </div>
-                    </div>                    
-                    <div id="profile-card" class="rounded">
-                        <div class = "profile-card-image bg-secondary bg-gradient rounded-circle m-1"> 
-                            <img src=${default_profile}>
-                        </div>
-                        <div id="profile-name" class = "m-1">
-                            profile name
-                        </div>
-                    </div>
-                </li>
-                <li id = "match-history-card" class = "rounded d-flex align-items-center justify-content-between bg-light">
-                    <div id="match-result" class = "ms-2">
-                        WIN 3-1
-                    </div>
-                    
-                    <div id="match-date">
-                        <div> 03/01/2025 </div>
-                        <div> 12:00 </div>
-                    </div>                    
-                    <div id="profile-card" class="rounded">
-                        <div class = "profile-card-image bg-secondary bg-gradient rounded-circle m-1"> 
-                            <img src=${default_profile}>
-                        </div>
-                        <div id="profile-name" class = "m-1">
-                            profile name
-                        </div>
-                    </div>
-                </li>
-
             </ul>
             
-      </div>
+        </div>
 
-      <div class ="menu-block">
-          <h1 id = "fight-meow"> Fight Meow~ </h1>
-          <div id = "meow-pow"><img id = "meow-pow-l" src=${meow_pow_l}> <img id = "meow-pow-r" src=${meow_pow_r}></div>
-          <button id = "match-making" class="btn btn-primary play-button"> Match making </button>
-          <button id = "tournament" class="btn btn-primary play-button"> Tournament </button>
-          <button id = "local-play" class="btn btn-primary play-button"> Play with friend </button>
-      </div>
+        <div class ="menu-block">
+            <h1 id = "fight-meow"> Fight Meow~ </h1>
+            <div id = "meow-pow"><img id = "meow-pow-l" src=${meow_pow_l}> <img id = "meow-pow-r" src=${meow_pow_r}></div>
+            <button id = "match-making" class="btn btn-primary play-button"> Match making </button>
+            <button id = "tournament" class="btn btn-primary play-button"> Tournament </button>
+            <button id = "local-play" class="btn btn-primary play-button"> Play with friend </button>
+        </div>
     </div>
 
     <add-friend-modal></add-friend-modal>
+    <modal-component></modal-component>
+    <accept-friend-modal></accept-friend-modal>
     `;
-  }
+    }
 
-  postCreate() {
+    async postCreate() {
     super.addComponentEventListener( this.querySelector("#match-making"),
                                     "click",
                                     () => window.Router.navigate('/match-making-page/'));
@@ -529,18 +325,209 @@ export class PlayMenuPage extends Component {
     super.addComponentEventListener(this.querySelector("#add-friend"),
                                     "click",
                                     this.add_friend_popup);
-  }
 
-  add_friend_popup()
-  {
-    const add_friend_model = this.querySelector("add-friend-modal");
-    add_friend_model.openModal();
-  }
 
-  logout()
-  {
-    console.log("logout");
-  }
+    this.#friend_req_list = await this.get_friend_req_list();
+    this.#friend_list = await this.get_friend_list();
+    this.#friend_action_model = this.querySelector("modal-component");
+    this.render_friend_req();
+    this.render_friend();
+    }
+
+    async get_friend_req_list()
+    {
+        try
+        {
+            const res = await fetchData('friends/friend-requests/');            
+            return res;
+        } 
+        catch (error)
+        {
+            alert(error);
+        }
+    }
+
+    async get_friend_list()
+    {
+        try
+        {
+            const res = await fetchData('friends/friends/');            
+            return res;
+        } 
+        catch (error)
+        {
+            alert(error);
+        }
+    }
+
+    render_friend_req() {
+        const default_profile = window.Images.getFile("1.png");
+        for (let i = 0; i < this.#friend_req_list.length; i++) {
+            if(this.#friend_req_list[i].status === "pending") 
+            {
+                const friend_req_data = this.#friend_req_list[i].from_user;
+                let profile_img = friend_req_data.avatar_url || default_profile;
+                const req_id_tick = "req-id-" + friend_req_data.id + "-tick";
+                const req_id_cross = "req-id-" + friend_req_data.id + "-cross";
+        
+                const friend_req = `
+                <li class="container bg-light h-25 rounded d-flex align-items-center justify-content-between">
+                    <div class="mini-profile bg-secondary bg-gradient rounded-circle"> 
+                        <img id="profile-img" src=${profile_img}> 
+                    </div>
+                    <div class="d-flex flex-column justify-content-center align-items-start me-1">
+                        <div class="mini-profile-text text-success mb-1"> Friend Request </div>
+                        <div id="display-name" class="mini-profile-text"> ${friend_req_data.display_name} </div>
+                    </div>
+                    <span id=${req_id_cross} class="bi bi-x text-danger fs-4"></span>
+                    <span id=${req_id_tick} class="bi bi-check text-success fs-4"></span>
+                </li>
+                `;
+                const friend_list_container = this.querySelector("#profileFriendContainer");
+                friend_list_container.insertAdjacentHTML('beforeend', friend_req);
+        
+                // เพิ่ม Event Listener สำหรับ Tick Icon
+                super.addComponentEventListener(this.querySelector(`#${req_id_tick}`),
+                    "click",
+                    () => this.accept_friend_popup(friend_req_data.id, friend_req_data.avatar_url, friend_req_data.display_name));
+                super.addComponentEventListener(this.querySelector(`#${req_id_cross}`),
+                    "click",
+                    () => this.reject_friend_popup(friend_req_data.id, friend_req_data.avatar_url, friend_req_data.display_name));
+            }
+        }
+    }
+
+    render_friend()
+    {
+        const default_profile = window.Images.getFile("1.png");
+        for (let i = 0; i < this.#friend_list.length; i++)
+        {
+            const friend_data = this.#friend_list[i];
+            let profile_img;
+            if (friend_data.avatar_url === null) {
+                profile_img = default_profile;
+            } else {
+                profile_img = friend_data.avatar_url;
+            }
+            let online_status;
+            if (friend_data.is_online) {
+                online_status = `
+                <div class="d-flex justify-content-start align-items-center mini-profile-text"> <div class="bg-success bg-gradient rounded-circle dot me-2"></div> online </div>
+                `;
+            } else {
+                online_status = `
+                <div class="d-flex justify-content-start align-items-center mini-profile-text"> <div class="bg-danger bg-gradient rounded-circle dot me-2"></div> offline </div>
+                `;
+            }
+            const friend_req = `
+            <li class = "container bg-light h-25 rounded d-flex align-items-center justify-content-between">
+                <div class = "mini-profile bg-secondary bg-gradient rounded-circle"> 
+                    <img src=${profile_img}> 
+                </div>
+                <div class = "d-flex flex-column justify-content-center align-items-start"> 
+                    <div class="mini-profile-text mb-1"> ${friend_data.display_name} </div>
+                    ${online_status}
+                </div>
+                <span class="bi bi-person-plus"></span>
+            </li>
+            `;
+            const friend_list_container = this.querySelector("#profileFriendContainer");
+            friend_list_container.insertAdjacentHTML('beforeend', friend_req);
+            console.log(friend_data.avatar_url);
+            console.log(friend_data.display_name);
+            // console.log(friend_req_data.is_online);
+            // console.log(friend_req_data.username);
+        }
+    }
+
+    add_friend_popup()
+    {
+        const add_friend_model = this.querySelector("add-friend-modal");
+        add_friend_model.openModal();
+    }
+
+    accept_friend_popup(req_id, avatar_url, display_name) {
+        const accept_friend_modal = this.querySelector("accept-friend-modal");
+        const modal_img = accept_friend_modal.querySelector("#friend-img");
+        const modal_title = accept_friend_modal.querySelector("#title");
+        const yes_button = accept_friend_modal.querySelector("#yes");
+    
+        // อัปเดตข้อมูลใน Modal
+        modal_img.src = avatar_url || window.Images.getFile("1.png");
+        modal_title.textContent = `Are you sure you want to accept ${display_name} as your friend?`;
+        modal_title.style.color = "black";
+    
+        // ลบ Event Listener เดิม (ถ้ามี)
+        yes_button.replaceWith(yes_button.cloneNode(true));
+        const new_yes_button = accept_friend_modal.querySelector("#yes");
+    
+        // เพิ่ม Event Listener ใหม่
+        super.addComponentEventListener(new_yes_button, "click", () => this.accept_friend(req_id));
+    
+        // เปิด Modal
+        accept_friend_modal.openModal();
+    }
+
+    reject_friend_popup(req_id, avatar_url, display_name) {
+        const accept_friend_modal = this.querySelector("accept-friend-modal");
+        const modal_img = accept_friend_modal.querySelector("#friend-img");
+        const modal_title = accept_friend_modal.querySelector("#title");
+        const yes_button = accept_friend_modal.querySelector("#yes");
+    
+        // อัปเดตข้อมูลใน Modal
+        modal_img.src = avatar_url || window.Images.getFile("1.png");
+        modal_title.textContent = `Are you sure you want to reject ${display_name}'s friend request?`;
+        modal_title.style.color = "red";
+    
+        // ลบ Event Listener เดิม (ถ้ามี)
+        yes_button.replaceWith(yes_button.cloneNode(true));
+        const new_yes_button = accept_friend_modal.querySelector("#yes");
+    
+        // เพิ่ม Event Listener ใหม่
+        super.addComponentEventListener(new_yes_button, "click", () => this.reject_friend(req_id));
+    
+        // เปิด Modal
+        accept_friend_modal.openModal();
+    }
+
+    async accept_friend(req_id) {
+        try {
+            const res = await fetchData(`/friends/friend-requests/${req_id}/accept/`, null, 'POST');
+            console.log("Friend request accepted:", res);
+    
+            // ปิด Modal
+            const accept_friend_modal = this.querySelector("accept-friend-modal");
+            accept_friend_modal.closeModal();
+    
+            // อัปเดตรายการคำขอเพื่อน
+            this.#friend_req_list = await this.get_friend_req_list();
+            this.render_friend_req();
+        } catch (error) {
+            alert("Failed to accept friend request: " + error.message);
+        }
+    }
+
+    async reject_friend(req_id) {
+        try {
+            const res = await fetchData(`/friends/friend-requests/${req_id}/reject/`, null, 'POST');
+            console.log("Friend request accepted:", res);
+    
+            // ปิด Modal
+            const accept_friend_modal = this.querySelector("accept-friend-modal");
+            accept_friend_modal.closeModal();
+    
+            // อัปเดตรายการคำขอเพื่อน
+            this.#friend_req_list = await this.get_friend_req_list();
+            this.render_friend_req();
+        } catch (error) {
+            alert("Failed to accept friend request: " + error.message);
+        }
+    }
+
+    logout()
+    {
+        console.log("logout");
+    }
 }
 
 customElements.define(name, PlayMenuPage);

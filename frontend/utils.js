@@ -34,7 +34,7 @@ export async function handle_42Redirect()
 }
 
 async function sendOauthCodeToBackEnd(oauthCode) {
-  const oauthToBackEndPath = `http://localhost:9000/auth/callback`;
+  const oauthToBackEndPath = `http://localhost:9000/auth/callback/`;
   console.log("Sending OAuth code to backend: ", oauthCode);
 
   try {
@@ -57,6 +57,8 @@ async function sendOauthCodeToBackEnd(oauthCode) {
         return data;
     } catch (error) {
         console.error('Error sending OAuth code to backend:', error);
+        sessionStorage.removeItem('oauthRedirectInProgress');
+        window.Router.navigate('');
         throw error;
     }
 }
