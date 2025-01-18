@@ -31,15 +31,10 @@ class ProfileConfigView(APIView):
 	permission_classes = [IsAuthenticated]
 	serializer_class = ProfileConfigSerializer
 
-	# @login_required
 	def put(self, request):
 		try: 
 			user = request.user
-			print("put user: ", user)
-			print("request data: ", request.data)
 			serializer = self.serializer_class(instance=user, data=request.data, partial=True)
-			print("Is valid:", serializer.is_valid())  # debug is_valid
-			print("Validation errors:", serializer.errors)  # debug errors
 			if (serializer.is_valid()):
 				serializer.save()
 				return Response(serializer.data)
