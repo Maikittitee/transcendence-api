@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     "Account",
     "Authentication",
 	"Friend",
+	"match",
 ]
 
 
