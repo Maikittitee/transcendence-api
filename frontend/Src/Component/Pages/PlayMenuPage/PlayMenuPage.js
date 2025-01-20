@@ -328,6 +328,8 @@ export class PlayMenuPage extends Component {
 
 
     this.#friend_req_list = await this.get_friend_req_list();
+    console.log("friend_req_list");
+    console.log(this.#friend_req_list);
     this.#friend_list = await this.get_friend_list();
     this.#friend_action_model = this.querySelector("modal-component");
     this.render_friend_req();
@@ -366,9 +368,10 @@ export class PlayMenuPage extends Component {
             if(this.#friend_req_list[i].status === "pending") 
             {
                 const friend_req_data = this.#friend_req_list[i].from_user;
+                const friend_req_id = this.#friend_req_list[i].id;
                 let profile_img = friend_req_data.avatar_url || default_profile;
-                const req_id_tick = "req-id-" + friend_req_data.id + "-tick";
-                const req_id_cross = "req-id-" + friend_req_data.id + "-cross";
+                const req_id_tick = "req-id-" + friend_req_id + "-tick";
+                const req_id_cross = "req-id-" + friend_req_id + "-cross";
         
                 const friend_req = `
                 <li class="container bg-light h-25 rounded d-flex align-items-center justify-content-between">
@@ -389,10 +392,10 @@ export class PlayMenuPage extends Component {
                 // เพิ่ม Event Listener สำหรับ Tick Icon
                 super.addComponentEventListener(this.querySelector(`#${req_id_tick}`),
                     "click",
-                    () => this.accept_friend_popup(friend_req_data.id, friend_req_data.avatar_url, friend_req_data.display_name));
+                    () => this.handle_friend_popup("accept", friend_req_id, friend_req_data.avatar_url, friend_req_data.display_name));
                 super.addComponentEventListener(this.querySelector(`#${req_id_cross}`),
                     "click",
-                    () => this.reject_friend_popup(friend_req_data.id, friend_req_data.avatar_url, friend_req_data.display_name));
+                    () => this.handle_friend_popup("reject", friend_req_id, friend_req_data.avatar_url, friend_req_data.display_name));
             }
         }
     }
@@ -402,7 +405,7 @@ export class PlayMenuPage extends Component {
         const default_profile = window.Images.getFile("1.png");
         for (let i = 0; i < this.#friend_list.length; i++)
         {
-            const friend_data = this.#friend_list[i];
+            const friend_data = this.#friend_list[i].friend;
             let profile_img;
             if (friend_data.avatar_url === null) {
                 profile_img = default_profile;
@@ -446,83 +449,64 @@ export class PlayMenuPage extends Component {
         add_friend_model.openModal();
     }
 
-    accept_friend_popup(req_id, avatar_url, display_name) {
+    handle_friend_popup(action, req_id, avatar_url, display_name) {
         const accept_friend_modal = this.querySelector("accept-friend-modal");
         const modal_img = accept_friend_modal.querySelector("#friend-img");
         const modal_title = accept_friend_modal.querySelector("#title");
         const yes_button = accept_friend_modal.querySelector("#yes");
-    
+
         // อัปเดตข้อมูลใน Modal
         modal_img.src = avatar_url || window.Images.getFile("1.png");
-        modal_title.textContent = `Are you sure you want to accept ${display_name} as your friend?`;
-        modal_title.style.color = "black";
-    
+        if (action === "accept") {
+            modal_title.textContent = `Are you sure you want to accept ${display_name} as your friend?`;
+            modal_title.style.color = "black";
+        } else if (action === "reject") {
+            modal_title.textContent = `Are you sure you want to reject ${display_name}'s friend request?`;
+            modal_title.style.color = "red";
+        }
+
         // ลบ Event Listener เดิม (ถ้ามี)
         yes_button.replaceWith(yes_button.cloneNode(true));
         const new_yes_button = accept_friend_modal.querySelector("#yes");
-    
+
         // เพิ่ม Event Listener ใหม่
-        super.addComponentEventListener(new_yes_button, "click", () => this.accept_friend(req_id));
-    
+        if (action === "accept") {
+            super.addComponentEventListener(new_yes_button, "click", () => this.handle_friend_action('accept', req_id));
+        } else if (action === "reject") {
+            super.addComponentEventListener(new_yes_button, "click", () => this.handle_friend_action('reject', req_id));
+        }
+
         // เปิด Modal
         accept_friend_modal.openModal();
     }
 
-    reject_friend_popup(req_id, avatar_url, display_name) {
-        const accept_friend_modal = this.querySelector("accept-friend-modal");
-        const modal_img = accept_friend_modal.querySelector("#friend-img");
-        const modal_title = accept_friend_modal.querySelector("#title");
-        const yes_button = accept_friend_modal.querySelector("#yes");
-    
-        // อัปเดตข้อมูลใน Modal
-        modal_img.src = avatar_url || window.Images.getFile("1.png");
-        modal_title.textContent = `Are you sure you want to reject ${display_name}'s friend request?`;
-        modal_title.style.color = "red";
-    
-        // ลบ Event Listener เดิม (ถ้ามี)
-        yes_button.replaceWith(yes_button.cloneNode(true));
-        const new_yes_button = accept_friend_modal.querySelector("#yes");
-    
-        // เพิ่ม Event Listener ใหม่
-        super.addComponentEventListener(new_yes_button, "click", () => this.reject_friend(req_id));
-    
-        // เปิด Modal
-        accept_friend_modal.openModal();
-    }
-
-    async accept_friend(req_id) {
+    async handle_friend_action(action, req_id) {
         try {
-            const res = await fetchData(`/friends/friend-requests/${req_id}/accept/`, null, 'POST');
-            console.log("Friend request accepted:", res);
-    
+            const endpoint = action === "accept" 
+                ? `/friends/friend-requests/${req_id}/accept/`
+                : `/friends/friend-requests/${req_id}/reject/`;
+
+            console.log("endpoint: " + endpoint);
+            const res = await fetchData(endpoint, null, 'POST');
+            console.log(`Friend request ${action}ed:`, res);
+
             // ปิด Modal
             const accept_friend_modal = this.querySelector("accept-friend-modal");
             accept_friend_modal.closeModal();
-    
+
             // อัปเดตรายการคำขอเพื่อน
+            const friend_list = this.querySelector('#profileFriendContainer');
             this.#friend_req_list = await this.get_friend_req_list();
+            this.#friend_list = await this.get_friend_list();
+            friend_list.innerHTML = "";
             this.render_friend_req();
+            this.render_friend();
+
         } catch (error) {
-            alert("Failed to accept friend request: " + error.message);
+            alert(`Failed to ${action} friend request: ` + error.message);
         }
     }
 
-    async reject_friend(req_id) {
-        try {
-            const res = await fetchData(`/friends/friend-requests/${req_id}/reject/`, null, 'POST');
-            console.log("Friend request accepted:", res);
-    
-            // ปิด Modal
-            const accept_friend_modal = this.querySelector("accept-friend-modal");
-            accept_friend_modal.closeModal();
-    
-            // อัปเดตรายการคำขอเพื่อน
-            this.#friend_req_list = await this.get_friend_req_list();
-            this.render_friend_req();
-        } catch (error) {
-            alert("Failed to accept friend request: " + error.message);
-        }
-    }
 
     logout()
     {
