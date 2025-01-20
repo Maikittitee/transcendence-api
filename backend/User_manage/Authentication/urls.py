@@ -10,9 +10,8 @@ urlpatterns = [
 	path("users/", djoser_views.UserViewSet.as_view({'get': 'list'})),
 	path("users/me/", djoser_views.UserViewSet.as_view({'get': 'me', 'patch':'me'})),
 	# path("users/me/", djoser_views.UserViewSet.as_view({'put': 'me'})),
-	path("profile/", views.ProfileConfigView.as_view()),
-	path("profile/upload/", views.UploadAvatarView.as_view()),
-	path("profile/avatar/", views.GetAvatarView.as_view()),
+	# path("profile/", views.ProfileConfigView.as_view()),
+	path("avatar/", views.UploadAvatarView.as_view()),
 
 	path("register/", views.RegisterView.as_view()),
     path('token/refresh/', simplejwt_views.TokenRefreshView.as_view(), name='token_refresh'),

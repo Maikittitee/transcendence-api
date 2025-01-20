@@ -31,21 +31,16 @@ class ProfileConfigView(APIView):
 	permission_classes = [IsAuthenticated]
 	serializer_class = ProfileConfigSerializer
 
-	# @login_required
 	def put(self, request):
 		try: 
 			user = request.user
-			print("put user: ", user)
-			print("request data: ", request.data)
 			serializer = self.serializer_class(instance=user, data=request.data, partial=True)
-			print("Is valid:", serializer.is_valid())  # debug is_valid
-			print("Validation errors:", serializer.errors)  # debug errors
 			if (serializer.is_valid()):
 				serializer.save()
 				return Response(serializer.data)
 			return Response(serializer.errors, status=400)
 		except Exception as e:
-			return (Response({"massage": e}, 500))
+			return (Response({"detail": e}, 500))
 
 
 class RegisterView(APIView):
@@ -72,7 +67,7 @@ class RegisterView(APIView):
 					"error": str(e)
 				}, status=status.HTTP_400_BAD_REQUEST)
 		print("not valid")
-		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+		return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 	
 
 @csrf_exempt
@@ -90,7 +85,7 @@ def login(request):
 			return Response({"detail": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
 		print("here1")
 		if (login_user.is_oauth_user):
-			return Response({"message": "42 User must login through intra."} , status=status.HTTP_400_BAD_REQUEST)
+			return Response({"detail": "42 User must login through intra."} , status=status.HTTP_400_BAD_REQUEST)
 		print("here2")
 		if (login_user.mfa_enabled):
 			otp_token = request.data.get('otp')
@@ -122,7 +117,7 @@ class OauthView(APIView):
 		print(f"code: {code}")
 		if not code:
 			return Response(
-				{'error': 'Authorization code not provided'}, 
+				{'detail': 'Authorization code not provided'}, 
 				status=status.HTTP_400_BAD_REQUEST
 		)
 		data={
@@ -141,7 +136,7 @@ class OauthView(APIView):
 		print("token: ", token_response.json())
 		if token_response.status_code != 200:
 			return Response(
-				{'error': 'Failed to obtain access token'},
+				{'detail': 'Failed to obtain access token'},
 				status=status.HTTP_400_BAD_REQUEST
 			)
 
@@ -156,7 +151,7 @@ class OauthView(APIView):
 		# print(user_response.json())
 
 		if (user_response.status_code != 200):
-			return Response({'error': 'Failed to get use info'}, status=status.HTTP_400_BAD_REQUEST)
+			return Response({'detail': 'Failed to get use info'}, status=status.HTTP_400_BAD_REQUEST)
 
 		user_info = user_response.json()
 		provider_id = user_info.get('id')  # Adjust based on provider's response
@@ -214,7 +209,7 @@ def setup_mfa(request):
 		})
 	except Exception as e:
 		return Response({
-			"massage": e
+			"detail": e
 		}, status=status.HTTP_400_BAD_REQUEST)
 
 @swagger_auto_schema(method="POST", request_body=VerifyOtpSerializer, operation_description="Verify OTP")
@@ -225,16 +220,16 @@ def verify_mfa_otp(request):
 	try:
 		otp = request.data["otp"]
 	except Exception as e:
-		return (Response ({"message": e}, status=status.HTTP_400_BAD_REQUEST))
+		return (Response ({"detail": e}, status=status.HTTP_400_BAD_REQUEST))
 	try:
 		if not user.mfa_secret or not user.mfa_enabled:
-			return Response({"massage": "no 2fa require with this users"}, status.HTTP_403_FORBIDDEN)
+			return Response({"detail": "no 2fa require with this users"}, status.HTTP_403_FORBIDDEN)
 		mfa = MFA(user.mfa_secret)
 		if (mfa.verify(otp)):
-			return Response({"massage": "otp verify success"}, status.HTTP_202_ACCEPTED)
-		return (Response({"massage": "otp verify failed"}, status=status.HTTP_401_UNAUTHORIZED))
+			return Response({"detail": "otp verify success"}, status.HTTP_202_ACCEPTED)
+		return (Response({"detail": "otp verify failed"}, status=status.HTTP_401_UNAUTHORIZED))
 	except Exception as e:
-		return (Response({"massage": e}, 500))
+		return (Response({"detail": e}, 500))
 
 @swagger_auto_schema(method="POST", request_body=VerifyOtpSerializer, operation_description="enable Two Factor Authentication")
 @api_view(["POST"])
@@ -244,7 +239,7 @@ def enable_mfa_otp(request):
 		user = get_object_or_404(User, username=request.user.username)
 		otp = request.data["otp"]
 	except Exception as e:
-		return (Response ({"message": e}, status=status.HTTP_400_BAD_REQUEST))
+		return (Response ({"detail": e}, status=status.HTTP_400_BAD_REQUEST))
 	try: 
 		mfa = MFA(user.mfa_secret)
 		if (mfa.verify(otp)):
@@ -253,7 +248,7 @@ def enable_mfa_otp(request):
 			return Response({"otp": "success"}, status.HTTP_202_ACCEPTED)
 		return (Response({"otp": "failed"}, status=status.HTTP_401_UNAUTHORIZED))
 	except Exception as e:
-		return (Response({"massage": e}, 500))
+		return (Response({"detail": e}, 500))
 
 
 @swagger_auto_schema(method="POST", request_body=VerifyOtpSerializer, operation_description="disable Two Factor Authentication")
@@ -264,7 +259,7 @@ def disable_mfa_otp(request):
 		user = get_object_or_404(User, username=request.user.username)
 		otp = request.data["otp"]
 	except Exception as e:
-		return (Response ({"message": e}, status=status.HTTP_400_BAD_REQUEST))
+		return (Response ({"detail": e}, status=status.HTTP_400_BAD_REQUEST))
 	try: 
 		mfa = MFA(user.mfa_secret)
 		if (mfa.verify(otp)):
@@ -273,7 +268,7 @@ def disable_mfa_otp(request):
 			return Response({"otp": "success"}, status.HTTP_202_ACCEPTED)
 		return (Response({"otp": "failed"}, status=status.HTTP_401_UNAUTHORIZED))
 	except Exception as e:
-		return (Response({"massage": e}, 500))
+		return (Response({"detail": e}, 500))
 
 
 
@@ -293,16 +288,16 @@ class UploadAvatarView(APIView):
 		if serializer.is_valid():
 			try:
 				user = serializer.save()
-				print("user avatar: ", user.avatar)
-				print("user avatar.url: ", user.avatar.url)
-				print("user avatar_url: ", user.avatar_url)
+				# print("user avatar: ", user.avatar)
+				# print("user avatar.url: ", user.avatar.url)
+				# print("user avatar_url: ", user.avatar_url)
 				return Response({
 					'avatar': user.avatar.url if user.avatar else None,
 					'avatar_url': user.avatar_url
 				})
 			except Exception as e:
 				return Response(
-					{'error': f'Error uploading avatar: {str(e)}'},
+					{'detail': f'Error uploading avatar: {str(e)}'},
 					status=400
 				)
 		return Response(serializer.errors, status=400)
@@ -310,7 +305,7 @@ class UploadAvatarView(APIView):
 	def get(self, request):
 		user = request.user
 		return Response({
-			'avatar': user.avatar.url if user.avatar else None,
+			# 'avatar': user.avatar.url if user.avatar else None,
 			'avatar_url': user.avatar_url
 		})
 class GetAvatarView(APIView):
