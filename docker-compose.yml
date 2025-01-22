@@ -14,13 +14,13 @@ services:
     restart: always
 
   nginx_cert:
-    image: nginx:alpine
+    image: nginx:stable-alpine
     container_name: nginx
     # build:
     #   context: nginx
     #   dockerfile: Dockerfile
     ports:
-      - 443:443
+      - "1024:1024"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/conf.d/defalt.conf
     restart: always
