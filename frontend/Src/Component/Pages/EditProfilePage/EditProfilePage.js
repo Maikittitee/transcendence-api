@@ -90,7 +90,7 @@ const componentStyle = `
     display: flex;
 }
 
-input {
+#fill-display-name {
     background-color:  white;
     width: 400px;
     border: 3px solid #000;
@@ -152,7 +152,7 @@ export class EditProfilePage extends Component {
 
     render() {
         const meowTitleSrc = window.Images.getFile("MeowPongTitle.png");
-        const default_profile = window.Images.getFile("1.png");
+        const profile_img = sessionStorage.getItem('profile_img');
     
         return `
             <div class="flex-container">
@@ -160,7 +160,7 @@ export class EditProfilePage extends Component {
         
                 <div class="sub-container">
                     <div class="profile-Block">
-                        <img id="profileImage" src="${default_profile}">
+                        <img id="profileImage" src="${profile_img}">
                         <div id="profileName">profile name</div>
                         <ul id="stat">
                             <li> <div>win</div>         <div id="win-stat">0</div>          </li>
@@ -239,14 +239,12 @@ export class EditProfilePage extends Component {
         const total_match = this.querySelector("#total-game-stat");
         const profile_name = this.querySelector("#profileName");
         const bio = this.querySelector("#bio-content");
-        // const profileImage = this.querySelector("#profileImage");
         win.textContent = getValueFromSession("win");
         loss.textContent = getValueFromSession("loss");
         draw.textContent = getValueFromSession("draw");
         total_match.textContent = getValueFromSession("total_match");
         profile_name.textContent = getValueFromSession("display_name");
         bio.textContent = getValueFromSession("bio");
-        // profileImage.src = await getValueFromSession("avatar_url");
     }
 
     edit_bio_popup()
@@ -302,15 +300,12 @@ export class EditProfilePage extends Component {
             const file = fileInput.files[0];
             const formData = new FormData();
             formData.append("avatar", file);
-    
-            // ใช้ fetchData function ในการอัปโหลด
-            const response = await fetchData('auth/avatar/', formData, 'PUT', true);
-            console.log("Profile picture updated:", response);
+            await fetchData('auth/avatar/', formData, 'PUT', true, {});
+            updateUserData();
     
             // อัปเดตรูปภาพใหม่ในหน้าโปรไฟล์
             const profileImage = this.querySelector("#profileImage");
             profileImage.src = URL.createObjectURL(file);
-    
             alert("Profile picture updated successfully!");
         } catch (error) {
             console.error("Error uploading profile picture:", error);

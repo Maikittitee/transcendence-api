@@ -268,7 +268,7 @@ export class PlayMenuPage extends Component {
     render ()
     {
     const meowTitleSrc = window.Images.getFile("MeowPongTitle.png");
-    const default_profile = window.Images.getFile("1.png");
+    const profile_img = sessionStorage.getItem('profile_img');
     const meow_pow_l = window.Images.getFile("9.png");
     const meow_pow_r = window.Images.getFile("10.png");
     const MeowPongTitle = document.createElement('img');
@@ -279,7 +279,7 @@ export class PlayMenuPage extends Component {
 
     <div class = "flex-container">
         <div class = "profile-Block">
-            <img id="profileImage" src=${default_profile}>
+            <img id="profileImage" src=${profile_img}>
             <div class = "d-flex flex-column justify-content-center align-items-between">
                 <button id="info" class="btn btn-success btn-lg mb-2"> profile name <span class="bi bi-list ms-2"></span> </button>
                 <button id="add-friend" class="btn btn-secondary btn-lg"> Add Friend <span class="bi bi-person-plus ms-2"></span> </button>
@@ -328,8 +328,6 @@ export class PlayMenuPage extends Component {
 
 
     this.#friend_req_list = await this.get_friend_req_list();
-    console.log("friend_req_list");
-    console.log(this.#friend_req_list);
     this.#friend_list = await this.get_friend_list();
     this.#friend_action_model = this.querySelector("modal-component");
     this.render_friend_req();
@@ -340,8 +338,25 @@ export class PlayMenuPage extends Component {
     {
         try
         {
-            const res = await fetchData('friends/friend-requests/');            
-            return res;
+            const friendsReqList = await fetchData('friends/friend-requests/');
+            console.log('Fetched friendsReqList:', friendsReqList);
+            for (let i = 0; i < friendsReqList.length; i++)
+            {
+                if (friendsReqList[i].from_user.avatar_url === null)
+                {
+                    friendsReqList[i].from_user.avatar_url = window.Images.getFile("1.png");
+                }
+                else{
+                    const picture = await fetchData(friendsReqList[i].from_user.avatar_url, null);
+                    if (picture instanceof Response) {
+                    const blob = await picture.blob();
+                    friendsReqList[i].from_user.avatar_url = URL.createObjectURL(blob);
+                    } else {
+                    console.error('The response is not a valid image file.');
+                    }
+                }
+            }            
+            return friendsReqList;
         } 
         catch (error)
         {
@@ -353,8 +368,24 @@ export class PlayMenuPage extends Component {
     {
         try
         {
-            const res = await fetchData('friends/friends/');            
-            return res;
+            const friendsList = await fetchData('friends/friends/');
+            for (let i = 0; i < friendsList.length; i++)
+            {
+                if (friendsList[i].friend.avatar_url === null)
+                {
+                    friendsList[i].friend.avatar_url = window.Images.getFile("1.png");
+                }
+                else{
+                    const picture = await fetchData(friendsList[i].friend.avatar_url, null);
+                    if (picture instanceof Response) {
+                    const blob = await picture.blob();
+                    friendsList[i].friend.avatar_url = URL.createObjectURL(blob);
+                    } else {
+                    console.error('The response is not a valid image file.');
+                    }
+                }
+            }        
+            return friendsList;
         } 
         catch (error)
         {
@@ -363,7 +394,6 @@ export class PlayMenuPage extends Component {
     }
 
     render_friend_req() {
-        const default_profile = window.Images.getFile("1.png");
         for (let i = 0; i < this.#friend_req_list.length; i++) {
             if(this.#friend_req_list[i].status === "pending") 
             {
@@ -402,16 +432,10 @@ export class PlayMenuPage extends Component {
 
     render_friend()
     {
-        const default_profile = window.Images.getFile("1.png");
         for (let i = 0; i < this.#friend_list.length; i++)
         {
             const friend_data = this.#friend_list[i].friend;
-            let profile_img;
-            if (friend_data.avatar_url === null) {
-                profile_img = default_profile;
-            } else {
-                profile_img = friend_data.avatar_url;
-            }
+            const profile_img = friend_data.avatar_url;
             let online_status;
             if (friend_data.is_online) {
                 online_status = `

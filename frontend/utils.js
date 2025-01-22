@@ -71,14 +71,12 @@ function getOauthCode()
     return  oauthCode;
 }
 
-export async function fetchData(endpoint, body, method = 'GET', is_reqauth = true, baseUri = 'http://localhost:9000/') {
+export async function fetchData(endpoint, body, method = 'GET', is_reqauth = true, header = { 'Content-Type': 'application/json' }, baseUri = 'http://localhost:9000/') {
   const access = getCookie("access") || '';
-  let header = { 'Content-Type': 'application/json' };
 
   if (is_reqauth) {
     header['Authorization'] = `Bearer ${access}`;
   }
-  console.log(header);
   const url = baseUri + endpoint;
   const options = {
     method,
@@ -101,7 +99,12 @@ export async function fetchData(endpoint, body, method = 'GET', is_reqauth = tru
       throw { status: response.status, body: errorData };
     }
 
-    return await parseResponse(response);
+    // เช็คประเภทข้อมูลที่ตอบกลับมาเป็นไฟล์ เช่น รูปภาพ
+    if (response.headers.get("Content-Type")?.includes("image")) {
+      return response;  // คืนค่าคำตอบที่เป็น Response เพื่อใช้ .blob()
+    }
+
+    return await parseResponse(response); // ถ้าไม่ใช่ไฟล์ให้แปลงเป็น JSON
   } catch (error) {
     if (error.status && error.body) {
       console.error(`HTTP Error ${error.status}:`, error.body);
@@ -143,6 +146,21 @@ export async function updateUserData(json_user_data) {
       const sanitizedValue = sanitizeInput(json_user_data[key]);
       sessionStorage.setItem(key, JSON.stringify(sanitizedValue));
     }
+  }
+  
+  const profile_img_url = await getValueFromSession("avatar_url");
+  if (profile_img_url === null)
+  {
+      sessionStorage.setItem('profile_img', window.Images.getFile("1.png"));
+  }
+  else{
+      const res = await fetchData(profile_img_url, null);
+      if (res instanceof Response) {
+      const blob = await res.blob();
+      sessionStorage.setItem('profile_img', URL.createObjectURL(blob));
+      } else {
+      console.error('The response is not a valid image file.');
+      }
   }
 }
 
