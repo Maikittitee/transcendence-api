@@ -28,6 +28,7 @@ def index(request):
 	return JsonResponse({"message":"you can use /register and /login"})
 
 class ProfileConfigView(APIView):
+	# user
 	permission_classes = [IsAuthenticated]
 	serializer_class = ProfileConfigSerializer
 
