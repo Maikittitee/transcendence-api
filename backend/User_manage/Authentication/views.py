@@ -25,7 +25,7 @@ from django.conf import settings
 from rest_framework.parsers import MultiPartParser, FormParser
 
 def index(request):
-	return JsonResponse({"message":"you can use /register and /login"})
+	return JsonResponse({"status": "API connected!"})
 
 class ProfileConfigView(APIView):
 	permission_classes = [IsAuthenticated]
@@ -226,8 +226,8 @@ def verify_mfa_otp(request):
 			return Response({"detail": "no 2fa require with this users"}, status.HTTP_403_FORBIDDEN)
 		mfa = MFA(user.mfa_secret)
 		if (mfa.verify(otp)):
-			return Response({"detail": "otp verify success"}, status.HTTP_202_ACCEPTED)
-		return (Response({"detail": "otp verify failed"}, status=status.HTTP_401_UNAUTHORIZED))
+			return Response({"otp": "success"}, status.HTTP_202_ACCEPTED)
+		return (Response({"detail": "otp verify failed"}, status=status.HTTP_406_NOT_ACCEPTABLE))
 	except Exception as e:
 		return (Response({"detail": e}, 500))
 
@@ -246,7 +246,7 @@ def enable_mfa_otp(request):
 			user.mfa_enabled = True
 			user.save()
 			return Response({"otp": "success"}, status.HTTP_202_ACCEPTED)
-		return (Response({"otp": "failed"}, status=status.HTTP_401_UNAUTHORIZED))
+		return (Response({"detail": "otp verification failed"}, status=status.HTTP_406_NOT_ACCEPTABLE))
 	except Exception as e:
 		return (Response({"detail": e}, 500))
 
@@ -266,7 +266,7 @@ def disable_mfa_otp(request):
 			user.mfa_enabled = False
 			user.save()
 			return Response({"otp": "success"}, status.HTTP_202_ACCEPTED)
-		return (Response({"otp": "failed"}, status=status.HTTP_401_UNAUTHORIZED))
+		return (Response({"detail": "otp verification failed"}, status=status.HTTP_406_NOT_ACCEPTABLE))
 	except Exception as e:
 		return (Response({"detail": e}, 500))
 
