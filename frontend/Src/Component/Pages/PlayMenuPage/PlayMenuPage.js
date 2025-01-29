@@ -281,7 +281,7 @@ export class PlayMenuPage extends Component {
         <div class = "profile-Block">
             <img id="profileImage" src=${profile_img}>
             <div class = "d-flex flex-column justify-content-center align-items-between">
-                <button id="info" class="btn btn-success btn-lg mb-2"> profile name <span class="bi bi-list ms-2"></span> </button>
+                <button id="info" class="btn btn-success btn-lg mb-2"> profile name </button>
                 <button id="add-friend" class="btn btn-secondary btn-lg"> Add Friend <span class="bi bi-person-plus ms-2"></span> </button>
             </div>
             <div id = "profileLine"></div>
@@ -314,6 +314,7 @@ export class PlayMenuPage extends Component {
     }
 
     async postCreate() {
+
     super.addComponentEventListener( this.querySelector("#match-making"),
                                     "click",
                                     () => window.Router.navigate('/match-making-page/'));
@@ -419,7 +420,7 @@ export class PlayMenuPage extends Component {
                 const friend_list_container = this.querySelector("#profileFriendContainer");
                 friend_list_container.insertAdjacentHTML('beforeend', friend_req);
         
-                // เพิ่ม Event Listener สำหรับ Tick Icon
+                // เพิ่ม Event Listener สำหรับ Tick แบะ Cross Icon
                 super.addComponentEventListener(this.querySelector(`#${req_id_tick}`),
                     "click",
                     () => this.handle_friend_popup("accept", friend_req_id, friend_req_data.avatar_url, friend_req_data.display_name));
@@ -436,6 +437,9 @@ export class PlayMenuPage extends Component {
         {
             const friend_data = this.#friend_list[i].friend;
             const profile_img = friend_data.avatar_url;
+            const friend_id = this.#friend_list[i].id;
+            const req_id_remove = "req-id-" + friend_id + "-remove";
+
             let online_status;
             if (friend_data.is_online) {
                 online_status = `
@@ -455,15 +459,15 @@ export class PlayMenuPage extends Component {
                     <div class="mini-profile-text mb-1"> ${friend_data.display_name} </div>
                     ${online_status}
                 </div>
-                <span class="bi bi-person-plus"></span>
+                <span id=${req_id_remove} class="bi bi-person-dash-fill text-danger"></span>
             </li>
             `;
             const friend_list_container = this.querySelector("#profileFriendContainer");
             friend_list_container.insertAdjacentHTML('beforeend', friend_req);
-            console.log(friend_data.avatar_url);
-            console.log(friend_data.display_name);
-            // console.log(friend_req_data.is_online);
-            // console.log(friend_req_data.username);
+
+            super.addComponentEventListener(this.querySelector(`#${req_id_remove}`),
+                "click",
+                () => this.handle_friend_popup("remove", friend_id, friend_data.avatar_url, friend_data.display_name));
         }
     }
 
@@ -478,59 +482,73 @@ export class PlayMenuPage extends Component {
         const modal_img = accept_friend_modal.querySelector("#friend-img");
         const modal_title = accept_friend_modal.querySelector("#title");
         const yes_button = accept_friend_modal.querySelector("#yes");
-
+    
         // อัปเดตข้อมูลใน Modal
         modal_img.src = avatar_url || window.Images.getFile("1.png");
+    
         if (action === "accept") {
             modal_title.textContent = `Are you sure you want to accept ${display_name} as your friend?`;
             modal_title.style.color = "black";
         } else if (action === "reject") {
             modal_title.textContent = `Are you sure you want to reject ${display_name}'s friend request?`;
             modal_title.style.color = "red";
+        } else if (action === "remove") {
+            modal_title.textContent = `Are you sure you want to remove ${display_name} from your friends list?`;
+            modal_title.style.color = "red";
         }
-
+    
         // ลบ Event Listener เดิม (ถ้ามี)
         yes_button.replaceWith(yes_button.cloneNode(true));
         const new_yes_button = accept_friend_modal.querySelector("#yes");
-
+    
         // เพิ่ม Event Listener ใหม่
         if (action === "accept") {
             super.addComponentEventListener(new_yes_button, "click", () => this.handle_friend_action('accept', req_id));
         } else if (action === "reject") {
             super.addComponentEventListener(new_yes_button, "click", () => this.handle_friend_action('reject', req_id));
+        } else if (action === "remove") {
+            super.addComponentEventListener(new_yes_button, "click", () => this.handle_friend_action('remove', req_id));
         }
-
+    
         // เปิด Modal
         accept_friend_modal.openModal();
     }
 
     async handle_friend_action(action, req_id) {
         try {
-            const endpoint = action === "accept" 
-                ? `/friends/friend-requests/${req_id}/accept/`
-                : `/friends/friend-requests/${req_id}/reject/`;
-
+            let endpoint;
+            if (action === "accept") {
+                endpoint = `/friends/friend-requests/${req_id}/accept/`;
+            } else if (action === "reject") {
+                endpoint = `/friends/friend-requests/${req_id}/reject/`;
+            } else if (action === "remove") {
+                endpoint = `/friends/friends/${req_id}/unfriend/`;
+            } else {
+                throw new Error("Invalid action");
+            }
+    
             console.log("endpoint: " + endpoint);
             const res = await fetchData(endpoint, null, 'POST');
             console.log(`Friend request ${action}ed:`, res);
-
-            // ปิด Modal
+    
+            // ปิด Modal ถ้ามีการยืนยัน
             const accept_friend_modal = this.querySelector("accept-friend-modal");
-            accept_friend_modal.closeModal();
-
-            // อัปเดตรายการคำขอเพื่อน
+            if (accept_friend_modal) {
+                accept_friend_modal.closeModal();
+            }
+    
+            // อัปเดตรายการเพื่อนและคำขอเพื่อน
             const friend_list = this.querySelector('#profileFriendContainer');
             this.#friend_req_list = await this.get_friend_req_list();
             this.#friend_list = await this.get_friend_list();
             friend_list.innerHTML = "";
             this.render_friend_req();
             this.render_friend();
-
+    
         } catch (error) {
             alert(`Failed to ${action} friend request: ` + error.message);
         }
     }
-
 
     logout()
     {

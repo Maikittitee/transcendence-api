@@ -67,6 +67,7 @@ const componentStyle = `
           <li id="login42"> 42 Login </li>
           <li id="guestLogin"> Guest Login </li>
           <li id="register"> Register </li>
+          <li id="check"> Check </li>
       </ul>
     </div>
     `;
@@ -84,6 +85,10 @@ const componentStyle = `
     this.addComponentEventListener( this.querySelector("#register"),
                                     "click",
                                     () => window.Router.navigate('/register-page/'));
+
+    this.addComponentEventListener( this.querySelector("#check"),
+                                    "click",
+                                    this.check);
   }
 
   async login42()
@@ -92,6 +97,12 @@ const componentStyle = `
     console.log(response.oauth_url);
     sessionStorage.setItem('oauthRedirectInProgress', true);
     window.location.href = response.oauth_url;
+  }
+
+  async check()
+  {
+    const response = await fetchData('/auth/', null, 'GET', false);
+    console.log(response);
   }
 }
 

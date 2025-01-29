@@ -27,7 +27,7 @@ export async function handle_42Redirect()
         return ;
     const oauthCode = getOauthCode();
     const res = await sendOauthCodeToBackEnd(oauthCode);
-    setCookie("access", 7, res.tokens.access);
+    setCookie("access", 1, res.tokens.access);
     setCookie("refresh", 7, res.tokens.refresh);
     window.Router.navigate('/game-menu-page/');
     sessionStorage.removeItem('oauthRedirectInProgress');
@@ -72,8 +72,15 @@ function getOauthCode()
 }
 
 export async function fetchData(endpoint, body, method = 'GET', is_reqauth = true, header = { 'Content-Type': 'application/json' }, baseUri = 'http://localhost:9000/') {
-  const access = getCookie("access") || '';
-
+  let access = getCookie("access") || '';
+  // sessionStorage.setItem('test', true);
+  // const test = sessionStorage.getItem('test');
+  // if (test)
+  // {
+  //   console.log('edit access token');
+  //   access = access + 'a';
+  //   sessionStorage.removeItem('test');
+  // }
   if (is_reqauth) {
     header['Authorization'] = `Bearer ${access}`;
   }
@@ -106,13 +113,53 @@ export async function fetchData(endpoint, body, method = 'GET', is_reqauth = tru
 
     return await parseResponse(response); // ถ้าไม่ใช่ไฟล์ให้แปลงเป็น JSON
   } catch (error) {
-    if (error.status && error.body) {
+    if (error.status === 401) 
+    {
+      await refresh_token_handle();
+      await fetchData(endpoint, body, method, is_reqauth, header, baseUri);
+    }
+    else if (error.status && error.body) {
       console.error(`HTTP Error ${error.status}:`, error.body);
       throw error;
     } else {
       console.error('Unexpected fetch error:', error);
       throw new Error('Unexpected fetch error');
     }
+  }
+}
+
+async function refresh_token_handle() {
+  const refreshToken = getCookie('refresh');
+
+  if (!refreshToken) {
+    console.error('No refresh token found');
+    return;
+  }
+
+  try {
+    // ทำการขอ access token ใหม่โดยใช้ refresh token
+    const response = await fetchData('/auth/token/refresh/', {
+      refresh: refreshToken,
+    }, 'POST', false, { 'Content-Type': 'application/json' });
+
+    // ถ้าสำเร็จ จะได้รับ access token ใหม่
+    if (response && response.access) {
+      // เก็บ access token ใหม่ในคุกกี้
+      setCookie('access', 1, response.access);  // สมมุติว่า access token จะหมดอายุใน 1 วัน
+      console.log('New access token received:', response.access);
+    } else {
+      console.error('Failed to refresh token');
+    }
+  } catch (error) {
+    console.error('Error refreshing token:', error);
+
+    // หาก refresh token หมดอายุ หรือตรวจพบข้อผิดพลาดอื่นๆ ให้ลบคุกกี้ทั้งหมด
+    deleteCookie('access');
+    deleteCookie('refresh');
+    alert('Session expired. Please log in again.');
+
+    // สามารถ redirect ไปที่หน้า login หรือทำการ logout อื่นๆ ได้ที่นี่
+    window.Router.navigate('/home-page/');
   }
 }
 
@@ -147,7 +194,7 @@ export async function updateUserData(json_user_data) {
       sessionStorage.setItem(key, JSON.stringify(sanitizedValue));
     }
   }
-  
+
   const profile_img_url = await getValueFromSession("avatar_url");
   if (profile_img_url === null)
   {

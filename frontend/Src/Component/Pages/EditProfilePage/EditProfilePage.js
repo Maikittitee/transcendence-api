@@ -261,7 +261,7 @@ export class EditProfilePage extends Component {
             const body = {display_name: new_name};
             const res = await fetchData('auth/users/me/', body, 'PATCH');
             const profileName = this.querySelector("#profileName");
-            updateUserData(res);
+            await updateUserData(res);
             console.log("after update")
             const display_name = sessionStorage.getItem('display_name').replace(/\"/g, '');
             profileName.textContent = display_name;
