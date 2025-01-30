@@ -119,12 +119,13 @@ export class GuestLoginPage extends Component {
   try 
   {
     const res = await fetchData('auth/login/', requestBody, 'POST', false);
-    setCookie("access", 7, res.access);
+    setCookie("access", 1, res.access);
     setCookie("refresh", 7, res.refresh);
     window.Router.navigate('/game-menu-page/');
   } 
   catch (error) 
   {
+    console.log(error);
     if(error.body.detail === '2FA token required')
     {
       const modal = this.querySelector('enable-2fa-modal');
