@@ -34,8 +34,9 @@ import { Modal }  from "./Component/Popup/Modal/Modal.js";
 import { Enable2FAModal }  from "./Component/Popup/Enable2FAModal/Enable2FAModal.js";
 import { AddFriendModal }  from "./Component/Popup/AddFriendModal/AddFriendModal.js";
 import { EditBioModal }  from "./Component/Popup/EditBioModal/EditBioModal.js";
+import { AcceptFriendModal }  from "./Component/Popup/AcceptFriendModal/AcceptFriendModal.js";
 
-export { Modal, Enable2FAModal, AddFriendModal, EditBioModal};
+export { Modal, Enable2FAModal, AddFriendModal, EditBioModal, AcceptFriendModal};
 
 // Router and Route
 import { Router, Route } from "./Router/Router.js";

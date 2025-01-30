@@ -90,7 +90,7 @@ const componentStyle = `
     display: flex;
 }
 
-input {
+#fill-display-name {
     background-color:  white;
     width: 400px;
     border: 3px solid #000;
@@ -152,7 +152,7 @@ export class EditProfilePage extends Component {
 
     render() {
         const meowTitleSrc = window.Images.getFile("MeowPongTitle.png");
-        const default_profile = window.Images.getFile("1.png");
+        const profile_img = sessionStorage.getItem('profile_img');
     
         return `
             <div class="flex-container">
@@ -160,7 +160,7 @@ export class EditProfilePage extends Component {
         
                 <div class="sub-container">
                     <div class="profile-Block">
-                        <img id="profileImage" src="${default_profile}">
+                        <img id="profileImage" src="${profile_img}">
                         <div id="profileName">profile name</div>
                         <ul id="stat">
                             <li> <div>win</div>         <div id="win-stat">0</div>          </li>
@@ -187,10 +187,10 @@ export class EditProfilePage extends Component {
                         <button id = "button_2fa"></button>
         
                         <div id="inputBox">
-                            <label>Upload your profile picture</label>
+                            <label for="profileImageUpload">Upload your profile picture</label>
                             <div>
-                                <button class="btn btn-info btn-lg me-3">choose file</button>
-                                <button class="btn btn-primary btn-lg">upload</button>
+                                <input id="profileImageUpload" type="file" accept="image/*">
+                                <button id="uploadProfilePictureButton" class="btn btn-primary btn-lg">Upload</button>
                             </div>
                         </div>
         
@@ -229,6 +229,9 @@ export class EditProfilePage extends Component {
         super.addComponentEventListener(this.querySelector("#edit-bio-button"),
                                         "click",
                                         this.edit_bio_popup);
+        super.addComponentEventListener(this.querySelector("#uploadProfilePictureButton"),
+                                        "click",
+                                        this.uploadProfilePicture);
             
         const win = this.querySelector("#win-stat");
         const loss = this.querySelector("#loss-stat");
@@ -236,14 +239,12 @@ export class EditProfilePage extends Component {
         const total_match = this.querySelector("#total-game-stat");
         const profile_name = this.querySelector("#profileName");
         const bio = this.querySelector("#bio-content");
-        // const profileImage = this.querySelector("#profileImage");
         win.textContent = getValueFromSession("win");
         loss.textContent = getValueFromSession("loss");
         draw.textContent = getValueFromSession("draw");
         total_match.textContent = getValueFromSession("total_match");
         profile_name.textContent = getValueFromSession("display_name");
         bio.textContent = getValueFromSession("bio");
-        // profileImage.src = await getValueFromSession("avatar_url");
     }
 
     edit_bio_popup()
@@ -260,7 +261,7 @@ export class EditProfilePage extends Component {
             const body = {display_name: new_name};
             const res = await fetchData('auth/users/me/', body, 'PATCH');
             const profileName = this.querySelector("#profileName");
-            updateUserData(res);
+            await updateUserData(res);
             console.log("after update")
             const display_name = sessionStorage.getItem('display_name').replace(/\"/g, '');
             profileName.textContent = display_name;
@@ -286,6 +287,30 @@ export class EditProfilePage extends Component {
         }
         const modal = this.querySelector("enable-2fa-modal");
         modal.create_qr();
+    }
+
+    async uploadProfilePicture() {
+        try {
+            const fileInput = this.querySelector("#profileImageUpload");
+            if (!fileInput.files.length) {
+                alert("Please select a file to upload.");
+                return;
+            }
+    
+            const file = fileInput.files[0];
+            const formData = new FormData();
+            formData.append("avatar", file);
+            await fetchData('auth/avatar/', formData, 'PUT', true, {});
+            updateUserData();
+    
+            // อัปเดตรูปภาพใหม่ในหน้าโปรไฟล์
+            const profileImage = this.querySelector("#profileImage");
+            profileImage.src = URL.createObjectURL(file);
+            alert("Profile picture updated successfully!");
+        } catch (error) {
+            console.error("Error uploading profile picture:", error);
+            alert("Failed to upload profile picture.");
+        }
     }
 }
 
