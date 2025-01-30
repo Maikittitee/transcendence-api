@@ -3,23 +3,6 @@ from .models import Match
 from .serializers import MatchSerializer
 from .permissions import CanReadUpdateDeleteMatch  # Import the custom permission
 
-# class MatchListCreateView(generics.ListCreateAPIView):
-#     queryset = Match.objects.all()
-#     serializer_class = MatchSerializer
-#     permission_classes = [permissions.IsAuthenticated]  # Authenticated users can create
-
-#     def get_queryset(self):
-#         queryset = super().get_queryset()
-#         status_param = self.request.query_params.get('status')
-#         if status_param:
-#             queryset = queryset.filter(status=status_param)
-#         return queryset
-
-# class MatchDetailView(generics.RetrieveUpdateDestroyAPIView):
-#     queryset = Match.objects.all()
-#     serializer_class = MatchSerializer
-#     permission_classes = [permissions.IsAuthenticated, CanReadUpdateDeleteMatch]
-
 class MatchListCreateView(generics.ListCreateAPIView):
     queryset = Match.objects.all()
     serializer_class = MatchSerializer
@@ -32,7 +15,6 @@ class MatchListCreateView(generics.ListCreateAPIView):
             queryset = queryset.filter(status=status_param)
         return queryset
 
-# ✅ Apply authorization for GET, PATCH, and DELETE
 class MatchDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Match.objects.all()
     serializer_class = MatchSerializer
