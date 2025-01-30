@@ -12,4 +12,37 @@ pillow
 djoser
 djangorestframework_simplejwt
 django-rest-swagger
+aiopg==1.4.0
+asgiref==3.8.1
+async-timeout==4.0.3
+attrs==24.2.0
+autobahn==24.4.2
+Automat==24.8.1
+cffi==1.17.1
+channels==4.0.0
+channels_postgres==1.0.5
+constantly==23.10.4
+cryptography==43.0.3
+daphne==4.1.2
+# Django==4.2.16
+# django-cors-headers==4.6.0
+hyperlink==21.0.0
+idna==3.10
+incremental==24.7.2
+msgpack==1.0.8
+psycopg2
+pyasn1==0.6.1
+pyasn1_modules==0.4.1
+pycparser==2.22
+pyOpenSSL==24.2.1
+service-identity==24.2.0
+shortuuid==1.0.13
+sqlparse==0.5.2
+tomli==2.1.0
+Twisted==24.10.0
+txaio==23.1.1
+typing_extensions==4.12.2
+whitenoise==6.8.2
+zope.interface==7.1.1
+
 
