@@ -55,6 +55,19 @@ export class GamePlayPage extends Component {
     
     function resizeCanvas(element) {
         console.log(`element width : ${element.width} element height : ${element.height}`);
+
+		function getCookie(name) {
+			const value = `; ${document.cookie}`;
+			const parts = value.split(`; ${name}=`);
+			if (parts.length === 2) return parts.pop().split(';').shift();
+			return null;
+		  }
+		  
+		  // Use it to get the 'access' cookie
+		  const accessToken = getCookie('access');
+		  console.log("access token: ", accessToken)
+		  
+
         let container = element.parentElement;
         let targetAspectRatio = 800 / 400;
         

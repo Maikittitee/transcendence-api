@@ -21,7 +21,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . /app/
 
 # Run migrations and collect static files
-CMD ["ls"]
 
 RUN python /app/User_manage/manage.py makemigrations
 

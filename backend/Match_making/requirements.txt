@@ -16,7 +16,9 @@ hyperlink==21.0.0
 idna==3.10
 incremental==24.7.2
 msgpack==1.0.8
-psycopg2
+# psycopg2
+psycopg2-binary
+
 pyasn1==0.6.1
 pyasn1_modules==0.4.1
 pycparser==2.22

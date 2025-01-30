@@ -10,8 +10,9 @@ class PongConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         
 		### NOTEEEEEEEEEEEEEEEEEEEEEEe
-        self.player_id = shortuuid.uuid()
-        self.player_id = self.player_id[:5]
+        # self.player_id = shortuuid.uuid()
+        # self.player_id = self.player_id[:5]
+        self.player_id = "eiei"
         
 		
         print(f"Player {self.player_id} connected")

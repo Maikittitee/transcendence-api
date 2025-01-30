@@ -6,6 +6,12 @@ all: makemigrations migrate run
 run:
 	python3 User_manage/manage.py runserver $(PORT)
 
+rund:
+	python3 User_manage/manage.py runserver $(PORT) &
+
+stop:
+	pkill -f "runserver $(PORT)" || true
+
 # Run migrations
 migrate:
 	python3 User_manage/manage.py migrate
