@@ -36,5 +36,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("account/", include("Account.urls")),
 	path('friends/', include('Friend.urls')),
+   
+   path('matches/', include('match.urls'))
 	# path("profile/", include("Profile.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

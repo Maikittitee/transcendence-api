@@ -1,0 +1,78 @@
+# version: '3.8'
+
+networks:
+  backend:
+
+services:
+  nginx:
+    image: nginx:latest
+    container_name: frontend
+    ports:
+      - "8000:80"
+      - "443:443"
+    volumes:
+      - ./frontend:/usr/share/nginx/html
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/ssl:/etc/nginx/ssl
+    restart: always
+    networks:
+      - backend
+
+  # backend:
+  #   container_name: backend
+  #   build:
+  #     context: backend
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "9000:9000"
+  # networks:
+  #   - badkend
+
+  backend:
+    container_name: backend
+    build:
+      context: backend
+  #   command: python manage.py runserver 0.0.0.0:
+      args:
+        - SECRET_KEY
+        - UID
+        - FT_CLIENT_SECRET
+        - REDIRECT_URI
+        - OAUTH_URL
+    volumes:
+      - ./backend:/app
+    ports:
+      - "9000:9000"
+    environment:
+      - DEBUG=1
+      # - SECRET_KEY=${SECRET_KEY}
+      # - SECRET_KEY # same result as line 43
+      # - NEW_SECRET_KEY=${SECRET_KEY}
+      - DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1
+      - SQL_ENGINE=django.db.backends.postgresql
+      - SQL_DATABASE=django_db
+      - SQL_USER=django_user
+      - SQL_PASSWORD=django_password
+      - SQL_HOST=db
+      - SQL_PORT=5432
+    env_file:
+      - .env
+    depends_on:
+      - db
+    networks:
+      - backend
+
+  db:
+    image: postgres:15
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=django_db
+      - POSTGRES_USER=django_user
+      - POSTGRES_PASSWORD=django_password
+    networks:
+      - backend
+
+volumes:
+  postgres_data:
+

@@ -1,12 +1,13 @@
 import { Component } from "../../Component.js";
 import { getCookie, getProfileData, fetchData, setCookie } from "../../../../utils.js";
 
-const name = 'add-friend-modal';
+const name = 'accept-friend-modal';
 
 const componentStyle = `
   #title {
     font-size: 1.5em;
     font-weight: bold;
+    text-align: center
   }
 
   input {
@@ -17,7 +18,7 @@ const componentStyle = `
       font-size: 30px;
   }
 
-  #add-frind-img {
+  #friend-img {
     width: 50%;
   }
 
@@ -37,7 +38,7 @@ const componentStyle = `
   }
 `;
 
-export class AddFriendModal extends Component {
+export class AcceptFriendModal extends Component {
   #modal
   #bootstrapModal;
   
@@ -46,20 +47,21 @@ export class AddFriendModal extends Component {
   }
 
   render() {
-    const add_frind_img = window.Images.getFile("20.png");
+    const default_profile = window.Images.getFile("1.png");
     return `
       <div class="modal fade" id="modal">
         <div id="modal-block" class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
             <div id="content-space" class="modal-body">
 
-              <img id="add-frind-img" src=${add_frind_img}>
+              <img id="friend-img" src=${default_profile}>
 
-              <div id="title" class="mb-3"> Enter a username to send a friend request. </div>
-
-              <input type=text id="req-username" class="mb-3">
-
-              <button id="req-send" class="btn btn-success btn-lg mb-3"> ~ Send Meow ~ </button>
+              <div id="title" class="m-3"> Are you sure you want to accept default_username as your friend? </div>
+              
+              <div class="d-flex justify-content-between w-50">
+                <button id="no" class="btn btn-danger btn-lg mb-3"> Nahh </button>
+                <button id="yes" class="btn btn-success btn-lg mb-3"> Yes! </button>
+              </div>
 
             </div>
           </div>
@@ -72,27 +74,9 @@ export class AddFriendModal extends Component {
   {
     this.#modal = super.querySelector('#modal');
     this.#bootstrapModal = new bootstrap.Modal(this.#modal);
-    super.addComponentEventListener(this.querySelector("#req-send"),
+    super.addComponentEventListener(this.querySelector("#no"),
     "click",
-    this.send_friend_req);
-  }
-
-  async send_friend_req()
-  {
-    try
-    {
-        console.log("send_friend_req");
-        const req_username = this.querySelector("#req-username").value;
-        const body = {to_user: req_username};
-        const res = await fetchData('friends/friend-requests/', body, 'POST');
-        console.log("send_friend_req");
-        console.log(res);
-    } 
-    catch (error)
-    {
-      alert("error: " + error.body.detail);
-    }
-    this.closeModal();
+    this.closeModal);
   }
 
   openModal() {
@@ -105,4 +89,4 @@ export class AddFriendModal extends Component {
 }
   
   // Register Custom Element
-  customElements.define(name, AddFriendModal);
+  customElements.define(name, AcceptFriendModal);

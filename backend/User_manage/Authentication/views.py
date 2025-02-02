@@ -28,6 +28,7 @@ def index(request):
 	return JsonResponse({"status": "API connected!"})
 
 class ProfileConfigView(APIView):
+	# user
 	permission_classes = [IsAuthenticated]
 	serializer_class = ProfileConfigSerializer
 

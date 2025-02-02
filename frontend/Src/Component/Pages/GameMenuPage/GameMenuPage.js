@@ -244,23 +244,21 @@ export class GameMenuPage extends Component {
     loading_page.style.display = "none";
   }
 
-  async load_game_data()
-  {
-    // const friend_list_res = await fetchData('/friends/friends/');
-    // updateUserData(friend_list_res);
+  async load_game_data() {
     await updateUserData();
     const win = this.querySelector("#win-stat");
     const loss = this.querySelector("#loss-stat");
     const draw = this.querySelector("#draw-stat");
     const total_match = this.querySelector("#total-game-stat");
     const profile_name = this.querySelector("#profileName");
-    // const profileImage = this.querySelector("#profileImage");
+    const profileImage = this.querySelector("#profileImage");
+    
     win.textContent = getValueFromSession("win");
     loss.textContent = getValueFromSession("loss");
     draw.textContent = getValueFromSession("draw");
     total_match.textContent = getValueFromSession("total_match");
     profile_name.textContent = getValueFromSession("display_name");
-    // profileImage.src = await getValueFromSession("avatar_url");
+    profileImage.src = sessionStorage.getItem('profile_img');
   }
 
   logout()

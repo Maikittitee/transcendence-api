@@ -1,10 +1,16 @@
 /* this file is only for quick test for frontend */
 
-const http = require('http');
+// const http = require('http');
+const https = require('https');
 const fs = require('fs');
 const path = require('path');
 
-const server = http.createServer((req, res) => {
+const options = {
+    key: fs.readFileSync('/nginx/ssl_certs/server.key'), // replace it with your key path
+    cert: fs.readFileSync('/nginx/ssl_certs/server.crt'), // replace it with your certificate path
+}
+
+const server = https.createServer((req, res) => {
     // Log incoming requests
     console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
 
@@ -16,7 +22,7 @@ const server = http.createServer((req, res) => {
 
     const extname = path.extname(filePath);
     let contentType = 'text/html';
-    
+
     // Set content type based on file extension
     switch (extname) {
         case '.js':
@@ -56,5 +62,5 @@ const server = http.createServer((req, res) => {
 
 const PORT = 8000;
 server.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}/`);
+    console.log(`Server running at https://localhost:${PORT}/`);
 });
