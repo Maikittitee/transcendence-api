@@ -12,6 +12,8 @@ class PongConsumer(AsyncWebsocketConsumer):
 		print("yed mae this is first connect")
 		token = self.scope['query_string'].decode('utf-8').split('=')[1]
 		print(f"token: {token}")
+  
+		
 		### NOTEEEEEEEEEEEEEEEEEEEEEEe
 		self.player_id = shortuuid.uuid()
 		self.player_id = self.player_id[:5]
