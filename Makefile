@@ -2,6 +2,9 @@
 
 all: backend backend-matchmaking frontend
 
+down:
+	docker compose down
+
 backend:
 	$(MAKE) -C backend rund
 
@@ -12,7 +15,7 @@ frontend:
 	$(MAKE) -C frontend rund
 
 stop:
-	$(MAKE) -C backend stop	
+	$(MAKE) -C backend stop
 	$(MAKE) -C backend/match_making stop
 	$(MAKE) -C frontend stop
 

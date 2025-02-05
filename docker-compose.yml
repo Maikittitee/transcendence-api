@@ -4,20 +4,20 @@ networks:
   backend:
 
 services:
-  nginx:
-    image: nginx:latest
+  frontend:
     container_name: frontend
+    build:
+      context: frontend
+      dockerfile: Dockerfile
     ports:
-      - "8000:80"
-      - "443:443"
-    volumes:
-      - ./frontend:/usr/share/nginx/html
-      - ./nginx/conf.d:/etc/nginx/conf.d
-      - ./nginx/ssl:/etc/nginx/ssl
+      - 8080:80
+      - 443:443
+    # volumes:
+    #     - ./nginx/ssl:/etc/nginx/ssl
+    #     - ./frontend:/usr/share/nginx/html
     restart: always
     networks:
       - backend
-
 
   backend:
     container_name: backend
