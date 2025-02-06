@@ -5,13 +5,13 @@ import logging
 
 class ApiManager:
     @staticmethod
-    def get(url: str, params: Optional[Dict] = None, auth: Optional[Dict] = None, headers: Optional[Dict] = None) -> Dict:
+    def get(url: str, params: Optional[Dict] = None, authorize: Optional[Dict] = None, headers: Optional[Dict] = None) -> Dict:
         try:
             params = params or {}
             headers = headers or {}
             
-            if (auth):
-                headers['Authorization'] = f'bearer {auth}'
+            if (authorize):
+                headers['Authorization'] = f'Bearer {authorize}'
             
             response = requests.get(url, params=params, headers=headers)
             
@@ -27,3 +27,4 @@ class ApiManager:
             logging.error(f"Failed to parse JSON response: {str(e)}")
             raise
         
+# print(ApiManager.get('http://127.0.0.1:9000/auth/users/me/', auth="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM4OTI2NjQxLCJpYXQiOjE3Mzg4NDAyNDEsImp0aSI6IjZmZjM3MjQwNzhiMDQ3N2FiYzg1NTFkNGMyMDQ3YWE1IiwidXNlcl9pZCI6Mn0.d1oEul33XXZrhvnXFOCc76PE0QzZnHYCoYpnYuPoam4"))

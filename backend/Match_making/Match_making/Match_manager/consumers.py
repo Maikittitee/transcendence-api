@@ -3,6 +3,7 @@ from .models import *
 import json
 from .GameInstantManeger import GameManager
 import shortuuid
+from .utils import ApiManager
 
 class PongConsumer(AsyncWebsocketConsumer):
 	game_manager = GameManager()  # Single game manager instance
@@ -12,13 +13,10 @@ class PongConsumer(AsyncWebsocketConsumer):
 		print("yed mae this is first connect")
 		token = self.scope['query_string'].decode('utf-8').split('=')[1]
 		print(f"token: {token}")
-  
+		user_data = ApiManager.get('http://127.0.0.1:9000/auth/users/me/', authorize=token)
 		
 		### NOTEEEEEEEEEEEEEEEEEEEEEEe
-		self.player_id = shortuuid.uuid()
-		self.player_id = self.player_id[:5]
-		# self.player_id = "eiei"
-		
+		self.player_id = user_data['id']
 		
 		print(f"Player {self.player_id} connected")
 		self.game_id = ""  # Generate player ID
