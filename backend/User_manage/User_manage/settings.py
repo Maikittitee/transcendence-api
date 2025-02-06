@@ -101,6 +101,19 @@ WSGI_APPLICATION = "User_manage.wsgi.application"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql",
+#         "NAME": "django_db",  # Database name
+#         "USER": "django_user",  # Database username
+#         "PASSWORD": "django_password",  # Database password
+#         "HOST": "localhost",  # Change to "postgres" if using Docker
+#         "PORT": "5432",  # Default PostgreSQL port
+#     }
+# }
+
+
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",

@@ -1,0 +1,20 @@
+-- Create Users
+CREATE USER user1 WITH PASSWORD 'password1' CREATEDB;
+CREATE USER user2 WITH PASSWORD 'password2' CREATEDB;
+CREATE USER user3 WITH PASSWORD 'password3' CREATEDB;
+
+-- Create Databases
+CREATE DATABASE db1 OWNER user1;
+CREATE DATABASE db2 OWNER user2;
+CREATE DATABASE db3 OWNER user3;
+
+-- Connect to db1 and create tables
+\c db1;
+CREATE TABLE customers (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(150) UNIQUE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+GRANT SELECT ON TABLE customers TO user1, user2;

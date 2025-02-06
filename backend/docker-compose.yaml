@@ -16,19 +16,33 @@ services:
       - SQL_DATABASE=django_db
       - SQL_USER=django_user
       - SQL_PASSWORD=django_password
-      - SQL_HOST=db
+      - SQL_HOST=postgres
       - SQL_PORT=5432
     depends_on:
-      - db
+      - postgres
 
-  db:
+  postgres:
     image: postgres:15
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+    restart: always
     environment:
       - POSTGRES_DB=django_db
       - POSTGRES_USER=django_user
       - POSTGRES_PASSWORD=django_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker_postgres_init.sql:/docker-entrypoint-initdb.d/docker_postgres_init.sql
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=a@a.com
+      - PGADMIN_DEFAULT_PASSWORD=!Q2w3e4r5t
+    ports:
+      - "16543:80"
+    depends_on:
+      - postgres
 
 volumes:
   postgres_data:
