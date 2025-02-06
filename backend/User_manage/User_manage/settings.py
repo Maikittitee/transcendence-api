@@ -35,6 +35,7 @@ DEBUG = True
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.TokenAuthentication', #for test
     ],
 }
 
@@ -55,6 +56,7 @@ INSTALLED_APPS = [
     "Authentication",
 	"Friend",
 	"match",
+    'rest_framework.authtoken',
 ]
 
 

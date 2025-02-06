@@ -1,17 +1,3 @@
-// require('dotenv').config()
-
-// const UID = process.env.UID
-// const FT_CLIENT_SECRET = process.env.FT_CLIENT_SECRET
-// const REDIRECT_URI = process.env.REDIRECT_URI
-// const OAUTH_URL = process.env.OAUTH_URL
-// const BASE_URL = process.env.BASE_URL
-
-// console.log(UID);
-// console.log(FT_CLIENT_SECRET);
-// console.log(REDIRECT_URI);
-// console.log(OAUTH_URL);
-// console.log(BASE_URL);
-
 import * as App from './Src/index.js';
 import {handle_42Redirect, fetchData} from './utils.js';
 

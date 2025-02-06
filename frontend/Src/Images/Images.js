@@ -24,6 +24,8 @@ export class Images {
                         "./Src/Images/file/17.png",
                         "./Src/Images/file/18.png",
                         "./Src/Images/file/19.png",
+                        "./Src/Images/file/20.png",
+                        "./Src/Images/file/21.png",
                         "./Src/Images/file/BackGroundVideo.mp4",
                         "./Src/Images/file/MeowBackGroundSong.mp3",
                         "./Src/Images/file/MeowPongTitle.png",
