@@ -12,9 +12,9 @@ services:
     ports:
       - 8080:80
       - 443:443
-    # volumes:
-    #     - ./nginx/ssl:/etc/nginx/ssl
-    #     - ./frontend:/usr/share/nginx/html
+    volumes:
+        - ./frontend/conf/:/etc/nginx/ssl
+        - ./frontend:/usr/share/nginx/html
     restart: always
     networks:
       - backend
