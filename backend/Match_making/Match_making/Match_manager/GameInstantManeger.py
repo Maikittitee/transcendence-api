@@ -60,6 +60,7 @@ class GameManager:
 
 			self.games[game_id].status = 'playing'
 			self.game_tasks[game_id] = asyncio.create_task(self.game_loop(game_id))
+			print("end bro")
 			return game_id
 		except asyncio.CancelledError:
 			print(f"Game loop {game_id} was cancelled.")
@@ -83,14 +84,17 @@ class GameManager:
 	async def game_loop(self, game_id: str):
 		try:
 			game = self.games[game_id]
-			while game_id in self.games and game.status == "playing":
+			while game_id in self.games and (game.status == "playing" or game.status == "finished"):
 				game.update({},{})
-				state_data = {
-					'type': "game_state",
-					'state': game.get_state()
-				}
-				await self.broadcast_state(game_id, state_data)
-				if game.status == "finished" :
+				print(f"hello: {game.status}")
+				if ( game.status != "finished"):
+					state_data = {
+						'type': "game_state",
+						'state': game.get_state()
+					}
+					await self.broadcast_state(game_id, state_data)
+				else :
+					print("hi1")
 					final_message = {
 						'type': 'game_over',
 						'winner': game.winner,
@@ -114,7 +118,9 @@ class GameManager:
 				print(f"Failed to cleanup game {game_id}: {e}")
 	
 		finally :
+			print("bp1")
 			print(f"game {game_id}")
+			print("bp2")
 			try:
 				await self.cleanup_game(game_id)
 			except Exception as e:

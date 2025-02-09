@@ -155,6 +155,7 @@ class GameInstant:
 							if self.left_paddle.score > self.right_paddle.score 
 								 else self.right_paddle.playerName
 							)
+			print("hey should be finish in _check_scoring")
 			self.status = 'finished'
 
 	def get_state(self) -> dict :
