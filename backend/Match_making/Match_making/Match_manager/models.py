@@ -9,7 +9,7 @@ class GameSession(models.Model):
     max_players = models.IntegerField(default=2)
 
     # Change 'players' to use related_name to avoid conflict
-    players_game = models.ManyToManyField(
+    players = models.ManyToManyField(
         'PlayerSession',
         related_name='participated_games',  # Add this
         blank=True

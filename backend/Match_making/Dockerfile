@@ -1,12 +1,25 @@
-FROM python:3.12-slim
+FROM python:3.13-slim
 
 WORKDIR /app
 
-COPY . .
-RUN export HOST_IP=$(hostname -I | awk '{print $1}')
-RUN echo $HOST_IP
+# Install system dependencies
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    build-essential \
+    libpq-dev \
+    python3-dev \
+    libffi-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements first
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-EXPOSE 25566
+# Copy the entire project
+COPY . .
 
-CMD ["python3", "./Match_making/manage.py", "runserver", "0.0.0.0:25566"]
+# Make entrypoint executable
+COPY entrypoint.sh .
+RUN chmod +x entrypoint.sh
+
+CMD ["./entrypoint.sh"]

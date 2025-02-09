@@ -1,78 +1,63 @@
-# version: '3.8'
-
-networks:
-  backend:
-
 services:
+
   nginx:
-    image: nginx:latest
-    container_name: frontend
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
     ports:
-      # - "8000:80"
+      - "80:80"
       - "443:443"
     volumes:
       - ./frontend:/usr/share/nginx/html
       - ./nginx/conf.d:/etc/nginx/conf.d
       - ./nginx/ssl:/etc/nginx/ssl
-    restart: always
+    depends_on:
+      - user_manage
+      - match_making
     networks:
-      - backend
-
-  # backend:
-  #   container_name: backend
-  #   build:
-  #     context: backend
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "9000:9000"
-  # networks:
-  #   - badkend
-
-  backend:
-    container_name: backend
+      - app_network
+  match_making:
     build:
-      context: backend
-  #   command: python manage.py runserver 0.0.0.0:
-      args:
-        - SECRET_KEY
-        - UID
-        - FT_CLIENT_SECRET
-        - REDIRECT_URI
-        - OAUTH_URL
+      context: ./backend/Match_making
+      dockerfile: Dockerfile
     volumes:
-      - ./backend:/app
+      - ./backend/Match_making:/app
     ports:
-      - "9000:9000"
-    environment:
-      - DEBUG=1
-      # - SECRET_KEY=${SECRET_KEY}
-      # - SECRET_KEY # same result as line 43
-      # - NEW_SECRET_KEY=${SECRET_KEY}
-      - DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1
-      - SQL_ENGINE=django.db.backends.postgresql
-      - SQL_DATABASE=django_db
-      - SQL_USER=django_user
-      - SQL_PASSWORD=django_password
-      - SQL_HOST=db
-      - SQL_PORT=5432
-    env_file:
-      - .env
+      - "25566:25566"
     depends_on:
       - db
     networks:
-      - backend
+      - app_network
+
+  user_manage:
+    build:
+      context: ./backend/User_manage
+      dockerfile: Dockerfile
+    env_file:
+      - ./backend/User_manage/.env
+    volumes:
+      - ./backend/User_manage:/app
+    ports:
+      - "9000:9000"
+    depends_on:
+      - db
+    networks:
+      - app_network
 
   db:
-    image: postgres:15
+    image: postgres:15  # Updated to version 15
+    environment:
+      - POSTGRES_DB=userdb
+      - POSTGRES_USER=dbuser
+      - POSTGRES_PASSWORD=dbpassword
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_DB=django_db
-      - POSTGRES_USER=django_user
-      - POSTGRES_PASSWORD=django_password
     networks:
-      - backend
+      - app_network
+
+networks:
+  app_network:
+    driver: bridge
 
 volumes:
   postgres_data:
-

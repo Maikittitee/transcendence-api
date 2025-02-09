@@ -1,16 +1,18 @@
 /* this file is only for quick test for frontend */
 
-// const http = require('http');
-const https = require('https');
+const http = require('http');
+// const https = require('https');
 const fs = require('fs');
 const path = require('path');
 
 const options = {
-    key: fs.readFileSync('/nginx/ssl_certs/server.key'), // replace it with your key path
-    cert: fs.readFileSync('/nginx/ssl_certs/server.crt'), // replace it with your certificate path
+    // key: fs.readFileSync('/nginx/ssl_certs/server.key'), // replace it with your key path
+    // cert: fs.readFileSync('/nginx/ssl_certs/server.crt'), // replace it with your certificate path
+    key: fs.readFileSync('/Users/maikittitee/Focusing/transcendence-api/nginx/ssl/nginx.key'), // replace it with your key path
+    cert: fs.readFileSync('/Users/maikittitee/Focusing/transcendence-api/nginx/ssl/nginx.crt'), // replace it with your certificate path
 }
 
-const server = https.createServer((req, res) => {
+const server = http.createServer((req, res) => {
     // Log incoming requests
     console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
 
@@ -62,5 +64,5 @@ const server = https.createServer((req, res) => {
 
 const PORT = 8000;
 server.listen(PORT, () => {
-    console.log(`Server running at https://localhost:${PORT}/`);
+    console.log(`Server running at http://localhost:${PORT}/`);
 });

@@ -3,20 +3,17 @@ from .models import *
 import json
 from .GameInstantManeger import GameManager
 import shortuuid
+from .utils import ApiManager
 
 class PongConsumer(AsyncWebsocketConsumer):
 	game_manager = GameManager()  # Single game manager instance
 	
 	async def connect(self):
-		
-		print("yed mae this is first connect")
 		token = self.scope['query_string'].decode('utf-8').split('=')[1]
-		print(f"token: {token}")
-		### NOTEEEEEEEEEEEEEEEEEEEEEEe
-		self.player_id = shortuuid.uuid()
-		self.player_id = self.player_id[:5]
-		# self.player_id = "eiei"
+		# user_data = ApiManager.get('http://127.0.0.1:9000/auth/users/me/', authorize=token)
 		
+		### NOTEEEEEEEEEEEEEEEEEEEEEEe
+		self.player_id = "2"
 		
 		print(f"Player {self.player_id} connected")
 		self.game_id = ""  # Generate player ID
@@ -36,26 +33,22 @@ class PongConsumer(AsyncWebsocketConsumer):
 		try:
 			data = json.loads(text_data)
 
-			#print(f"Received\n{data}from \n{self.player_id} on {self.game_id}")
-			if self.game_id and data['type'] == 'player_input':
+			# print(f"Received\n{data}from \n{self.player_id} on {self.game_id}")
+			if self.game_id and data['type'] == 'player_input':	
 				if self.game_id == "":
 					self.game_id = data['game_id']
 					print(f"set Game ID {self.game_id}")
-				await self.game_manager.handle_input(
-					self.game_id,
-					self.player_id,
-					data.get('inputs', {})
-				)
+				await self.game_manager.handle_input(self.game_id, self.player_id, data.get('inputs', {}))
 			if data['type'] == 'game_start' :
-
 				self.game_id = data['game_id']
 				print(f"Game Start {self.game_id}")
 			if data['type'] == 'connected':
+				print("Connected")
 				await self.game_manager.give_game_setting(self.player_id)
 			
 			if data['type'] == 'queue':
-				self.game_id = await self.game_manager.add_player(self.player_id, self)
 				print(f"Player {self.player_id} joined game {self.game_id}")
+				self.game_id = await self.game_manager.add_player(self.player_id, self)
 		except json.JSONDecodeError:
 			pass
 
