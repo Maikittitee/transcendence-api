@@ -20,17 +20,13 @@ export function deleteCookie(name, path = "/") {
   document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=${path};`;
 }
 
-export async function handle_42Redirect()
-{
-    let is_oauthRedirectInProgress = sessionStorage.getItem('oauthRedirectInProgress');
-    if (is_oauthRedirectInProgress == null)
-        return ;
-    const oauthCode = getOauthCode();
-    const res = await sendOauthCodeToBackEnd(oauthCode);
-    setCookie("access", 1, res.tokens.access);
-    setCookie("refresh", 7, res.tokens.refresh);
-    window.Router.navigate('/game-menu-page/');
-    sessionStorage.removeItem('oauthRedirectInProgress');
+export function removeAllCookies() {
+  let cookies = document.cookie.split("; ");
+
+  for (let cookie of cookies) {
+    let [name] = cookie.split("="); 
+    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;`;
+  }
 }
 
 async function sendOauthCodeToBackEnd(oauthCode) {
@@ -214,5 +210,27 @@ export async function updateUserData(json_user_data) {
 export function getValueFromSession(key) {
   const value = JSON.parse(sessionStorage.getItem(key));
   return value;
+}
+
+export async function pageLoadManager()
+{
+    let pageLoadIndex = sessionStorage.getItem('pageLoadIndex', "home");
+    if (pageLoadIndex == "home")
+    {
+      Router.init();
+    }
+    else if (pageLoadIndex == "42_login")
+    {
+      const oauthCode = getOauthCode();
+      const res = await sendOauthCodeToBackEnd(oauthCode);
+      setCookie("access", 1, res.tokens.access);
+      setCookie("refresh", 7, res.tokens.refresh);
+      window.Router.redirect('/game-menu-page/');
+      sessionStorage.removeItem('oauthRedirectInProgress');
+    }
+    else if (pageLoadIndex == "game")
+    {
+      window.Router.redirect('/game-menu-page/');
+    }
 }
 
