@@ -1,4 +1,5 @@
 import { Component } from "../../Component.js";
+import { errorDisplay } from "../../../../utils.js";
 
 const name = "play-menu-page";
 
@@ -219,10 +220,16 @@ const componentStyle = `
         font-weight: bold;
     }
 
-    #match-result {
+    #match-result-win {
         font-size: 1.25em;
         font-weight: bold;
         color: rgb(76, 146, 67);
+    }
+
+    #match-result-loss {
+        font-size: 1.25em;
+        font-weight: bold;
+        color: rgb(199, 47, 47);
     }
 
     .history-block h1 {
@@ -293,15 +300,15 @@ export class PlayMenuPage extends Component {
         <div class ="menu-block">
             <h1 id = "fight-meow"> Fight Meow~ </h1>
             <div id = "meow-pow"><img id = "meow-pow-l" src=${meow_pow_l}> <img id = "meow-pow-r" src=${meow_pow_r}></div>
-            <button id = "match-making" class="btn btn-primary play-button"> Match making </button>
+            <button id = "match-making" class="btn btn-primary play-button"> Local Play </button>
             <button id = "tournament" class="btn btn-primary play-button"> Tournament </button>
-            <button id = "local-play" class="btn btn-primary play-button"> Play with friend </button>
+            <button id = "local-play" class="btn btn-primary play-button"> Match Making </button>
         </div>
     </div>
 
     <add-friend-modal></add-friend-modal>
-    <modal-component></modal-component>
     <accept-friend-modal></accept-friend-modal>
+    <error-modal></error-modal>
     `;
     }
 
@@ -326,7 +333,6 @@ export class PlayMenuPage extends Component {
     this.render_friend();
     this.#history_list = await this.get_history();
     this.render_history();
-    this.#friend_action_model = this.querySelector("modal-component");
     }
 
     async get_friend_req_list()
@@ -354,7 +360,8 @@ export class PlayMenuPage extends Component {
         } 
         catch (error)
         {
-            alert(error);
+            const errModal = this.querySelector("error-modal");
+            errorDisplay(errModal, error);
         }
     }
 
@@ -383,7 +390,8 @@ export class PlayMenuPage extends Component {
         } 
         catch (error)
         {
-            alert(error);
+            const errModal = this.querySelector("error-modal");
+            errorDisplay(errModal, error);
         }
     }
 
@@ -417,7 +425,8 @@ export class PlayMenuPage extends Component {
         } 
         catch (error)
         {
-            alert(error);
+            const errModal = this.querySelector("error-modal");
+            errorDisplay(errModal, error);
         }
     }
 
@@ -461,11 +470,17 @@ export class PlayMenuPage extends Component {
     render_history()
     {
 
-        // const game_result = `
+        // let game_result;
+        // if ()
+        // {
+        //     game_result =
+        //     `
         //     <div id="match-result" class = "ms-2">
         //         WIN 3-1
         //     </div>
-        // `;
+        //      `;
+        // } 
+
 
         // this.#match_history_template = `
         // <li id = "match-history-card" class = "rounded d-flex align-items-center justify-content-between bg-light">
@@ -603,14 +618,12 @@ export class PlayMenuPage extends Component {
             this.render_friend_req();
             this.render_friend();
     
-        } catch (error) {
-            alert(`Failed to ${action} friend request: ` + error.message);
+        } 
+        catch (error) 
+        {
+            const errModal = this.querySelector("error-modal");
+            errorDisplay(errModal, error);
         }
-    }
-
-    logout()
-    {
-        console.log("logout");
     }
 }
 

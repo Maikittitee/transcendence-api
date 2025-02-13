@@ -126,7 +126,6 @@ export class GuestLoginPage extends Component {
   } 
   catch (error) 
   {
-    console.log(error);
     if(error.body.detail === '2FA token required')
     {
       const modal = this.querySelector('enable-2fa-modal');
