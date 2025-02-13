@@ -235,3 +235,27 @@ export async function pageLoadManager()
     }
 }
 
+export function errorDisplay(errorModal, error) {
+  console.log(error);
+
+  let errorMessages;
+
+  if (typeof error.body.detail === "object" && error.body.detail !== null) {
+      // กรณี error.body.detail เป็น object ที่มี key และ array เป็นค่า
+      errorMessages = Object.entries(error.body.detail)
+          .map(([key, messages]) => `${key}: ${Array.isArray(messages) ? messages.join(", ") : messages}`)
+          .join("<br>");
+  } else if (typeof error.body.detail === "string") {
+      // กรณี error.body.detail เป็น string
+      errorMessages = error.body.detail;
+  } else {
+      // กรณีที่ไม่รู้จักโครงสร้างข้อมูล
+      errorMessages = "An unknown error occurred.";
+  }
+
+  errorModal.set_title_content("Invalid");
+  errorModal.set_body_content(errorMessages);
+  errorModal.openModal();
+}
+
+

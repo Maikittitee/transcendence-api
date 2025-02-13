@@ -1,5 +1,5 @@
 import { Component } from "../../Component.js";
-import { setCookie } from "../../../../utils.js";
+import { setCookie, errorDisplay } from "../../../../utils.js";
 
 const name = "guest-login-page";
 
@@ -97,6 +97,7 @@ export class GuestLoginPage extends Component {
       </div>
 
       <enable-2fa-modal></enable-2fa-modal>
+      <error-modal></error-modal>
     `;
   }
   postCreate() {
@@ -133,7 +134,8 @@ export class GuestLoginPage extends Component {
     }
     else
     {
-      alert("error: " + error.body.detail);
+      const errModal = this.querySelector("error-modal");
+      errorDisplay(errModal, error);
     }
   }
 }

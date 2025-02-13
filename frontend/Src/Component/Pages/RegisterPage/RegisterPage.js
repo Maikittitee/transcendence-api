@@ -1,4 +1,5 @@
 import { Component } from "../../Component.js";
+import { errorDisplay } from "../../../../utils.js";
 
 const name = "register-page";
 
@@ -118,7 +119,7 @@ export class RegisterPage extends Component {
             </div>
         </div>
 
-        <modal-component></modal-component>
+        <error-modal></error-modal>
     `;
   }
 
@@ -150,23 +151,10 @@ export class RegisterPage extends Component {
           fontSize: '36px'
         });
         errModal.openModal("Notification", `<div>Create Account Successful!</div>`);
-        window.Router.navigate('/guest-login-page/')
+        window.Router.navigate('/guest-login-page/');
     } catch (error) {
-        if (error.status && error.body) {
-          const errorMessages = Object.entries(error.body)
-            .map(([field, messages]) => `<div>${field}: ${messages}</div>`) 
-            .join('\n'); 
-          const errModal = this.querySelector("modal-component");
-          errModal.set_title_style({
-            color: 'red',
-            fontWeight: 'bold',
-            fontSize: '36px'
-          });
-          errModal.openModal("Error", `<div>Registration failed </div> ${errorMessages}`);
-        } else {
-          const errModal = this.querySelector("modal-component");
-          errModal.openModal("Error", 'Unexpected error occurred during registration.');
-        }
+      const errModal = this.querySelector("error-modal");
+      errorDisplay(errModal, error);
     }
   }
 }
