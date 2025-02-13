@@ -84,7 +84,7 @@ export class AddFriendModal extends Component {
         console.log("send_friend_req");
         const req_username = this.querySelector("#req-username").value;
         const body = {to_user: req_username};
-        const res = await fetchData('friends/friend-requests/', body, 'POST');
+        const res = await fetchData('/friends/friend-requests/', body, 'POST');
         console.log("send_friend_req");
         console.log(res);
     } 
