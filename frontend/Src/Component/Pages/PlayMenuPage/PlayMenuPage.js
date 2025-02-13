@@ -231,38 +231,30 @@ const componentStyle = `
         margin-top: 3%;
         margin-bottom: 3%;
     }
+
+    .profileFrame {
+    width: 60%;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    border: 10px solid palevioletred;    
+}
 `;
 
 export class PlayMenuPage extends Component {
 
     #friend_req_list;
     #friend_list;
+    #history_list;
     #friend_action_model;
     #match_history_template;
 
     constructor() {
     super(componentStyle);
     const default_profile = window.Images.getFile("1.png");
-    this.#match_history_template = `
-    <li id = "match-history-card" class = "rounded d-flex align-items-center justify-content-between bg-light">
-        <div id="match-result" class = "ms-2">
-            WIN 3-1
-        </div>
-
-        <div id="match-date">
-            <div> 03/01/2025 </div>
-            <div> 12:00 </div>
-        </div>                    
-        <div id="profile-card" class="rounded">
-            <div class = "profile-card-image bg-secondary bg-gradient rounded-circle m-1"> 
-                <img src=${default_profile}>
-            </div>
-            <div id="profile-name" class = "m-1">
-                profile name
-            </div>
-        </div>
-    </li>
-    `;
     }
 
     render ()
@@ -279,7 +271,7 @@ export class PlayMenuPage extends Component {
 
     <div class = "flex-container">
         <div class = "profile-Block">
-            <img id="profileImage" src=${profile_img}>
+            <img id="profileImage" class = "profileFrame" src=${profile_img}>
             <div class = "d-flex flex-column justify-content-center align-items-between">
                 <button id="info" class="btn btn-success btn-lg mb-2"> profile name </button>
                 <button id="add-friend" class="btn btn-secondary btn-lg"> Add Friend <span class="bi bi-person-plus ms-2"></span> </button>
@@ -329,10 +321,12 @@ export class PlayMenuPage extends Component {
 
 
     this.#friend_req_list = await this.get_friend_req_list();
-    this.#friend_list = await this.get_friend_list();
-    this.#friend_action_model = this.querySelector("modal-component");
     this.render_friend_req();
+    this.#friend_list = await this.get_friend_list();
     this.render_friend();
+    this.#history_list = await this.get_history();
+    this.render_history();
+    this.#friend_action_model = this.querySelector("modal-component");
     }
 
     async get_friend_req_list()
@@ -394,6 +388,40 @@ export class PlayMenuPage extends Component {
         }
     }
 
+    async get_history()
+    {
+        let ret_history;
+        try
+        {
+            const history = await fetchData('/matches/match-history/');
+            for (let i = 0; i < history.length; i++)
+            {
+                ret_history[i].my_score = history[i].player1_score;
+                ret_history[i].opponent_score = history[i].player2_score;
+                ret_history[i].oppenent_displayname = history[i].player2_display_name;
+                ret_history[i].status = history[i].status;
+                ret_history[i].date = history[i].completed_at;
+                if(my_score > opponent_score)
+                {
+                    ret_history[i].game_result = 1; // 1 = win
+                }
+                else if(my_score < opponent_score)
+                {
+                    ret_history[i].game_result = 2; // 2 = loss
+                }
+                else
+                {
+                    ret_history[i].game_result = 0; // 0 = draw
+                }
+            }
+            return ret_history;
+        } 
+        catch (error)
+        {
+            alert(error);
+        }
+    }
+
     render_friend_req() {
         for (let i = 0; i < this.#friend_req_list.length; i++) {
             if(this.#friend_req_list[i].status === "pending") 
@@ -429,6 +457,37 @@ export class PlayMenuPage extends Component {
                     () => this.handle_friend_popup("reject", friend_req_id, friend_req_data.avatar_url, friend_req_data.display_name));
             }
         }
+    }
+
+    render_history()
+    {
+
+        // const game_result = `
+        //     <div id="match-result" class = "ms-2">
+        //         WIN 3-1
+        //     </div>
+        // `;
+
+        // this.#match_history_template = `
+        // <li id = "match-history-card" class = "rounded d-flex align-items-center justify-content-between bg-light">
+        //     ${game_result}
+        //     <div id="match-date">
+        //         <div> 03/01/2025 </div>
+        //         <div> 12:00 </div>
+        //     </div>                    
+        //     <div id="profile-card" class="rounded">
+        //         <div class = "profile-card-image bg-secondary bg-gradient rounded-circle m-1"> 
+        //             <img src=${default_profile}>
+        //         </div>
+        //         <div id="profile-name" class = "m-1">
+        //             profile name
+        //         </div>
+        //     </div>
+        // </li>
+        // `;
+        // for (let i = 0; i < this.#history_list; i++) {
+
+        // }
     }
 
     render_friend()
