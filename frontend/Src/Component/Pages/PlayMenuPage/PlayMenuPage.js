@@ -339,7 +339,7 @@ export class PlayMenuPage extends Component {
     {
         try
         {
-            const friendsReqList = await fetchData('friends/friend-requests/');
+            const friendsReqList = await fetchData('/friends/friend-requests/');
             console.log('Fetched friendsReqList:', friendsReqList);
             for (let i = 0; i < friendsReqList.length; i++)
             {
@@ -369,7 +369,7 @@ export class PlayMenuPage extends Component {
     {
         try
         {
-            const friendsList = await fetchData('friends/friends/');
+            const friendsList = await fetchData('/friends/friends/');
             for (let i = 0; i < friendsList.length; i++)
             {
                 if (friendsList[i].friend.avatar_url === null)

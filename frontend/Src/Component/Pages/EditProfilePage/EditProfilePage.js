@@ -259,7 +259,7 @@ export class EditProfilePage extends Component {
         {
             const new_name = this.querySelector("#fill-display-name").value;;
             const body = {display_name: new_name};
-            const res = await fetchData('auth/users/me/', body, 'PATCH');
+            const res = await fetchData('/auth/users/me/', body, 'PATCH');
             const profileName = this.querySelector("#profileName");
             await updateUserData(res);
             console.log("after update")
@@ -277,7 +277,7 @@ export class EditProfilePage extends Component {
     {
         try
         {
-            const res = await fetchData('auth/2fa/qr/', null);
+            const res = await fetchData('/auth/2fa/qr/', null);
             console.log(res.otp_uri);
             setCookie("qr-link", 1, res.otp_uri);
         } 
@@ -300,7 +300,7 @@ export class EditProfilePage extends Component {
             const file = fileInput.files[0];
             const formData = new FormData();
             formData.append("avatar", file);
-            await fetchData('auth/avatar/', formData, 'PUT', true, {});
+            await fetchData('/auth/avatar/', formData, 'PUT', true, {});
             updateUserData();
     
             // อัปเดตรูปภาพใหม่ในหน้าโปรไฟล์

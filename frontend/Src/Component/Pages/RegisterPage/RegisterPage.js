@@ -142,7 +142,7 @@ export class RegisterPage extends Component {
     };
   
     try {
-        const res = await fetchData('auth/register/', requestBody, 'POST', false);
+        const res = await fetchData('/auth/register/', requestBody, 'POST', false);
         const errModal = this.querySelector("modal-component");
         errModal.set_title_style({
           color: 'green',
