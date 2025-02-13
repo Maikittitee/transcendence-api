@@ -58,6 +58,10 @@ export class ErrorModal extends Component {
       this.#bootstrapModal.hide();
     }
 
+    closeModal() {
+      this.#bootstrapModal.hide();
+    }
+
     // Method to set title style
     set_title_style(style) {
       // Apply custom styles to modal title
@@ -76,10 +80,21 @@ export class ErrorModal extends Component {
       Object.assign(this.#modal.style, style);
     }
 
-    // Method to modify modal footer content
-    modify_footer(footerContent) {
-      // Set custom content for the footer
-      this.#modalFooter.innerHTML = footerContent;
+    set_title_content(content) {
+      setTimeout(() => {
+         this.#modalTitle.innerHTML = content;
+      }, 0);
+   }
+   
+   set_body_content(content) {
+      console.log("Setting body content:", content);
+      setTimeout(() => {
+         this.#modalBody.innerHTML = content;
+      }, 0);
+   }
+
+    set_footer_content(Content) {
+      this.#modalFooter.innerHTML = Content;
     }
   }
   
