@@ -86,8 +86,8 @@ class GameManager:
 			game = self.games[game_id]
 			while game_id in self.games and (game.status == "playing" or game.status == "finished"):
 				game.update({},{})
-				print(f"hello: {game.status}")
 				if ( game.status != "finished"):
+					# print(f"hello1: {game.status}")
 					state_data = {
 						'type': "game_state",
 						'state': game.get_state()
@@ -105,6 +105,8 @@ class GameManager:
 						'game_id' : game_id
 					}
 					print("game ending")
+					print("final msg: ", final_message)
+					### Create here 
 					await self.broadcast_state(game_id, final_message)
 					print("game ended")
 					break

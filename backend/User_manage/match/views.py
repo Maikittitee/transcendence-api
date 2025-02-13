@@ -6,7 +6,7 @@ from .permissions import CanReadUpdateDeleteMatch  # Import the custom permissio
 class MatchListCreateView(generics.ListCreateAPIView):
     queryset = Match.objects.all()
     serializer_class = MatchSerializer
-    permission_classes = [permissions.IsAuthenticated]  # Authenticated users can create
+    permission_classes = [permissions.AllowAny]  # Authenticated users can create
 
     def get_queryset(self):
         queryset = super().get_queryset()
