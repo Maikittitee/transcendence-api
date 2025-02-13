@@ -55,6 +55,9 @@ export class GamePlayPage extends Component {
     
     function resizeCanvas(element) {
         console.log(`element width : ${element.width} element height : ${element.height}`);
+
+		  
+
         let container = element.parentElement;
         let targetAspectRatio = 800 / 400;
         
@@ -103,7 +106,7 @@ export class GamePlayPage extends Component {
             let radToDraw = scaleValue(this.canvas, this.radius);
             let xToDraw = scaleValue(this.canvas, this.posX);
             let yToDraw = scaleValue(this.canvas, this.posY);
-            console.log(`x : ${xToDraw} y : ${yToDraw} rad : ${radToDraw}`);
+            // console.log(`x : ${xToDraw} y : ${yToDraw} rad : ${radToDraw}`);
             this.ctx.drawImage(this.imageObj, xToDraw - radToDraw, yToDraw - radToDraw, (radToDraw  * 2) , (radToDraw  * 2 ) );
             this.ctx.beginPath();
             this.ctx.arc(xToDraw, yToDraw, radToDraw, 0, Math.PI * 2);
@@ -134,7 +137,7 @@ export class GamePlayPage extends Component {
                 "DOWN" : false,
             }
         }
-    
+
         putbutton()
         {
             let button = document.createElement("button");
@@ -222,17 +225,37 @@ export class GamePlayPage extends Component {
 
         setUpWebsocket()
         {
-            this.webSocketConnection = new WebSocket(`ws://127.0.0.1:25566/ws/matchmaking/`);
+
+			function getCookie(name) {
+				const value = `; ${document.cookie}`;
+				const parts = value.split(`; ${name}=`);
+				if (parts.length === 2) return parts.pop().split(';').shift();
+				return null;
+			  }
+			  // Use it to get the 'access' cookie
+			const accessToken = getCookie('access');
+			console.log("access tokenn: ", accessToken)
+            this.webSocketConnection = new WebSocket(`wss://${window.location.host}/ws/matchmaking/?token=${accessToken}`);
             this.webSocketConnection.onopen = function() {
             }
+
+			this.webSocketConnection.onerror = (error) => {
+				console.error("WebSocket Error:", error);
+			};
+			
+			this.webSocketConnection.onclose = (event) => {
+				console.log("WebSocket closed with code:", event.code, "reason:", event.reason);
+			};
     
             this.webSocketConnection.onmessage = (e) => {
                 let recieveData =  JSON.parse(e.data);
                 this.dataBox.innerHTML = e.data + "\nKey up : " + this.key.UP+ "\nKey Down : " + this.key.DOWN;
 
+				console.log("data: ", recieveData);
                 if (recieveData.type === "player_disconnected") {
-                    this.cleanUpGame();
-                    console.log("Player Disconnected You Win");
+					console.log("someone disconnected to the game....")
+                    // this.cleanUpGame();
+                    // console.log("Player Disconnected You Win");
                 }
 
                 if (recieveData.type === "connected") {
@@ -258,6 +281,13 @@ export class GamePlayPage extends Component {
                     this.currentState = recieveData.state;
     
                 }
+				if (recieveData.type === "game_over"){
+					console.log("game over krabb")
+					console.log(recieveData)
+
+					
+					// should display ended of game or just redirect it
+				}
             }
         }
     

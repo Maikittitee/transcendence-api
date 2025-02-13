@@ -112,6 +112,7 @@ class PongGame
         this.setUpWebsocket();
         resizeCanvas(this.canvas);
         this.putbutton();
+		console.log("hello world")
     }
 
     draw()
@@ -169,7 +170,7 @@ class PongGame
     {
         this.webSocketConnection = new WebSocket(`ws://127.0.0.1:25566/ws/matchmaking/`);
         this.webSocketConnection.onopen = function() {
-            console.log("connected");
+            console.log("connected!");
         }
 
         this.webSocketConnection.onmessage = (e) => {
@@ -177,7 +178,12 @@ class PongGame
             console.log(recieveData);
             this.dataBox.innerHTML = e.data + "\nKey up : " + this.key.UP+ "\nKey Down : " + this.key.DOWN;
             if (recieveData.type === "connected") {
+				console.log("bp1")
                 console.log(`connected with ${recieveData.playerID}`);
+				console.log("bp2")
+				const token = JSON.parse(localStorage.getItem("tokens"));
+				console.log("bp3")
+				console.log("tokens: ", token)
             }
             if (recieveData.type === "game_setting") {
                 this.settingData = recieveData.setting;

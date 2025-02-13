@@ -26,15 +26,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG', default=True, cast=bool)
-ALLOWED_HOSTS = ["*"]
 # SECURITY WARNING: don't run with debug turned on in production!
+ALLOWED_HOSTS = ["*"]
 DEBUG = True
 
-# ALLOWED_HOSTS = ["http://127.0.0.1:5500"]
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.TokenAuthentication', #for test
     ],
 }
 
@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     "Authentication",
 	"Friend",
 	"match",
+    'rest_framework.authtoken',
 ]
 
 

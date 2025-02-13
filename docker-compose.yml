@@ -1,0 +1,63 @@
+services:
+
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./frontend:/usr/share/nginx/html
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/ssl:/etc/nginx/ssl
+    depends_on:
+      - user_manage
+      - match_making
+    networks:
+      - app_network
+  match_making:
+    build:
+      context: ./backend/Match_making
+      dockerfile: Dockerfile
+    volumes:
+      - ./backend/Match_making:/app
+    ports:
+      - "25566:25566"
+    depends_on:
+      - db
+    networks:
+      - app_network
+
+  user_manage:
+    build:
+      context: ./backend/User_manage
+      dockerfile: Dockerfile
+    env_file:
+      - ./backend/User_manage/.env
+    volumes:
+      - ./backend/User_manage:/app
+    ports:
+      - "9000:9000"
+    depends_on:
+      - db
+    networks:
+      - app_network
+
+  db:
+    image: postgres:15  # Updated to version 15
+    environment:
+      - POSTGRES_DB=userdb
+      - POSTGRES_USER=dbuser
+      - POSTGRES_PASSWORD=dbpassword
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
