@@ -1,5 +1,5 @@
 import { Component } from "../../Component.js";
-import { updateUserData, getValueFromSession } from "../../../../utils.js";
+import { updateUserData, getValueFromSession, removeAllCookies} from "../../../../utils.js";
 
 const name = "game-menu-page";
 
@@ -12,7 +12,7 @@ const componentStyle = `
     display:  flex;
     justify-content: space-between;
     width: 85%;
-    height: 90%;
+    height: auto;
 }
 
 .menu ul li {
@@ -113,7 +113,7 @@ const componentStyle = `
 }
 
 #profileName {
-    padding: 10px 20px 10px 20px;
+    padding: 10px 10px 10px 10px;
     background-color: rgb(94, 190, 158);
     border-radius: 10px;
     color: aliceblue;
@@ -164,6 +164,18 @@ const componentStyle = `
     place-content: center;
 }
 
+loading-page {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none; /* ซ่อนเริ่มต้น */
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /* ให้แสดงเหนือทุกๆ หน้า */
+}
+
 `;
 
 export class GameMenuPage extends Component { 
@@ -196,34 +208,11 @@ export class GameMenuPage extends Component {
                 <li> <div>draw</div>        <div id="draw-stat">0</div>         </li>
                 <li> <div>total match</div>  <div id="total-game-stat">0</div>  </li>
             </ul>
-            <div id = "profileLine"></div>
-            <div id = "profileFriendTiTle">Friend list</div>
-            <ul id = "profileFriendContainer" class = "overflow-auto">
-                <li class = "container bg-light h-25 rounded d-flex align-items-center justify-content-between">
-                    <div class = "mini-profile bg-secondary bg-gradient rounded-circle"> 
-                        <img src=${default_profile}> 
-                    </div>
-                    <div class = "d-flex flex-column justify-content-center align-items-start"> 
-                        <div class="mini-profile-text mb-1"> profile name </div>
-                        <div class="d-flex justify-content-start align-items-center mini-profile-text"> <div class="bg-success bg-gradient rounded-circle dot me-2"></div> online </div>
-                    </div>
-                    <span class="bi bi-chat"></span>
-                </li>
-                <li class = "container bg-light h-25 rounded d-flex align-items-center justify-content-between">
-                    <div class = "mini-profile bg-secondary bg-gradient rounded-circle"> 
-                        <img src=${default_profile}> 
-                    </div>
-                    <div class = "d-flex flex-column justify-content-center align-items-start"> 
-                        <div class="mini-profile-text mb-1"> profile name </div>
-                        <div class="d-flex justify-content-start align-items-center mini-profile-text"> <div class="bg-danger bg-gradient rounded-circle dot me-2"></div> offline </div>
-                    </div>
-                    <span class="bi bi-chat"></span>
-                </li>
-            </ul>
         </div>
     </div>
     
-    <loading-page> </loading-page>
+    <loading-page></loading-page>
+    <confirm-modal></confirm-modal>
     `;
   }
 
@@ -236,7 +225,7 @@ export class GameMenuPage extends Component {
     super.addComponentEventListener( this.querySelector("#editProfile"),
                                     "click",
                                     () => window.Router.navigate('/edit-profile-page/'));
-    super.addComponentEventListener(this.querySelector(".btn-primary"),
+    super.addComponentEventListener(this.querySelector("#logout"),
                                     "click",
                                     this.logout);
 
@@ -261,10 +250,22 @@ export class GameMenuPage extends Component {
     profileImage.src = sessionStorage.getItem('profile_img');
   }
 
-  logout()
-  {
-    console.log("logout");
+  confirm_action() {
+    const modal = document.querySelector('confirm-modal');
+    modal.closeModal();
+    removeAllCookies();
+    sessionStorage.clear();
+    window.Router.redirect('');
   }
+
+  logout() {
+        const modal = this.querySelector('confirm-modal');
+        console.log("Modal found:", modal);
+        modal.set_title_content("Logout!!");
+        modal.set_body_content("Are you sure you want to logout?");
+        modal.set_confirm_action(this.confirm_action);
+        modal.openModal();
+    }
 }
 
 customElements.define(name, GameMenuPage);

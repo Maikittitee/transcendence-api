@@ -32,18 +32,18 @@ export class Router {
       return this.#loadRoute(route, parametersValues);
     }
 
-    // redirect(newPath) {
-    //   const newPathWithoutQuery = newPath.split('?')[0];
-    //   window.history.replaceState({}, '', newPath);
-    //   const {route, parametersValues} = this.#findMatchingRoute(
-    //       newPathWithoutQuery,
-    //   );
-    //   if (route === null) {
-    //     console.error(`Route not found`);
-    //     return null;
-    //   }
-    //   return this.#loadRoute(route, parametersValues);
-    // }
+    redirect(newPath) {
+      const newPathWithoutQuery = newPath.split('?')[0];
+      window.history.replaceState({}, '', newPath);
+      const {route, parametersValues} = this.#findMatchingRoute(
+          newPathWithoutQuery,
+      );
+      if (route === null) {
+        console.error(`Route not found`);
+        return null;
+      }
+      return this.#loadRoute(route, parametersValues);
+    }
   
     init() {
       const URI = this.#getURIWithSlash(document.location.pathname);
@@ -73,8 +73,7 @@ export class Router {
   
     #loadRoute(route, parametersValues) {
       const customElement = document.createElement(route.customElement);
-      Router.#setParametersInElement(customElement, route.pathParameters,
-          parametersValues);
+      Router.#setParametersInElement(customElement, route.pathParameters, parametersValues);
       this.#app.innerHTML = '';
       this.#app.appendChild(customElement);
       return customElement;
@@ -84,11 +83,18 @@ export class Router {
       const {route, parametersValues} = this.#findMatchingRoute(
           document.location.pathname,
       );
-      if (route === null) {
+      if (document.location.pathname == '/')
+      {
+        console.log("test"); //at the comfirm logout popup if not confirm charge url to present
+      }
+      else if (route === null) {
         console.error(`Route not found`);
         return null;
       }
-      this.#loadRoute(route, parametersValues);
+      else
+      {
+        this.#loadRoute(route, parametersValues);
+      }
     }
   
     #getURIWithSlash(URI) {

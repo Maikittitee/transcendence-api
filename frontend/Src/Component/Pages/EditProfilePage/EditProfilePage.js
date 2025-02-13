@@ -45,6 +45,7 @@ const componentStyle = `
     background: rgba(255, 255, 255, 0.5);
     border-radius: 30px;
 }
+
 .profile-Block ul {
     width: 80%;
 }
@@ -141,6 +142,17 @@ const componentStyle = `
     overflow-wrap: break-word;
     white-space: normal;
 }
+
+.profileFrame {
+    width: 60%;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    border: 10px solid palevioletred;    
+}
     
 `;
 
@@ -160,7 +172,7 @@ export class EditProfilePage extends Component {
         
                 <div class="sub-container">
                     <div class="profile-Block">
-                        <img id="profileImage" src="${profile_img}">
+                        <img id="profileImage" class="profileFrame" src="${profile_img}">
                         <div id="profileName">profile name</div>
                         <ul id="stat">
                             <li> <div>win</div>         <div id="win-stat">0</div>          </li>
@@ -188,8 +200,8 @@ export class EditProfilePage extends Component {
         
                         <div id="inputBox">
                             <label for="profileImageUpload">Upload your profile picture</label>
-                            <div>
-                                <input id="profileImageUpload" type="file" accept="image/*">
+                            <div class = "d-flex justify-content-center align-items-center">
+                                <input class="form-control m-4" id="profileImageUpload" type="file" accept="image/*">
                                 <button id="uploadProfilePictureButton" class="btn btn-primary btn-lg">Upload</button>
                             </div>
                         </div>
