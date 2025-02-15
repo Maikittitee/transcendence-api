@@ -252,7 +252,7 @@ export class GamePlayPage extends Component {
                 let recieveData =  JSON.parse(e.data);
                 this.dataBox.innerHTML = e.data + "\nKey up : " + this.key.UP+ "\nKey Down : " + this.key.DOWN;
 
-				console.log("data: ", recieveData);
+				// console.log("data: ", recieveData);
                 if (recieveData.type === "player_disconnected") {
 					console.log("someone disconnected to the game....")
                     // this.cleanUpGame();
