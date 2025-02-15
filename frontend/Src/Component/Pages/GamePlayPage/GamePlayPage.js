@@ -1,4 +1,5 @@
 import { Component } from "../../Component.js";
+import { fetchData } from "../../../../utils.js";
 
 const name = "game-play-page";
 
@@ -247,7 +248,7 @@ export class GamePlayPage extends Component {
 				console.log("WebSocket closed with code:", event.code, "reason:", event.reason);
 			};
     
-            this.webSocketConnection.onmessage = (e) => {
+            this.webSocketConnection.onmessage = async (e) => {
                 let recieveData =  JSON.parse(e.data);
                 this.dataBox.innerHTML = e.data + "\nKey up : " + this.key.UP+ "\nKey Down : " + this.key.DOWN;
 
@@ -285,6 +286,34 @@ export class GamePlayPage extends Component {
 					console.log("game over krabb")
 					console.log(recieveData)
 
+					const user_data = await fetchData('/auth/users/me/',null, "GET", true, {
+						"Authorization": `Bearer ${accessToken}`
+					})
+
+					console.log("user data: " ,user_data)
+					
+					// update stat here
+					if (recieveData.winner == user_data.id){
+
+						console.log("You win: saving record...")
+						const response = await fetchData('/auth/users/me/', {
+							"win": user_data.win + 1
+						}, "PATCH", true, {
+							"Content-Type": "application/json",
+							"Authorization": `Bearer ${accessToken}`
+						})
+						console.log("patch response: ", response)
+					} else {
+						console.log("You Loss: saving record...")
+						const response = await fetchData('/auth/users/me/', {
+							"loss": user_data.loss + 1
+						}, "PATCH", true, {
+							"Content-Type": "application/json",
+							"Authorization": `Bearer ${accessToken}`
+						})	
+						console.log("patch response: ", response)
+					}
+					
 					
 					// should display ended of game or just redirect it
 				}
