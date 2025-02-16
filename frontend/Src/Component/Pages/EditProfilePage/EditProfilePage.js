@@ -213,6 +213,7 @@ export class EditProfilePage extends Component {
         
             <enable-2fa-modal></enable-2fa-modal>
             <edit-bio-modal></edit-bio-modal>
+            
         `;
     }
 
@@ -271,7 +272,7 @@ export class EditProfilePage extends Component {
         {
             const new_name = this.querySelector("#fill-display-name").value;;
             const body = {display_name: new_name};
-            const res = await fetchData('auth/users/me/', body, 'PATCH');
+            const res = await fetchData('/auth/users/me/', body, 'PATCH');
             const profileName = this.querySelector("#profileName");
             await updateUserData(res);
             console.log("after update")
@@ -280,8 +281,8 @@ export class EditProfilePage extends Component {
         } 
         catch (error)
         {
-            console.log(error);
-            alert("error: " + error.body.detail);
+            const errModal = this.querySelector("error-modal");
+            errorDisplay(errModal, error);
         }
     }
 
@@ -289,13 +290,14 @@ export class EditProfilePage extends Component {
     {
         try
         {
-            const res = await fetchData('auth/2fa/qr/', null);
+            const res = await fetchData('/auth/2fa/qr/', null);
             console.log(res.otp_uri);
             setCookie("qr-link", 1, res.otp_uri);
         } 
         catch (error)
         {
-            console.log("this is error from handle 2fa");
+            const errModal = this.querySelector("error-modal");
+            errorDisplay(errModal, error);
         }
         const modal = this.querySelector("enable-2fa-modal");
         modal.create_qr();
@@ -312,7 +314,7 @@ export class EditProfilePage extends Component {
             const file = fileInput.files[0];
             const formData = new FormData();
             formData.append("avatar", file);
-            await fetchData('auth/avatar/', formData, 'PUT', true, {});
+            await fetchData('/auth/avatar/', formData, 'PUT', true, {});
             updateUserData();
     
             // อัปเดตรูปภาพใหม่ในหน้าโปรไฟล์
@@ -320,8 +322,8 @@ export class EditProfilePage extends Component {
             profileImage.src = URL.createObjectURL(file);
             alert("Profile picture updated successfully!");
         } catch (error) {
-            console.error("Error uploading profile picture:", error);
-            alert("Failed to upload profile picture.");
+            const errModal = this.querySelector("error-modal");
+            errorDisplay(errModal, error);
         }
     }
 }

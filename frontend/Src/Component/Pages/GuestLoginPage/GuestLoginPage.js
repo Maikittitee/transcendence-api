@@ -1,5 +1,5 @@
 import { Component } from "../../Component.js";
-import { setCookie } from "../../../../utils.js";
+import { setCookie, errorDisplay } from "../../../../utils.js";
 
 const name = "guest-login-page";
 
@@ -97,6 +97,7 @@ export class GuestLoginPage extends Component {
       </div>
 
       <enable-2fa-modal></enable-2fa-modal>
+      <error-modal></error-modal>
     `;
   }
   postCreate() {
@@ -118,14 +119,13 @@ export class GuestLoginPage extends Component {
 
   try 
   {
-    const res = await fetchData('auth/login/', requestBody, 'POST', false);
+    const res = await fetchData('/auth/login/', requestBody, 'POST', false);
     setCookie("access", 1, res.access);
     setCookie("refresh", 7, res.refresh);
     window.Router.redirect('/game-menu-page/');
   } 
   catch (error) 
   {
-    console.log(error);
     if(error.body.detail === '2FA token required')
     {
       const modal = this.querySelector('enable-2fa-modal');
@@ -133,7 +133,8 @@ export class GuestLoginPage extends Component {
     }
     else
     {
-      alert("error: " + error.body.detail);
+      const errModal = this.querySelector("error-modal");
+      errorDisplay(errModal, error);
     }
   }
 }

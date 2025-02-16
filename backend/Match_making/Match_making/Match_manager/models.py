@@ -5,8 +5,9 @@ from django.db import models
 class GameSession(models.Model):
     game_id = models.UUIDField(primary_key=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=20, default='waiting')
+    status = models.CharField(max_length=20, default='waiting') #waiting active finish
     max_players = models.IntegerField(default=2)
+
     # Change 'players' to use related_name to avoid conflict
     players = models.ManyToManyField(
         'PlayerSession',
@@ -34,6 +35,8 @@ class PlayerSession(models.Model):
 
     def __str__(self):
         return f"{self.user_name} ({self.current_status})"
+    
+
 # class Queue(models.Model):
 #     queue_id = models.CharField(max_length=100)
 #     queue_name = models.CharField(max_length=100)

@@ -71,7 +71,7 @@ export class EditBioModal extends Component {
     {
         const new_bio = this.querySelector("#bio-input").value;
         const body = {bio: new_bio};
-        const res = await fetchData('auth/users/me/', body, 'PATCH');
+        const res = await fetchData('/auth/users/me/', body, 'PATCH');
         const bio_content = document.querySelector("#bio-content");
         updateUserData(res);
         const bio = sessionStorage.getItem('bio').replace(/\"/g, '');

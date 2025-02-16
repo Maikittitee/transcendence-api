@@ -26,15 +26,15 @@ schema_view = get_schema_view(
 # Define the security scheme for Bearer Authentication
 
 urlpatterns = [
-	# docs
-	path('swagger<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),
-	path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-   	path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
-
-	# service 
-    path("auth/", include("Authentication.urls")),
-    path("admin/", admin.site.urls),
-    path("account/", include("Account.urls")),
-	path('friends/', include('Friend.urls')),
-	# path("profile/", include("Profile.urls")),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    path('api/', include([
+        path('swagger<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+        path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+        path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+        # services
+        path("auth/", include("Authentication.urls")),
+        path("admin/", admin.site.urls),
+        path("account/", include("Account.urls")),
+        path('friends/', include('Friend.urls')),
+        path('matches/', include('match.urls'))
+    ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT))),  
+] 
