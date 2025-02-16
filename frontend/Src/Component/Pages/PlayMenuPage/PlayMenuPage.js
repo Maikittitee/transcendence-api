@@ -1,5 +1,5 @@
 import { Component } from "../../Component.js";
-import { errorDisplay } from "../../../../utils.js";
+import { errorDisplay, getValueFromSession } from "../../../../utils.js";
 
 const name = "play-menu-page";
 
@@ -256,6 +256,7 @@ export class PlayMenuPage extends Component {
     #friend_req_list;
     #friend_list;
     #history_list;
+    #display_name;
     #friend_action_model;
     #match_history_template;
 
@@ -271,6 +272,7 @@ export class PlayMenuPage extends Component {
     const meow_pow_l = window.Images.getFile("9.png");
     const meow_pow_r = window.Images.getFile("10.png");
     const MeowPongTitle = document.createElement('img');
+    const proflie_name = getValueFromSession("display_name");
     MeowPongTitle.id = "MeowPongTitle";
     MeowPongTitle.src = meowTitleSrc;
 
@@ -280,7 +282,7 @@ export class PlayMenuPage extends Component {
         <div class = "profile-Block">
             <img id="profileImage" class = "profileFrame" src=${profile_img}>
             <div class = "d-flex flex-column justify-content-center align-items-between">
-                <button id="info" class="btn btn-success btn-lg mb-2"> profile name </button>
+                <button id="info" class="btn btn-success btn-lg mb-2"> ${proflie_name} </button>
                 <button id="add-friend" class="btn btn-secondary btn-lg"> Add Friend <span class="bi bi-person-plus ms-2"></span> </button>
             </div>
             <div id = "profileLine"></div>
@@ -401,20 +403,68 @@ export class PlayMenuPage extends Component {
         try
         {
             let ret_history = [];
-            console.log('fetch match-history');
             const history = await fetchData('/matches/match-history/');
-            console.log('history: ');
-            console.log(history);
             for (let i = 0; i < history.length; i++)
             {
                 if (history[i].status == "COMPLETED")
                 {
+                    if (history[i].player1.avatar_url === null)
+                    {
+                        history[i].player1.avatar_url = window.Images.getFile("1.png");
+                    }
+                    else
+                    {
+                        const picture = await fetchData(history[i].player1.avatar_url, null);
+                        if (picture instanceof Response) {
+                        const blob = await picture.blob();
+                        history[i].player1.avatar_url = URL.createObjectURL(blob);
+                        } else {
+                        console.error('The response is not a valid image file.');
+                        }
+                    }
+
+                    if (history[i].player2.avatar_url === null)
+                        {
+                            history[i].player2.avatar_url = window.Images.getFile("1.png");
+                        }
+                        else
+                        {
+                            const picture = await fetchData(history[i].player2.avatar_url, null);
+                            if (picture instanceof Response) {
+                            const blob = await picture.blob();
+                            history[i].player2.avatar_url = URL.createObjectURL(blob);
+                            } else {
+                            console.error('The response is not a valid image file.');
+                            }
+                        }
+
+                    let my_display_name = getValueFromSession("display_name");
+                    let my_score;
+                    let opponent_display_name;
+                    let opponent_avatar_url;
+                    let opponent_score;
+                    console.log(my_display_name);
+                    console.log(history[i].player2.display_name);
+                    if(my_display_name !== history[i].player2.display_name)
+                    {
+                        my_score = history[i].player1_score;
+                        opponent_display_name = history[i].player2.display_name;
+                        opponent_avatar_url = history[i].player2.avatar_url;
+                        opponent_score = history[i].player2_score;
+                    }
+                    else
+                    {
+                        my_score = history[i].player2_score;
+                        opponent_display_name = history[i].player1.display_name;
+                        opponent_avatar_url = history[i].player1.avatar_url;
+                        opponent_score = history[i].player1_score;
+                    }
+
                     ret_history[i] = {
-                        player1: history[i].player1,
-                        player2: history[i].player2,
-                        player1_score: history[i].player1_score,
-                        player2_score: history[i].player2_score,
-                        winner: history[i].winner,
+                        player2_display_name: opponent_display_name,
+                        player2_avatar_url: opponent_avatar_url,
+                        player1_score: my_score,
+                        player2_score: opponent_score,
                         completed_at: history[i].completed_at
                     };
                 }
@@ -468,55 +518,57 @@ export class PlayMenuPage extends Component {
 
     render_history()
     {
-        // for (let i = 0; i < this.#history_list.length; i++)
-        // {
-        //     const history_data = this.#history_list[i];
-        //     let game_result;
-        //     if (history_data.player1_score > history_data.player2_score) {
-        //         game_result = `<div class="match-result text-success ms-2"> WIN ${history_data.player1_score} - ${history_data.player2_score} </div>`;
-        //     } else {
-        //         game_result = `<div class="match-result text-danger ms-2"> LOSS ${history_data.player1_score} - ${history_data.player2_score} </div>`;
-        //     }
+        for (let i = 0; i < this.#history_list.length; i++)
+        {
+            const history_data = this.#history_list[i];
+            console.log(history_data);
+            let game_result;
+            if (history_data.player1_score > history_data.player2_score) {
+                game_result = `<div class="match-result text-success fw-bold fs-4 ms-2"> WIN ${history_data.player1_score} - ${history_data.player2_score} </div>`;
+            } else {
+                game_result = `<div class="match-result text-danger fw-bold fs-4 ms-2"> LOSS ${history_data.player1_score} - ${history_data.player2_score} </div>`;
+            }
 
-        //     let completed_at = history_data.completed_at;
-        //     let dateObj = new Date(completed_at);
+            let completed_at = history_data.completed_at;
+            let dateObj = new Date(completed_at);
             
-        //     // แปลงวันที่เป็น "DD/MM/YYYY"
-        //     let day = String(dateObj.getUTCDate()).padStart(2, '0');
-        //     let month = String(dateObj.getUTCMonth() + 1).padStart(2, '0'); // เดือนเริ่มจาก 0
-        //     let year = dateObj.getUTCFullYear();
-        //     let formattedDate = `${day}/${month}/${year}`;
+            // แปลงวันที่เป็น "DD/MM/YYYY"
+            let day = String(dateObj.getUTCDate()).padStart(2, '0');
+            let month = String(dateObj.getUTCMonth() + 1).padStart(2, '0'); // เดือนเริ่มจาก 0
+            let year = dateObj.getUTCFullYear();
+            let formattedDate = `${day}/${month}/${year}`;
             
-        //     // แปลงเวลาเป็น "HH:mm"
-        //     let hours = String(dateObj.getUTCHours()).padStart(2, '0');
-        //     let minutes = String(dateObj.getUTCMinutes()).padStart(2, '0');
-        //     let formattedTime = `${hours}:${minutes}`;
+            // แปลงเวลาเป็น "HH:mm"
+            let hours = String(dateObj.getUTCHours()).padStart(2, '0');
+            let minutes = String(dateObj.getUTCMinutes()).padStart(2, '0');
+            let formattedTime = `${hours}:${minutes}`;
             
-        //     // ใส่ค่าลงใน game_date
-        //     let game_date = `
-        //     <div id="match-date">
-        //         <div> ${formattedDate} </div>
-        //         <div> ${formattedTime} </div>
-        //     </div>`;
+            // ใส่ค่าลงใน game_date
+            let game_date = `
+            <div id="match-date">
+                <div> ${formattedDate} </div>
+                <div> ${formattedTime} </div>
+            </div>`;
             
-        //     let profile_img = friend_req_data.avatar_url || default_profile;
-        // }
+            let player2_img = history_data.player2_avatar_url;
 
-        // this.#match_history_template = `
-        // <li id = "match-history-card" class = "rounded d-flex align-items-center justify-content-between bg-light">
-        //     ${game_result}
-        //     ${game_date}
-                  
-        //     <div id="profile-card" class="rounded">
-        //         <div class = "profile-card-image bg-secondary bg-gradient rounded-circle m-1"> 
-        //             <img src=${default_profile}>
-        //         </div>
-        //         <div id="profile-name" class = "m-1">
-        //             profile name
-        //         </div>
-        //     </div>
-        // </li>
-        // `;
+            let match_history_card = `
+                <li id = "match-history-card" class = "rounded d-flex align-items-center justify-content-between bg-light">
+                    ${game_result}
+                    ${game_date}
+                    <div id="profile-card" class="rounded">
+                        <div class = "profile-card-image bg-secondary bg-gradient rounded-circle m-1"> 
+                            <img src=${player2_img}>
+                        </div>
+                        <div id="profile-name" class = "m-1">
+                            ${history_data.player2_display_name}
+                        </div>
+                    </div>
+                </li>
+            `;
+            const match_history_container = this.querySelector("#match-history-container");
+            match_history_container.insertAdjacentHTML('afterbegin', match_history_card);
+        }
     }
 
     render_friend()
