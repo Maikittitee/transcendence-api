@@ -83,9 +83,11 @@ export class Router {
       const {route, parametersValues} = this.#findMatchingRoute(
           document.location.pathname,
       );
-      if (document.location.pathname == '/')
+      const status = sessionStorage.getItem('status');
+      if (document.location.pathname == '/' && status == 'login')
       {
-        console.log("test"); //at the comfirm logout popup if not confirm charge url to present
+        const GameMenuPage = document.querySelector('game-menu-page');
+        GameMenuPage.logout();
       }
       else if (route === null) {
         console.error(`Route not found`);

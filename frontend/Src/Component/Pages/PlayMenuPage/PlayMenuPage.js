@@ -1,4 +1,5 @@
 import { Component } from "../../Component.js";
+import { errorDisplay } from "../../../../utils.js";
 
 const name = "play-menu-page";
 
@@ -219,10 +220,16 @@ const componentStyle = `
         font-weight: bold;
     }
 
-    #match-result {
+    #match-result-win {
         font-size: 1.25em;
         font-weight: bold;
         color: rgb(76, 146, 67);
+    }
+
+    #match-result-loss {
+        font-size: 1.25em;
+        font-weight: bold;
+        color: rgb(199, 47, 47);
     }
 
     .history-block h1 {
@@ -293,15 +300,15 @@ export class PlayMenuPage extends Component {
         <div class ="menu-block">
             <h1 id = "fight-meow"> Fight Meow~ </h1>
             <div id = "meow-pow"><img id = "meow-pow-l" src=${meow_pow_l}> <img id = "meow-pow-r" src=${meow_pow_r}></div>
-            <button id = "match-making" class="btn btn-primary play-button"> Match making </button>
+            <button id = "match-making" class="btn btn-primary play-button"> Local Play </button>
             <button id = "tournament" class="btn btn-primary play-button"> Tournament </button>
-            <button id = "local-play" class="btn btn-primary play-button"> Play with friend </button>
+            <button id = "local-play" class="btn btn-primary play-button"> Match Making </button>
         </div>
     </div>
 
     <add-friend-modal></add-friend-modal>
-    <modal-component></modal-component>
     <accept-friend-modal></accept-friend-modal>
+    <error-modal></error-modal>
     `;
     }
 
@@ -326,7 +333,6 @@ export class PlayMenuPage extends Component {
     this.render_friend();
     this.#history_list = await this.get_history();
     this.render_history();
-    this.#friend_action_model = this.querySelector("modal-component");
     }
 
     async get_friend_req_list()
@@ -355,7 +361,8 @@ export class PlayMenuPage extends Component {
         } 
         catch (error)
         {
-            alert(error);
+            const errModal = this.querySelector("error-modal");
+            errorDisplay(errModal, error);
         }
     }
 
@@ -384,41 +391,41 @@ export class PlayMenuPage extends Component {
         } 
         catch (error)
         {
-            alert(error);
+            const errModal = this.querySelector("error-modal");
+            errorDisplay(errModal, error);
         }
     }
 
     async get_history()
     {
-        let ret_history;
         try
         {
+            let ret_history = [];
+            console.log('fetch match-history');
             const history = await fetchData('/matches/match-history/');
+            console.log('history: ');
+            console.log(history);
             for (let i = 0; i < history.length; i++)
             {
-                ret_history[i].my_score = history[i].player1_score;
-                ret_history[i].opponent_score = history[i].player2_score;
-                ret_history[i].oppenent_displayname = history[i].player2_display_name;
-                ret_history[i].status = history[i].status;
-                ret_history[i].date = history[i].completed_at;
-                if(my_score > opponent_score)
+                if (history[i].status == "COMPLETED")
                 {
-                    ret_history[i].game_result = 1; // 1 = win
-                }
-                else if(my_score < opponent_score)
-                {
-                    ret_history[i].game_result = 2; // 2 = loss
-                }
-                else
-                {
-                    ret_history[i].game_result = 0; // 0 = draw
+                    ret_history[i] = {
+                        player1: history[i].player1,
+                        player2: history[i].player2,
+                        player1_score: history[i].player1_score,
+                        player2_score: history[i].player2_score,
+                        winner: history[i].winner,
+                        completed_at: history[i].completed_at
+                    };
                 }
             }
+            console.log('Final ret_history:', ret_history[0]);
             return ret_history;
         } 
         catch (error)
         {
-            alert(error);
+            const errModal = this.querySelector("error-modal");
+            errorDisplay(errModal, error);
         }
     }
 
@@ -461,20 +468,45 @@ export class PlayMenuPage extends Component {
 
     render_history()
     {
+        // for (let i = 0; i < this.#history_list.length; i++)
+        // {
+        //     const history_data = this.#history_list[i];
+        //     let game_result;
+        //     if (history_data.player1_score > history_data.player2_score) {
+        //         game_result = `<div class="match-result text-success ms-2"> WIN ${history_data.player1_score} - ${history_data.player2_score} </div>`;
+        //     } else {
+        //         game_result = `<div class="match-result text-danger ms-2"> LOSS ${history_data.player1_score} - ${history_data.player2_score} </div>`;
+        //     }
 
-        // const game_result = `
-        //     <div id="match-result" class = "ms-2">
-        //         WIN 3-1
-        //     </div>
-        // `;
+        //     let completed_at = history_data.completed_at;
+        //     let dateObj = new Date(completed_at);
+            
+        //     // แปลงวันที่เป็น "DD/MM/YYYY"
+        //     let day = String(dateObj.getUTCDate()).padStart(2, '0');
+        //     let month = String(dateObj.getUTCMonth() + 1).padStart(2, '0'); // เดือนเริ่มจาก 0
+        //     let year = dateObj.getUTCFullYear();
+        //     let formattedDate = `${day}/${month}/${year}`;
+            
+        //     // แปลงเวลาเป็น "HH:mm"
+        //     let hours = String(dateObj.getUTCHours()).padStart(2, '0');
+        //     let minutes = String(dateObj.getUTCMinutes()).padStart(2, '0');
+        //     let formattedTime = `${hours}:${minutes}`;
+            
+        //     // ใส่ค่าลงใน game_date
+        //     let game_date = `
+        //     <div id="match-date">
+        //         <div> ${formattedDate} </div>
+        //         <div> ${formattedTime} </div>
+        //     </div>`;
+            
+        //     let profile_img = friend_req_data.avatar_url || default_profile;
+        // }
 
         // this.#match_history_template = `
         // <li id = "match-history-card" class = "rounded d-flex align-items-center justify-content-between bg-light">
         //     ${game_result}
-        //     <div id="match-date">
-        //         <div> 03/01/2025 </div>
-        //         <div> 12:00 </div>
-        //     </div>                    
+        //     ${game_date}
+                  
         //     <div id="profile-card" class="rounded">
         //         <div class = "profile-card-image bg-secondary bg-gradient rounded-circle m-1"> 
         //             <img src=${default_profile}>
@@ -485,9 +517,6 @@ export class PlayMenuPage extends Component {
         //     </div>
         // </li>
         // `;
-        // for (let i = 0; i < this.#history_list; i++) {
-
-        // }
     }
 
     render_friend()
@@ -604,14 +633,12 @@ export class PlayMenuPage extends Component {
             this.render_friend_req();
             this.render_friend();
     
-        } catch (error) {
-            alert(`Failed to ${action} friend request: ` + error.message);
+        } 
+        catch (error) 
+        {
+            const errModal = this.querySelector("error-modal");
+            errorDisplay(errModal, error);
         }
-    }
-
-    logout()
-    {
-        console.log("logout");
     }
 }
 
