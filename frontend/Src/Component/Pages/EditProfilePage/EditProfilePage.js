@@ -213,6 +213,7 @@ export class EditProfilePage extends Component {
         
             <enable-2fa-modal></enable-2fa-modal>
             <edit-bio-modal></edit-bio-modal>
+            
         `;
     }
 
@@ -280,8 +281,8 @@ export class EditProfilePage extends Component {
         } 
         catch (error)
         {
-            console.log(error);
-            alert("error: " + error.body.detail);
+            const errModal = this.querySelector("error-modal");
+            errorDisplay(errModal, error);
         }
     }
 
@@ -295,7 +296,8 @@ export class EditProfilePage extends Component {
         } 
         catch (error)
         {
-            console.log("this is error from handle 2fa");
+            const errModal = this.querySelector("error-modal");
+            errorDisplay(errModal, error);
         }
         const modal = this.querySelector("enable-2fa-modal");
         modal.create_qr();
@@ -320,8 +322,8 @@ export class EditProfilePage extends Component {
             profileImage.src = URL.createObjectURL(file);
             alert("Profile picture updated successfully!");
         } catch (error) {
-            console.error("Error uploading profile picture:", error);
-            alert("Failed to upload profile picture.");
+            const errModal = this.querySelector("error-modal");
+            errorDisplay(errModal, error);
         }
     }
 }

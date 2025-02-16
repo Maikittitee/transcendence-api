@@ -49,9 +49,7 @@ export class ConfirmModal extends Component {
       this.#bootstrapModal = new bootstrap.Modal(this.#modal);
     }
   
-    openModal(title = "Modal Title", message = "Modal content goes here.") {
-      this.#modalTitle.innerHTML = title;
-      this.#modalBody.innerHTML = message;
+    openModal() {
       this.#bootstrapModal.show();
     }
 
