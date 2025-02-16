@@ -36,5 +36,5 @@ urlpatterns = [
         path("account/", include("Account.urls")),
         path('friends/', include('Friend.urls')),
         path('matches/', include('match.urls'))
-    ])),  
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT))),  
+] 
