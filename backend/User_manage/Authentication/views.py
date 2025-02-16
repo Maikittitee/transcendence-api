@@ -291,9 +291,6 @@ class UploadAvatarView(APIView):
 				user = serializer.save()
 				user.avatar_url = user.avatar.url
 				user.save()
-				# print("user avatar: ", user.avatar)
-				# print("user avatar.url: ", user.avatar.url)
-				# print("user avatar_url: ", user.avatar_url)
 				return Response({
 					'avatar': user.avatar.url if user.avatar else None,
 					'avatar_url': user.avatar.url
