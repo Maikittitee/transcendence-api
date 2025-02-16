@@ -142,7 +142,7 @@ class GameManager:
 							sys.stdout.flush()
 						try:
 							print("POST match request")
-							print(await ApiManager.post("http://nginx/api/matches/match/", data=request_body))
+							print(await ApiManager.post("https://nginx/api/matches/match/", data=request_body))
 						except Exception as e:
 							print(f"Error posting data: {e}")
 					except Exception as e:

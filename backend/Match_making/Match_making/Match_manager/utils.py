@@ -15,7 +15,7 @@ class ApiManager:
 			if (authorize):
 				headers['Authorization'] = f'Bearer {authorize}'
 			
-			response = requests.get(url, params=params, headers=headers)
+			response = requests.get(url, params=params, headers=headers, verify=False)
 			
 			response.raise_for_status()
 			
@@ -42,7 +42,7 @@ class ApiManager:
 			
    
 			print("data: ", data)
-			response = requests.post(url, json=data, params=params, headers=headers)
+			response = requests.post(url, json=data, params=params, headers=headers, verify=False)
 			
 			response.raise_for_status()
 			
@@ -67,7 +67,7 @@ class ApiManager:
 			if authorize:
 				headers['Authorization'] = f'Bearer {authorize}'
 			
-			response = requests.patch(url, json=data, params=params, headers=headers)
+			response = requests.patch(url, json=data, params=params, headers=headers, verify=False)
 			
 			response.raise_for_status()
 			

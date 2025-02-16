@@ -10,11 +10,12 @@ class PongConsumer(AsyncWebsocketConsumer):
 	
 	async def connect(self):
 		token = self.scope['query_string'].decode('utf-8').split('=')[1]
-		user_data = ApiManager.get('http://nginx/api/auth/users/me/', authorize=token)
+		user_data = ApiManager.get('https://nginx/api/auth/users/me/', authorize=token)
 		
 		### NOTEEEEEEEEEEEEEEEEEEEEEEe
 		print(user_data)
 		self.player_id = user_data.get('id')
+		# self.player_id = "99"
 		print(f"Player {self.player_id} connected")
 		self.game_id = ""  # Generate player ID
 		await self.accept()
