@@ -289,12 +289,14 @@ class UploadAvatarView(APIView):
 		if serializer.is_valid():
 			try:
 				user = serializer.save()
+				user.avatar_url = user.avatar.url
+				user.save()
 				# print("user avatar: ", user.avatar)
 				# print("user avatar.url: ", user.avatar.url)
 				# print("user avatar_url: ", user.avatar_url)
 				return Response({
 					'avatar': user.avatar.url if user.avatar else None,
-					'avatar_url': user.avatar_url
+					'avatar_url': user.avatar.url
 				})
 			except Exception as e:
 				return Response(
@@ -307,7 +309,7 @@ class UploadAvatarView(APIView):
 		user = request.user
 		return Response({
 			# 'avatar': user.avatar.url if user.avatar else None,
-			'avatar_url': user.avatar_url
+			'avatar_url': user.avatar.url
 		})
 class GetAvatarView(APIView):
 	permission_classes = [IsAuthenticated]

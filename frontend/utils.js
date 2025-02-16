@@ -67,8 +67,8 @@ function getOauthCode()
     return  oauthCode;
 }
 
-export async function fetchData(endpoint, body, method = 'GET', is_reqauth = true, header = { 'Content-Type': 'application/json' }, baseUri = `https://${window.location.host}/api`) {
-	console.log(`fetchData...on  ${baseUri} + ${endpoint}`);
+export async function fetchData(endpoint, body, method = 'GET', is_reqauth = true, header = { 'Content-Type': 'application/json' }, baseUri = `/api`) {
+	console.log(`fetchData...on  ${baseUri} + ${endpoint}`)
 	let access = getCookie("access") || '';
   // sessionStorage.setItem('test', true);
   // const test = sessionStorage.getItem('test');
