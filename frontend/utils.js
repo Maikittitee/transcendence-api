@@ -68,7 +68,7 @@ function getOauthCode()
 }
 
 export async function fetchData(endpoint, body, method = 'GET', is_reqauth = true, header = { 'Content-Type': 'application/json' }, baseUri = `/api`) {
-	console.log(`fetchData...on  ${baseUri} + ${endpoint}`)
+	// console.log(`fetchData...on  ${baseUri} + ${endpoint}`)
 	let access = getCookie("access") || '';
   // sessionStorage.setItem('test', true);
   // const test = sessionStorage.getItem('test');
@@ -130,6 +130,7 @@ async function refresh_token_handle() {
 
   if (!refreshToken) {
     console.error('No refresh token found');
+    window.Router.redirect('');
     return;
   }
 

@@ -315,7 +315,7 @@ export class PlayMenuPage extends Component {
     }
 
     async postCreate() {
-
+    sessionStorage.setItem('status', name);
     super.addComponentEventListener( this.querySelector("#match-making"),
                                     "click",
                                     () => window.Router.navigate('/match-making-page/'));
