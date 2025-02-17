@@ -223,6 +223,7 @@ export class EditProfilePage extends Component {
         button_2fa.setAttribute("data-bs-toggle", "modal");
         button_2fa.setAttribute("data-bs-target", "#modal");
         const data = getValueFromSession("mfa_enabled");
+        sessionStorage.setItem('status', name);
         if (data) {
             console.log(data);
             button_2fa.classList.add("btn-danger");
