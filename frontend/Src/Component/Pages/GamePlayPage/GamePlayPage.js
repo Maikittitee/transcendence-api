@@ -297,7 +297,8 @@ export class GamePlayPage extends Component {
 
 						console.log("You win: saving record...")
 						const response = await fetchData('/auth/users/me/', {
-							"win": user_data.win + 1
+							"win": user_data.win + 1,
+							"total_match": user_data.total_match + 1
 						}, "PATCH", true, {
 							"Content-Type": "application/json",
 							"Authorization": `Bearer ${accessToken}`
@@ -306,7 +307,8 @@ export class GamePlayPage extends Component {
 					} else {
 						console.log("You Loss: saving record...")
 						const response = await fetchData('/auth/users/me/', {
-							"loss": user_data.loss + 1
+							"loss": user_data.loss + 1,
+							"total_match": user_data.total_match + 1
 						}, "PATCH", true, {
 							"Content-Type": "application/json",
 							"Authorization": `Bearer ${accessToken}`
