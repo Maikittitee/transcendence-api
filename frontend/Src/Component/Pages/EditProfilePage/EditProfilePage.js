@@ -189,7 +189,7 @@ export class EditProfilePage extends Component {
 
                     <div class="profileconfig-Block">
                         <div id="inputBox">
-                            <label for="profileName">Edit your username</label>
+                            <label for="profileName">Edit your Display Name</label>
                             <div>
                                 <input id="fill-display-name" type="text">
                                 <button id="save-display-name-button" class="btn btn-primary btn-lg">save</button>

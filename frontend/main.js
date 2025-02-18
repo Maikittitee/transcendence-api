@@ -52,6 +52,7 @@ async function setApp() {
         new App.Route('/edit-profile-page/', 'edit-profile-page'),
         new App.Route('/match-making-page/', 'match-making-page'),
         new App.Route('/game-play-page/', 'game-play-page'),
+        new App.Route('/local-play-page/', 'local-play-page'),
         new App.Route('/loading/', 'loading-page'),
     ]);
     window.Router = Router; // make Router as a global object
