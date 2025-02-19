@@ -28,7 +28,7 @@ export {        Component,
                 PlayMenuPage,
                 MatchMakingPage,
                 GamePlayPage,
-                LocalPlayPage
+                LocalPlayPage,
 };
 
 // Popup
@@ -38,13 +38,16 @@ import { Enable2FAModal }  from "./Component/Popup/Enable2FAModal/Enable2FAModal
 import { AddFriendModal }  from "./Component/Popup/AddFriendModal/AddFriendModal.js";
 import { EditBioModal }  from "./Component/Popup/EditBioModal/EditBioModal.js";
 import { AcceptFriendModal }  from "./Component/Popup/AcceptFriendModal/AcceptFriendModal.js";
+import { WinLossModal }  from "./Component/Popup/WinLossModal/WinLossModal.js";
 
 export {    ErrorModal,
             ConfirmModal,
             Enable2FAModal,
             AddFriendModal,
             EditBioModal,
-            AcceptFriendModal};
+            AcceptFriendModal,
+            WinLossModal,
+        };
 
 // Router and Route
 import { Router, Route } from "./Router/Router.js";
