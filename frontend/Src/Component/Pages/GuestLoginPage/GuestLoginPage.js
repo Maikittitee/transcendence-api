@@ -101,6 +101,7 @@ export class GuestLoginPage extends Component {
     `;
   }
   postCreate() {
+    sessionStorage.setItem('status', name);
     super.addComponentEventListener(this.querySelector(".btn-primary"),
     "click",
     this.login_as_guest);

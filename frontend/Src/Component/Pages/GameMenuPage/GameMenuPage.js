@@ -219,7 +219,7 @@ export class GameMenuPage extends Component {
   async postCreate() {
     const loading_page = this.querySelector("loading-page");
     loading_page.style.display = "block";
-    sessionStorage.setItem('status', 'login');
+    sessionStorage.setItem('status', name);
     super.addComponentEventListener( this.querySelector("#play"),
                                     "click",
                                     () => window.Router.navigate('/play-menu-page/'));

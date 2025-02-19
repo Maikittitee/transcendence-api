@@ -302,9 +302,9 @@ export class PlayMenuPage extends Component {
         <div class ="menu-block">
             <h1 id = "fight-meow"> Fight Meow~ </h1>
             <div id = "meow-pow"><img id = "meow-pow-l" src=${meow_pow_l}> <img id = "meow-pow-r" src=${meow_pow_r}></div>
-            <button id = "match-making" class="btn btn-primary play-button"> Local Play </button>
+            <button id = "local-play" class="btn btn-primary play-button"> Local Play </button>
             <button id = "tournament" class="btn btn-primary play-button"> Tournament </button>
-            <button id = "local-play" class="btn btn-primary play-button"> Match Making </button>
+            <button id = "match-making" class="btn btn-primary play-button"> Match Making </button>
         </div>
     </div>
 
@@ -315,12 +315,12 @@ export class PlayMenuPage extends Component {
     }
 
     async postCreate() {
-
-    super.addComponentEventListener( this.querySelector("#match-making"),
+    sessionStorage.setItem('status', name);
+    super.addComponentEventListener( this.querySelector("#local-play"),
                                     "click",
-                                    () => window.Router.navigate('/match-making-page/'));
+                                    () => window.Router.navigate('/local-play-page/'));
 
-    super.addComponentEventListener(this.querySelector("#local-play"),
+    super.addComponentEventListener(this.querySelector("#match-making"),
                                     "click",
                                     () => window.Router.navigate('/game-play-page/'));
 
