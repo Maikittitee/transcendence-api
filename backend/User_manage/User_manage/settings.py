@@ -100,23 +100,71 @@ WSGI_APPLICATION = "User_manage.wsgi.application"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
-}
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
+#     }
+# }
+
+# setting
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': os.getenv('POSTGRES_DB', 'root'),
+#         'USER': os.getenv('POSTGRES_USER', 'root'),
+#         'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'root'),
+#         'HOST': os.getenv('POSTGRES_HOST', 'postgres'),  # Ensure this matches the service name
+#         'PORT': os.getenv('POSTGRES_PORT', '5432'),
+#     },
+# 	'db': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': os.getenv('POSTGRES_DB', 'userdb'),
+#         'USER': os.getenv('POSTGRES_USER', 'dbuser'),
+#         'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'dbpassword'),
+#         'HOST': os.getenv('POSTGRES_HOST', 'postgres'),  # Ensure this matches the service name
+#         'PORT': os.getenv('POSTGRES_PORT', '5432'),
+#     }
+# }
 
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'db_user', 
-#         'USER': 'postgres',
-#         'PASSWORD': '1',
+#         'NAME': 'db1',  # Default database for users
+#         'USER': 'django_user',
+#         'PASSWORD': 'django_password',
+#         'HOST': 'postgres',
+#         'PORT': '5432',
+#     },
+#     'matches_db': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'db2',  # Stores match data
+#         'USER': 'django_user',
+#         'PASSWORD': 'django_password',
 #         'HOST': 'postgres',
 #         'PORT': '5432',
 #     }
 # }
+
+# PostgreSQL Database Configuration (from Docker)
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.getenv("POSTGRES_DB", "root"),  # Default database
+        "USER": os.getenv("POSTGRES_USER", "root"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD", "root"),
+        "HOST": os.getenv("DATABASE_HOST", "postgres"),  # Container name in Docker
+        "PORT": os.getenv("DATABASE_PORT", "5432"),
+    },
+    "match_making": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "userdb",  # Database for Match Making
+        "USER": "dbuser",
+        "PASSWORD": "dbpassword",
+        "HOST": "db",  # Match Making DB container in Docker
+        "PORT": "5432",
+    },
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
