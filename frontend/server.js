@@ -1,4 +1,7 @@
-const https = require('https');
+/* this file is only for quick test for frontend */
+
+const http = require('http');
+// const https = require('https');
 const fs = require('fs');
 const path = require('path');
 
@@ -6,11 +9,14 @@ const PORT = 80;
 const HOST = "0.0.0.0";
 
 const options = {
-    key: fs.readFileSync('/etc/nginx/ssl/nginx.key'), // Ensure this file exists
-    cert: fs.readFileSync('/etc/nginx/ssl/nginx.crt'), // Ensure this file exists
-};
+    // key: fs.readFileSync('/nginx/ssl_certs/server.key'), // replace it with your key path
+    // cert: fs.readFileSync('/nginx/ssl_certs/server.crt'), // replace it with your certificate path
+    key: fs.readFileSync('/Users/maikittitee/Focusing/transcendence-api/nginx/ssl/nginx.key'), // replace it with your key path
+    cert: fs.readFileSync('/Users/maikittitee/Focusing/transcendence-api/nginx/ssl/nginx.crt'), // replace it with your certificate path
+}
 
-const server = https.createServer(options, (req, res) => {
+const server = http.createServer((req, res) => {
+    // Log incoming requests
     console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
 
     let filePath = '.' + req.url;
@@ -43,6 +49,7 @@ const server = https.createServer(options, (req, res) => {
     });
 });
 
-server.listen(PORT, HOST, () => {
-    console.log(`Server running at https://0.0.0.0:${PORT}/`);
+const PORT = 8000;
+server.listen(PORT, () => {
+    console.log(`Server running at http://localhost:${PORT}/`);
 });
