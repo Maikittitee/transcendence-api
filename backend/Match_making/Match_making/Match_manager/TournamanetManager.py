@@ -1,44 +1,83 @@
-import shortuuid
+from .GameInstantManeger import GameManager
 
 class TournamentManager:
     def __init__(self):
-        self.tournaments = {}  # Store active tournaments
-        self.waiting_players = []  # Players waiting to join
+        self.tournaments = {}
+        self.waiting_players = []
+        self.game_manager = GameManager()  # Use existing GameManager for matches
 
-    def add_player(self, player_id, connection):
+    async def add_player(self, player_id, connection):
         self.waiting_players.append({
             'id': player_id,
             'connection': connection
         })
-        
-        # Start tournament when 4 players are ready
+
         if len(self.waiting_players) >= 4:
-            tournament_id = self.create_tournament(self.waiting_players[:4])
+            # Create tournament with 4 players
+            tournament = self.create_tournament(self.waiting_players[:4])
             self.waiting_players = self.waiting_players[4:]
-            return tournament_id
+            
+            # Start first round matches
+            await self.start_round_matches(tournament['id'])
+            return tournament['id']
         return None
 
     def create_tournament(self, players):
-        tournament_id = str(shortuuid.uuid())
+        tournament_id = shortuuid.uuid()
         self.tournaments[tournament_id] = {
+            'id': tournament_id,
             'players': players,
-            'round1': {
-                'match1': {
-                    'players': [players[0], players[1]],
-                    'winner': None,
-                    'status': 'pending'
-                },
-                'match2': {
-                    'players': [players[2], players[3]],
-                    'winner': None,
-                    'status': 'pending'
-                }
+            'matches': {
+                'semifinals': [
+                    {'players': [players[0], players[1]], 'winner': None, 'game_id': None},
+                    {'players': [players[2], players[3]], 'winner': None, 'game_id': None}
+                ],
+                'final': {'players': [], 'winner': None, 'game_id': None}
             },
-            'final': {
-                'players': [],
-                'winner': None,
-                'status': 'waiting'
-            },
-            'status': 'round1'
+            'status': 'semifinals'
         }
-        return tournament_id
+        return self.tournaments[tournament_id]
+
+    async def start_round_matches(self, tournament_id):
+        tournament = self.tournaments[tournament_id]
+        
+        if tournament['status'] == 'semifinals':
+            for match in tournament['matches']['semifinals']:
+                game_id = await self.game_manager.create_game(
+                    match['players'][0]['id'],
+                    match['players'][1]['id']
+                )
+                match['game_id'] = game_id
+
+                # Notify players
+                for player in match['players']:
+                    await player['connection'].send(json.dumps({
+                        'type': 'tournament_match_start',
+                        'game_id': game_id,
+                        'round': 'semifinals'
+                    }))
+
+    async def handle_match_end(self, tournament_id, game_id, winner_id):
+        tournament = self.tournaments[tournament_id]
+        
+        if tournament['status'] == 'semifinals':
+            # Update semifinals results
+            for match in tournament['matches']['semifinals']:
+                if match['game_id'] == game_id:
+                    match['winner'] = winner_id
+            
+            # Check if semifinals complete
+            winners = [m['winner'] for m in tournament['matches']['semifinals'] if m['winner']]
+            if len(winners) == 2:
+                tournament['status'] = 'final'
+                tournament['matches']['final']['players'] = winners
+                await self.start_final_match(tournament_id)
+
+        elif tournament['status'] == 'final':
+            # Tournament complete
+            tournament['matches']['final']['winner'] = winner_id
+            await self.end_tournament(tournament_id)
+
+    async def handle_game_input(self, tournament_id, game_id, player_id, inputs):
+        # Use existing GameManager for game mechanics
+        await self.game_manager.handle_input(game_id, player_id, inputs)
