@@ -234,7 +234,7 @@ export class GamePlayPage extends Component {
 			  // Use it to get the 'access' cookie
 			const accessToken = getCookie('access');
 			console.log("access tokenn: ", accessToken)
-            this.webSocketConnection = new WebSocket(`wss://${window.location.host}/ws/matchmaking/?token=${accessToken}`);
+            this.webSocketConnection = new WebSocket(`wss://${window.location.host}/ws/matchmaking/?token=${accessToken}&mode=normal`);
             this.webSocketConnection.onopen = function() {
             }
 
@@ -261,6 +261,7 @@ export class GamePlayPage extends Component {
 
                 }
                 if (recieveData.type === "game_setting") {
+					console.log("game setting")
                     this.settingData = recieveData.setting;
                     this.initGameAssets();
                 }
