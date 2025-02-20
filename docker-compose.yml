@@ -72,9 +72,9 @@ services:
   db: #match making
     image: postgres:15  # Updated to version 15
     environment:
-      - POSTGRES_DB=userdb
-      - POSTGRES_USER=dbuser
-      - POSTGRES_PASSWORD=dbpassword
+      - MATCH_DB=userdb
+      - MATCH_USER=dbuser
+      - MATCH_PASSWORD=dbpassword
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
