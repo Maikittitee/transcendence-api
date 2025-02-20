@@ -110,7 +110,7 @@ DATABASES = {
         "PASSWORD": "root",
         "HOST": "postgres",
         "PORT": "5432"
-    }
+    },
     "match_making": {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": "userdb",
