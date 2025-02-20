@@ -41,6 +41,7 @@ export class GamePlayPage extends Component {
         <canvas id="pong-game"></canvas>
     </div>
     <p id="data"></p>
+    <win-loss-modal></win-loss-modal>
     `;
   }
 
@@ -56,9 +57,6 @@ export class GamePlayPage extends Component {
     
     function resizeCanvas(element) {
         console.log(`element width : ${element.width} element height : ${element.height}`);
-
-		  
-
         let container = element.parentElement;
         let targetAspectRatio = 800 / 400;
         
@@ -293,6 +291,7 @@ export class GamePlayPage extends Component {
 					console.log("user data: " ,user_data)
 					
 					// update stat here
+                    let winLossModal = document.querySelector("win-loss-modal");
 					if (recieveData.winner == user_data.id){
 
 						console.log("You win: saving record...")
@@ -303,7 +302,10 @@ export class GamePlayPage extends Component {
 							"Content-Type": "application/json",
 							"Authorization": `Bearer ${accessToken}`
 						})
+                        winLossModal.set_display(recieveData.final_score.player1, recieveData.final_score.player2, 'WIN');
 						console.log("patch response: ", response)
+                        winLossModal.openModal();
+                        window.Router.navigate('/play-menu-page/')
 					} else {
 						console.log("You Loss: saving record...")
 						const response = await fetchData('/auth/users/me/', {
@@ -312,12 +314,12 @@ export class GamePlayPage extends Component {
 						}, "PATCH", true, {
 							"Content-Type": "application/json",
 							"Authorization": `Bearer ${accessToken}`
-						})	
+						})
+                        winLossModal.set_display(recieveData.final_score.player1, recieveData.final_score.player2, 'LOSS');
 						console.log("patch response: ", response)
+                        winLossModal.openModal();
+                        window.Router.navigate('/play-menu-page/')
 					}
-					
-					
-					// should display ended of game or just redirect it
 				}
             }
         }
