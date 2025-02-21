@@ -6,61 +6,57 @@ const name = "edit-profile-page";
 const componentStyle = `
 
 .flex-container {
-    display: flex;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display:  flex;
     flex-direction: column;
     align-items: center;
     width: 90%;
-    height: auto; /* Let the height adjust based on content */
-    padding: 5vw 0; /* Add some padding for spacing */
-    margin: 0 auto;
+    height: 90%;
 }
 
-#MeowPongTitle {
-    width: 60%;
+#MeowPongTitle{
+    width: 50%;
     height: auto;
-    max-width: 500px; /* Prevents the title from becoming too large on big screens */
-    margin-bottom: 3vh;
 }
 
 .sub-container {
-    display: flex;
+    display:  flex;
     justify-content: space-between;
     align-items: center;
     width: 90%;
-    height: auto; /* Adjusts height according to content */
+    height: 75%;
     background-color: rgba(162, 162, 162, 0.8);
     border-radius: 30px;
-    padding: 5vw;
-    flex-wrap: wrap; /* Ensures content stays in line on small screens */
+    padding: 30px;
 }
 
 .profile-Block {
-    max-width: 100%;
-    width: 30%; /* Default width for larger screens */
-    height: auto;
-    display: flex;
+    max-width: 25%;
+    height: 100%;
+    display:  flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-around;
-    font-size: 1.5rem;
+    color: rgb(0, 0, 0);
+    font-size: 35px;
     background: rgba(255, 255, 255, 0.5);
     border-radius: 30px;
-    padding: 2vw;
 }
 
 .profile-Block ul {
     width: 80%;
-    padding: 0;
-    margin: 0;
 }
 
 .profile-Block ul li {
-    width: 100%;
-    display: flex;
+    width : 100%;
+    display:  flex;
     justify-content: space-between;
     text-align: center;
-    font-size: 1.5rem; /* Scalable font size */
-    margin-bottom: 2vh;
+    font-size: 25px;
+    margin-bottom: 15px;
 }
 
 .profile-Block ul li div {
@@ -73,161 +69,93 @@ const componentStyle = `
 }
 
 #profileName {
-    padding: 1rem 2rem;
+    padding: 10px 20px 10px 20px;
     background-color: rgb(94, 190, 158);
     border-radius: 10px;
     color: aliceblue;
-    font-size: 1.5rem;
 }
 
 #inputBox {
-    width: 80%;
-    height: auto;
-    display: flex;
-    flex-direction: column;
+	width: 80%;
+	height: auto;
+	display: flex;
+	flex-direction: column;
 }
 
 #inputBox > label {
-    font-size: 1.5rem;
-    margin: 1vw;
+    font-size: 30px;
+    margin: 10px;
 }
 
 #inputBox > div {
     display: flex;
-    justify-content: space-between;
 }
 
 #fill-display-name {
-    background-color: white;
-    width: 100%;
-    max-width: 500px;
+    background-color:  white;
+    width: 400px;
     border: 3px solid #000;
     border-radius: 10px;
-    font-size: 1.5rem;
-    margin-right: 2vw;
-    justify-content: space-between;
-
+    font-size: 30px;
+    margin-right: 30px;
 }
 
 .profileconfig-Block {
-    width: 100%;
-    max-width: 40%;
-    height: auto;
-    background: rgba(255, 255, 255, 0.5);
-    border-radius: 30px;
-    padding: 2vw;
     display: flex;
+    max-width: 40%;
     flex-direction: column;
     justify-content: space-around;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 30px;
+    padding: 25px;
 }
 
 .profileconfig-Block > button {
-    width: 100%;
-    max-width: 300px;
-    font-size: 1.0rem;
+    width: 300px;
 }
 
 .bio-Block {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
-    margin-bottom: 0;
-    width: 100%;
-    max-width: 30%;
-    max-height: 100%
+    width: 30%;
+    height: 100%;
     background: rgb(255, 255, 255);
     border-radius: 30px;
-    padding: 2vw;
+    padding: 25px;
 }
 
 .bio-Block h1 {
-    font-size: 1.5rem;
+    font-size: 30px;
 }
 
 #bio-content {
+    background: rgb(255, 255, 255);
     border-radius: 30px;
-    padding: 1vw;
-    height: auto;
+    padding: 10px;
+    height: 100%;
     overflow-y: auto;
+    overflow-x: hidden;
     word-wrap: break-word;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
 }
 
 .profileFrame {
     width: 60%;
-    max-width: 300px;
     aspect-ratio: 1 / 1;
     overflow: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
     border-radius: 50%;
-    border: 10px solid palevioletred;
+    border: 10px solid palevioletred;    
 }
-
-@media (max-width: 768px) {
-    .flex-container {
-        width: 90%;
-        margin-top: 10vh;
-    }
-
-    .sub-container {
-        flex-direction: column; /* Stack subcontainers vertically on small screens */
-        padding: 5vw;
-    }
-
-    .profile-Block, .profileconfig-Block {
-        width: 80%; /* Adjust width for tablets */
-        hight: 80%;
-        max-width: none;
-        margin-bottom: 1vh; /* Add spacing */
-        font-size: 1rem;
-    }
-
-    #MeowPongTitle {
-        width: 80%;
-        margin-bottom: 5vh;
-    }
-
-    #fill-display-name {
-        width: 100%; /* Make input fields take up full width */
-        margin-right: 0;
-    }
-
-    .bio-Block {
-        max-width: 80%;
-    }
-
-    .profileconfig-Block > button {
-    margin-bottom: 5vh;
-    max-width: 80%;
-   }
-}
-
-@media (max-width: 480px) {
-    .flex-container {
-        width: 95%;
-    }
-
-    .sub-container {
-        flex-direction: column;
-    }
-
-    .profile-Block, .profileconfig-Block {
-        width: 100%; /* Full width for small screens */
-    }
-
-    .bio-Block {
-        max-width: 100%;
-    }
-
-    .profileFrame {
-        width: 70%;
-        max-width: 200px;
-    }
-}
-
-
+    
 `;
+
 
 
 export class EditProfilePage extends Component {
