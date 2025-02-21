@@ -15,21 +15,22 @@ class GameManager:
 		self.connections: Dict[str, object] = {}
 		self.game_tasks: Dict[str, asyncio.Task] = {}
 
-	async def give_game_setting(self, player_id) -> None :
+	async def give_game_setting(self, player_id, mode="normal") -> None :
 		print(f"give_game_setting to {player_id}")
-		await self.connections[player_id].send(json.dumps({
-			"type" : "game_setting",
-			"setting" : {
-				"baseWidth" : GameSettings.baseWidth,
-				"baseHeight" : GameSettings.baseHeight,
-				"ballRadius" : GameSettings.ballRadius,
-				"paddleRadius" : GameSettings.paddleRadius,
-				"frameRate" : GameSettings.frameRate,
-				"paddlePos" : {
-					"x" : GameSettings.paddleInitPositionX,
-					"y" : GameSettings.paddleInitPositionY
-				},
-			}}))
+		if (mode == "normal" or mode == "tournament"):
+			await self.connections[player_id].send(json.dumps({
+				"type" : "game_setting",
+				"setting" : {
+					"baseWidth" : GameSettings.baseWidth,
+					"baseHeight" : GameSettings.baseHeight,
+					"ballRadius" : GameSettings.ballRadius,
+					"paddleRadius" : GameSettings.paddleRadius,
+					"frameRate" : GameSettings.frameRate,
+					"paddlePos" : {
+						"x" : GameSettings.paddleInitPositionX,
+						"y" : GameSettings.paddleInitPositionY
+					},
+				}}))
 	
 	async def add_player(self, player_id: str, websocket) -> Optional[str]:
 		self.connections[player_id] = websocket
@@ -230,7 +231,7 @@ class GameManager:
 						}))
 					except:
 						pass
-			await self.cleanup_game(game_id)
+			# await self.cleanup_game(game_id)
 		if player_id in self.waiting_players:
 			self.waiting_players.remove(player_id)
 		if player_id in self.connections:
