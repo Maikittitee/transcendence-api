@@ -1,5 +1,5 @@
 import { Component } from "../../Component.js";
-import { errorDisplay, getValueFromSession } from "../../../../utils.js";
+import { errorDisplay, getValueFromSession, fetchData } from "../../../../utils.js";
 
 const name = "play-menu-page";
 
@@ -346,7 +346,7 @@ export class PlayMenuPage extends Component {
             <h1 id = "fight-meow"> Fight Meow~ </h1>
             <div id = "meow-pow"><img id = "meow-pow-l" src=${meow_pow_l}> <img id = "meow-pow-r" src=${meow_pow_r}></div>
             <button id = "local-play" class="btn btn-primary play-button"> Local Play </button>
-            <button id = "tournament" class="btn btn-primary play-button"> Tournament </button>
+            <button id = "local-tournament" class="btn btn-primary play-button"> Tournament </button>
             <button id = "match-making" class="btn btn-primary play-button"> Match Making </button>
         </div>
     </div>
@@ -354,6 +354,7 @@ export class PlayMenuPage extends Component {
     <add-friend-modal></add-friend-modal>
     <accept-friend-modal></accept-friend-modal>
     <error-modal></error-modal>
+    <win-loss-modal></win-loss-modal>
     `;
     }
 
@@ -370,6 +371,10 @@ export class PlayMenuPage extends Component {
     super.addComponentEventListener(this.querySelector("#add-friend"),
                                     "click",
                                     this.add_friend_popup);
+
+    super.addComponentEventListener( this.querySelector("#local-tournament"),
+                                    "click",
+                                    () => window.Router.navigate('/local-tournament-page/'));
 
 
     this.#friend_req_list = await this.get_friend_req_list();
@@ -392,7 +397,8 @@ export class PlayMenuPage extends Component {
                 {
                     friendsReqList[i].from_user.avatar_url = window.Images.getFile("1.png");
                 }
-                else{
+                else
+                {
                     const picture = await fetchData(friendsReqList[i].from_user.avatar_url, null);
                     if (picture instanceof Response) {
                     const blob = await picture.blob();

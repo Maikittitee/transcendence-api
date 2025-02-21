@@ -41,6 +41,7 @@ export class GamePlayPage extends Component {
         <canvas id="pong-game"></canvas>
     </div>
     <p id="data"></p>
+    <win-loss-modal></win-loss-modal>
     `;
   }
 
@@ -285,6 +286,34 @@ export class GamePlayPage extends Component {
 				if (recieveData.type === "game_over"){
 					console.log("game over krabb")
 					console.log(recieveData)
+
+					const user_data = await fetchData('/auth/users/me/',null, "GET", true, {
+						"Authorization": `Bearer ${accessToken}`
+					})
+
+					console.log("user data: " ,user_data)
+
+					// update stat here
+					if (recieveData.winner == user_data.id){
+
+						console.log("You win: saving record...")
+						const response = await fetchData('/auth/users/me/', {
+							"win": user_data.win + 1
+						}, "PATCH", true, {
+							"Content-Type": "application/json",
+							"Authorization": `Bearer ${accessToken}`
+						})
+						console.log("patch response: ", response)
+					} else {
+						console.log("You Loss: saving record...")
+						const response = await fetchData('/auth/users/me/', {
+							"loss": user_data.loss + 1
+						}, "PATCH", true, {
+							"Content-Type": "application/json",
+							"Authorization": `Bearer ${accessToken}`
+						})
+						console.log("patch response: ", response)
+					}
 
 
 					// should display ended of game or just redirect it

@@ -102,9 +102,11 @@ class GameInstant:
 		self.status = 'waiting'
 		self.winner = None
 		self.last_update = time.time()
+		self.p1 =  player1
+		self.p2 =  player2
 
 	def __str__(self):
-		return (f"{self.winner} win {self.game_id}" if self.winner else f"no winner in {self.game_id}")
+		return (f"game {self.game_id}, players: {self.p1}, {self.p2}")
 	 
 	def update(self, p1_input: Dict[str, bool], p2_input: Dict[str, bool]) -> None:
 		

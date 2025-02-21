@@ -17,6 +17,7 @@ import { EditProfilePage }  from "./Component/Pages/EditProfilePage/EditProfileP
 import { MatchMakingPage }  from "./Component/Pages/MatchMakingPage/MatchMakingPage.js";
 import { GamePlayPage }  from "./Component/Pages/GamePlayPage/GamePlayPage.js";
 import { LocalPlayPage }  from "./Component/Pages/LocalPlayPage/LocalPlayPage.js";
+import { LocalTournamentPage }  from "./Component/Pages/LocalTournamentPage/LocalTournamentPage.js";
 
 export {        Component,
                 LoadingPage,
@@ -28,7 +29,8 @@ export {        Component,
                 PlayMenuPage,
                 MatchMakingPage,
                 GamePlayPage,
-                LocalPlayPage
+                LocalPlayPage,
+                LocalTournamentPage,
 };
 
 // Popup
@@ -38,13 +40,18 @@ import { Enable2FAModal }  from "./Component/Popup/Enable2FAModal/Enable2FAModal
 import { AddFriendModal }  from "./Component/Popup/AddFriendModal/AddFriendModal.js";
 import { EditBioModal }  from "./Component/Popup/EditBioModal/EditBioModal.js";
 import { AcceptFriendModal }  from "./Component/Popup/AcceptFriendModal/AcceptFriendModal.js";
+import { WinLossModal }  from "./Component/Popup/WinLossModal/WinLossModal.js";
+// import { TournamentMatchResultModal }  from "./Component/Popup/TournamentMatchResultModal/TournamentMatchResultModal.js";
 
 export {    ErrorModal,
             ConfirmModal,
             Enable2FAModal,
             AddFriendModal,
             EditBioModal,
-            AcceptFriendModal};
+            AcceptFriendModal,
+            WinLossModal,
+        //     TournamentMatchResultModal,
+        };
 
 // Router and Route
 import { Router, Route } from "./Router/Router.js";

@@ -173,7 +173,6 @@ export class RegisterPage extends Component {
         window.Router.navigate('/guest-login-page/');
     } catch (error) {
       const errModal = this.querySelector("error-modal");
-      console.log(error);
       errorDisplay(errModal, error);
     }
   }

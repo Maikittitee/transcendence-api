@@ -275,7 +275,6 @@ export class GameMenuPage extends Component {
     super.addComponentEventListener(this.querySelector("#logout"),
                                     "click",
                                     this.logout);
-
     await this.load_game_data();
     loading_page.style.display = "none";
   }
