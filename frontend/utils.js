@@ -205,7 +205,8 @@ export async function updateUserData(json_user_data) {
       const blob = await res.blob();
       sessionStorage.setItem('profile_img', URL.createObjectURL(blob));
       } else {
-      console.error('The response is not a valid image file.');
+      sessionStorage.setItem('profile_img', getValueFromSession("avatar_url"));
+      // console.error('The response is not a valid image file.');
       }
   }
 }

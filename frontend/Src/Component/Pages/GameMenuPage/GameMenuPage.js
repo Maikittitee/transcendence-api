@@ -4,68 +4,52 @@ import { updateUserData, getValueFromSession, removeAllCookies} from "../../../.
 const name = "game-menu-page";
 
 const componentStyle = `
+
 .flex-container {
-    display: flex;
-    flex-wrap: wrap; /* Allows items to wrap on smaller screens */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display:  flex;
     justify-content: space-between;
-    align-items: center;
     width: 85%;
     height: auto;
-    margin: auto; /* Centers content */
-    position: relative; /* Removes absolute positioning */
 }
 
-// .menu ul li {
-//     margin-bottom: 5vh;
-//     text-decoration: none;
-//     color: rgb(0, 0, 0);
-//     font-size: max(4vw, 25px);
-//     transition: color 0.3s;
-//     cursor: pointer;
-//     user-select: none;
-// }
 .menu ul li {
-    margin-bottom: 3vh;
-    font-size: clamp(18px, 4vw, 25px); /* Scales between 18px and 25px */
+    margin-bottom: 5vh;
+    text-decoration: none;
+    color: rgb(0, 0, 0);
+    font-size: max(4vw, 25px);
+    transition: color 0.3s;
+    cursor: pointer;
+    user-select: none;
 }
 
 .menu ul li:hover {
     color: #FFD700;
 }
 
-// .list-Block {
-//     max-width: 65%;
-//     height: 100%;
-//     display:  flex;
-//     flex-direction: column;
-//     align-items: center;
-//     justify-content: center;
-//     list-style: none;
-// }
 .list-Block {
-    max-width: 100%;
+    max-width: 65%;
+    height: 100%;
+    display:  flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    list-style: none;
+}
+
+.list-Block ul {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
     width: 65%;
     height: auto;
-}
-.list-Block ul {
-    width: 100%;
-}
-// .list-Block ul {
-//     display: flex;
-//     flex-direction: column;
-//     align-items: center;
-//     justify-content: space-around;
-//     width: 65%;
-//     height: auto;
-//     border-radius: 30px;
-//     background: rgba(255, 255, 255, 0.5);
-//     list-style-type: none;
-// }
-
-.profile-Block {
-    width: 25%;
-    height: auto;
-    max-width: 100%;
+    border-radius: 30px;
+    background: rgba(255, 255, 255, 0.5);
+    list-style-type: none;
 }
 
 .list-Block ul li {
@@ -84,9 +68,8 @@ const componentStyle = `
 }
 
 .profile-Block {
-    width: 25%;
+    max-width: 25%;
     height: auto;
-    max-width: 100%;
     display:  flex;
     flex-direction: column;
     align-items: center;
@@ -96,7 +79,6 @@ const componentStyle = `
     background: rgba(255, 255, 255, 0.5);
     border-radius: 30px;
 }
-
 .profile-Block ul {
     width: 80%;
 }
@@ -122,7 +104,7 @@ const componentStyle = `
     justify-content: center;
     align-items: center;
     border-radius: 50%;
-    border: 10px solid palevioletred;
+    border: 10px solid palevioletred;    
 }
 
 #profileImage {
@@ -193,33 +175,6 @@ loading-page {
     justify-content: center;
     align-items: center;
     z-index: 9999; /* ให้แสดงเหนือทุกๆ หน้า */
-}
-@media (max-width: 768px) {
-    .flex-container {
-        width: 100%;
-    }
-
-    .menu ul li {
-        font-size: clamp(16px, 4vw, 22px);
-    }
-
-    .profile-Block {
-        width: 100%;
-    }
-}
-
-@media (max-width: 480px) {
-    .list-Block {
-        width: 100%;
-    }
-
-    .profile-Block {
-        width: 100%;
-    }
-
-    #profileName {
-        font-size: 1rem;
-    }
 }
 
 `;
@@ -293,7 +248,13 @@ export class GameMenuPage extends Component {
     draw.textContent = getValueFromSession("draw");
     total_match.textContent = getValueFromSession("total_match");
     profile_name.textContent = getValueFromSession("display_name");
-    profileImage.src = sessionStorage.getItem('profile_img');
+
+    const Image_check = sessionStorage.getItem('profile_img');
+    if (Image_check) {
+        profileImage.src = sessionStorage.getItem('profile_img');
+    } else {
+        profileImage.src = sessionStorage.getItem('avatar_url');
+    }
   }
 
   confirm_action() {
