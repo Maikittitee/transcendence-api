@@ -47,6 +47,7 @@ const componentStyle = `
     width: 55%;
     height: 100%;
     border-radius: 5%;
+    padding: 2%;
   }
 
   #player-board-title
@@ -103,6 +104,24 @@ const componentStyle = `
     height: 20%;
     padding-left: 5%;
     padding-right: 5%;
+  }
+
+  #match-result-card {
+    background-color: #fff3e7;
+    width: 90%;
+    height: 23%;
+    padding-left: 5%;
+    padding-right: 5%;
+  }
+
+  #match-result-player1-card {
+    background-color: #fcacac;
+    width: 40%;
+  }
+
+  #match-result-player2-card {
+    background-color: #5ce1e6;
+    width: 40%;
   }
 `;
 
@@ -176,7 +195,96 @@ export class LocalTournamentPage extends Component {
 
           </div>
 
-          <div id = "tournament-match-result-section">
+          <div id = "tournament-match-result-section" class = "d-flex flex-column justify-content-between align-items-center">
+
+            <div id = "player-board-title"> Tournament Match Status</div>
+
+            <div id = "match-result-card" class="d-flex flex-column justify-content-between align-items-center rounded">
+
+              <div class = "d-flex justify-content-between align-items-center h-50 w-100">
+                <div id="match-result-player1-card" class="d-flex align-items-center h-75 rounded px-2">
+                  <div class="mini-profile bg-white rounded-circle h-75 me-3"> 
+                      <img id="profile-img" src=${player1_img}> 
+                  </div>
+                  <div id="player1-displayname" class = "fs-4">p1</div>
+                </div>
+
+                <div class = "fs-4">VS.</div>
+
+                <div id="match-result-player2-card" class="d-flex align-items-center h-75 rounded px-2">
+                  <div class="mini-profile bg-white rounded-circle h-75 me-3"> 
+                      <img id="profile-img" src=${player2_img}> 
+                  </div>
+                  <div id="player2-displayname" class = "fs-4">p2</div>
+                </div>
+              </div>
+
+              <div id = "match_status"  class = "d-flex justify-content-around align-items-center h-50 w-100">
+                <div id = "win-loss-1" class = "fs-3"> win </div>
+                <div id = "match-status" class = "fs-3">game ended</div>
+                <div id = "win-loss-2" class = "fs-3"> loss</div>
+              </div>
+
+            </div>
+
+            <div id = "match-result-card" class="d-flex flex-column justify-content-between align-items-center rounded">
+
+              <div class = "d-flex justify-content-between align-items-center h-50 w-100">
+                <div id="match-result-player1-card" class="d-flex align-items-center h-75 rounded px-2">
+                  <div class="mini-profile bg-white rounded-circle h-75 me-3"> 
+                      <img id="profile-img" src=${player1_img}> 
+                  </div>
+                  <div id="player1-displayname" class = "fs-4">p1</div>
+                </div>
+
+                <div class = "fs-4">VS.</div>
+
+                <div id="match-result-player2-card" class="d-flex align-items-center h-75 rounded px-2">
+                  <div class="mini-profile bg-white rounded-circle h-75 me-3"> 
+                      <img id="profile-img" src=${player2_img}> 
+                  </div>
+                  <div id="player2-displayname" class = "fs-4">p2</div>
+                </div>
+              </div>
+
+              <div id = "match_status"  class = "d-flex justify-content-around align-items-center h-50 w-100">
+                <div id = "win-loss-1" class = "fs-3"> win </div>
+                <div id = "match-status" class = "fs-3">game ended</div>
+                <div id = "win-loss-2" class = "fs-3"> loss</div>
+              </div>
+
+            </div>
+
+            <div id = "match-result-card" class="d-flex flex-column justify-content-between align-items-center rounded">
+
+              <div class = "d-flex justify-content-between align-items-center h-50 w-100">
+                <div id="match-result-player1-card" class="d-flex align-items-center h-75 rounded px-2">
+                  <div class="mini-profile bg-white rounded-circle h-75 me-3"> 
+                      <img id="profile-img" src=${player1_img}> 
+                  </div>
+                  <div id="player1-displayname" class = "fs-4">p1</div>
+                </div>
+
+                <div class = "fs-4">VS.</div>
+
+                <div id="match-result-player2-card" class="d-flex align-items-center h-75 rounded px-2">
+                  <div class="mini-profile bg-white rounded-circle h-75 me-3"> 
+                      <img id="profile-img" src=${player2_img}> 
+                  </div>
+                  <div id="player2-displayname" class = "fs-4">p2</div>
+                </div>
+              </div>
+
+              <div id = "match_status"  class = "d-flex justify-content-around align-items-center h-50 w-100">
+                <div id = "win-loss-1" class = "fs-3"> win </div>
+                <div id = "match-status" class = "fs-3">game ended</div>
+                <div id = "win-loss-2" class = "fs-3"> loss</div>
+              </div>
+
+            </div>
+
+            <button type="button" class="btn btn-lg btn-success fs-3"> start game! </button>
+
           </div>
 
         </div>
