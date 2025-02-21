@@ -186,6 +186,7 @@ export class GameMenuPage extends Component {
   render() {
     const meowTitleSrc = window.Images.getFile("MeowPongTitle.png");
     const default_profile = window.Images.getFile("1.png");
+    localStorage.clear()
 
     return `
     <div class = "flex-container">
