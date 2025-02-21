@@ -41,6 +41,7 @@ import { AddFriendModal }  from "./Component/Popup/AddFriendModal/AddFriendModal
 import { EditBioModal }  from "./Component/Popup/EditBioModal/EditBioModal.js";
 import { AcceptFriendModal }  from "./Component/Popup/AcceptFriendModal/AcceptFriendModal.js";
 import { WinLossModal }  from "./Component/Popup/WinLossModal/WinLossModal.js";
+import { EditNameModal } from "./Component/Popup/EditNameModal/EditNameModal.js";
 // import { TournamentMatchResultModal }  from "./Component/Popup/TournamentMatchResultModal/TournamentMatchResultModal.js";
 
 export {    ErrorModal,
@@ -50,6 +51,7 @@ export {    ErrorModal,
             EditBioModal,
             AcceptFriendModal,
             WinLossModal,
+			EditNameModal,
         //     TournamentMatchResultModal,
         };
 

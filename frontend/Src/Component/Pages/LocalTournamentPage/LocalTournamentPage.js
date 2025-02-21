@@ -1,4 +1,5 @@
 import { Component } from "../../Component.js";
+import { EditBioModal } from "../../Popup/EditBioModal/EditBioModal.js";
 
 const name = "local-tournament-page";
 
@@ -136,9 +137,9 @@ export class LocalTournamentPage extends Component {
               </div>
               <div class = "w-100 px-4">
                 <div class = "fs-3 mb-4"> player 1 </div>
-                <div id = "display-name-player" class = "fs-4 bg-white rounded p-2"> p </div>
+                <div id="display-name-p1" class = "fs-4 bg-white rounded p-2"> p </div>
               </div>
-              <span class="bi bi-pencil-fill fs-3 ms-2 text-success"></span>
+              <span id="edit-button-p1" class="bi bi-pencil-fill fs-3 ms-2 text-success"></span>
             </div>
 
             <div id = "player-card2" class = "d-flex justify-content-between align-items-center rounded">
@@ -147,9 +148,9 @@ export class LocalTournamentPage extends Component {
               </div>
               <div class = "w-100 px-4">
                 <div class = "fs-3 mb-4"> player 2 </div>
-                <div id = "display-name-player" class = "fs-4 bg-white rounded p-2"> p </div>
+                <div id = "display-name-p2" class = "fs-4 bg-white rounded p-2"> p </div>
               </div>
-              <span class="bi bi-pencil-fill fs-3 ms-2 text-success"></span>
+              <span id="edit-button-p2" class="bi bi-pencil-fill fs-3 ms-2 text-success"></span>
             </div>
 
             <div id = "player-card3" class = "d-flex justify-content-between align-items-center rounded">
@@ -158,9 +159,9 @@ export class LocalTournamentPage extends Component {
               </div>
               <div class = "w-100 px-4">
                 <div class = "fs-3 mb-4"> player 3 </div>
-                <div id = "display-name-player" class = "fs-4 bg-white rounded p-2"> p </div>
+                <div id = "display-name-p3" class = "fs-4 bg-white rounded p-2"> p </div>
               </div>
-              <span class="bi bi-pencil-fill fs-3 ms-2 text-success"></span>
+              <span id="edit-button-p3" class="bi bi-pencil-fill fs-3 ms-2 text-success"></span>
             </div>
 
             <div id = "player-card4" class = "d-flex justify-content-between align-items-center rounded">
@@ -169,9 +170,9 @@ export class LocalTournamentPage extends Component {
               </div>
               <div class = "w-100 px-4">
                 <div class = "fs-3 mb-4"> player 4 </div>
-                <div id = "display-name-player" class = "fs-4 bg-white rounded p-2"> p </div>
+                <div id = "display-name-p4" class = "fs-4 bg-white rounded p-2"> p </div>
               </div>
-              <span class="bi bi-pencil-fill fs-3 ms-2 text-success"></span>
+              <span id="edit-button-p4" class="bi bi-pencil-fill fs-3 ms-2 text-success"></span>
             </div>
 
           </div>
@@ -184,11 +185,27 @@ export class LocalTournamentPage extends Component {
       </div>
 
     </div>
+	<edit-name-modal></edit-name-modal>>
     `;
   }
 
+  showModal(num) {
+	const modal = this.querySelector("edit-name-modal");
+	modal.openModal(num); 
+  }
   postCreate() {
-
+	super.addComponentEventListener( this.querySelector("#edit-button-p1"),
+		"click",
+		() => { console.log("Click 1"); this.showModal("1")});
+	super.addComponentEventListener( this.querySelector("#edit-button-p2"),
+		"click",
+		() => { console.log("Click 2"); this.showModal("2")});
+	super.addComponentEventListener( this.querySelector("#edit-button-p3"),
+		"click",
+		() => { console.log("Click 3"); this.showModal("3")});
+	super.addComponentEventListener( this.querySelector("#edit-button-p4"),
+		"click",
+		() => { console.log("Click 4"); this.showModal("4")});
   }
 }
 
