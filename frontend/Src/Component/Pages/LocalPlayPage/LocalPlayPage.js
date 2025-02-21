@@ -15,7 +15,6 @@ const componentStyle = `
         width: 100%;
         height: 100%;
     }
-
 `;
 
 export class LocalPlayPage extends Component { 

@@ -5,79 +5,62 @@ const name = "guest-login-page";
 
 const componentStyle = `
   .menu {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    color: rgb(0, 0, 0);
-    font-family: 'Itim', sans-serif;
-    text-align: center;
-    height: auto;
-    width: 90%; /* Adjust width for smaller screens */
-    max-width: 500px; /* Prevent excessive stretching */
-}
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      color: rgb(0, 0, 0);
+      font-family: 'Itim', sans-serif;
+      text-align: center;
+      height: 80%;
+      width: 50%;
+  }
 
-.frame {
-    width: 90%;
-    max-width: 400px; /* Limits the width on larger screens */
+  .frame {
+    height: auto;
+    width: 60%;
     border: #1e4950 3px solid;
-    border-radius: 20px;
-    background-color: rgba(146, 220, 253, 0.5);
-    padding: 20px; /* Reduce padding on smaller screens */
+    border-radius: 30px;
+    background-color: rgba(146,220,253, 0.5);
+    padding: 35px;
     overflow: hidden;
     display: flex;
     flex-direction: column;
-}
+  }
 
-.frame div {
-    padding-bottom: 15px;
-}
+  .frame div {
+      padding-bottom: 20px;
+  }
 
-.frame h1 {
-    display: flex;
-    flex-direction: row;
-    align-self: start;
-    padding-bottom: 15px;
-    font-size: 2rem; /* Use rem for scalability */
-}
+  .frame h1 {
+      display: flex;
+      flex-direction: row;
+      align-self: start;
+      padding-bottom: 20px;
+      font-size: 50px;
+  }
 
-.frame button {
-    font-size: 1.5rem;
-    padding: 10px;
-    width: 100%;
-}
+  .frame button {
+      font-size: 30px;
+  }
 
-#MeowPongTitle {
-    padding: 0;
-    margin: 0;
-    max-width: 100%; /* Prevents the image from overflowing */
-    height: auto;
-}
+  #backButton {
+      display: flex;
+  }
 
-@media (max-width: 768px) {
-    .menu {
-        width: 95%;
-        height: auto;
-        padding: 10px;
-    }
+  #MeowPongTitle{
+      padding: 0;
+      margin: 0;
+      width: max(100%, 300px);
+  }
 
-    .frame {
-        width: 100%;
-        padding: 15px;
-    }
-
-    .frame h1 {
-        font-size: 1.8rem;
-    }
-
-    .frame button {
-        font-size: 1.2rem;
-    }
-}
+  #error-msg{
+      color: red;
+  }
 `;
 
 export class GuestLoginPage extends Component {
