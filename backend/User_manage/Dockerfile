@@ -18,8 +18,6 @@ RUN pip install --no-cache-dir psycopg2-binary
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-
-
 COPY User_manage .
 COPY start.sh .
 

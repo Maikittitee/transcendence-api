@@ -189,7 +189,14 @@ export class LocalPlayPage extends Component {
             this.ctx = canvasElement.getContext(SETTING.CANVAS_CONTEXT);
             this.animationFrameId = null;
             this.isGameRunning = true;  // ตัวแปรควบคุมสถานะเกม
+			this.gamePath = '/local-play-page/';
+			localStorage.setItem('pongGameRunning', 'true');
         }
+
+		isOnGamePage() {
+
+			return window.location.pathname === this.gamePath;
+		}
 
         incressGame_speed() {
             MATCH_DATA.currenMoveSpeed += 0.005;
@@ -245,6 +252,19 @@ export class LocalPlayPage extends Component {
             this.drawScoreBoard();
     
             if (MATCH_DATA.opponentScore >= 10 || MATCH_DATA.playerScore >= 10) {
+				if (MATCH_DATA.opponentScore > MATCH_DATA.playerScore){
+					this.winner = MATCH_DATA.opponentScore
+					this.loser = MATCH_DATA.playerScore
+				} else {
+					this.winner = MATCH_DATA.playerScore
+					this.loser = MATCH_DATA.opponentScore
+				}
+				const result = {
+					"winner": this.winner,
+					"loser": this.winner
+				}
+				// IMPLEMENT MORE IN HERE
+				console.log('result: ', result)
                 this.end();
                 return;  // หยุดการทำงานหากมีคนชนะ
             }
@@ -269,6 +289,16 @@ export class LocalPlayPage extends Component {
         }
 
         start() {
+			if (!this.isOnGamePage()) {
+				console.log("not on game page")
+				this.isGameRunning = false;
+				return;
+			}
+			// Check if game should still be running
+			if (!localStorage.getItem('pongGameRunning')) {
+					this.end();
+					return;
+				}
             if (!this.isGameRunning) return;  // ถ้าเกมไม่กำลังเล่นอยู่จะไม่ทำงาน
     
             this.detectKeyAndAdjustPosition();
@@ -286,12 +316,13 @@ export class LocalPlayPage extends Component {
         }
 
         end() {
-            // หยุดการเรียก requestAnimationFrame
+			// หยุดการเรียก requestAnimationFrame
             this.isGameRunning = false;  // กำหนดสถานะเกมเป็น false
             if (this.animationFrameId !== null) {
-                cancelAnimationFrame(this.animationFrameId);
+				cancelAnimationFrame(this.animationFrameId);
                 this.animationFrameId = null;  // รีเซ็ต ID
             }
+			localStorage.removeItem('pongGameRunning');
             console.log("Game Over");
             window.Router.redirect('/play-menu-page/');
         }
@@ -360,7 +391,11 @@ export class LocalPlayPage extends Component {
         canvasss.getBoundingClientRect();
     }
 
-    //when element are resize resize 
+    //when element are resize resize
+	localStorage.setItem('pongGameRunning', 'true');
+	if (localStorage.getItem('pongGameRunning') != 'true'){
+		console.log("not runnign")
+	}
     game.start();
     resizeCanvas();
     window.onload = resizeCanvas;
