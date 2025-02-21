@@ -5,8 +5,7 @@ services:
       context: ./nginx
       dockerfile: Dockerfile
     ports:
-      # - "80:80"
-      - "5000:443"
+      - "443:443"
     volumes:
       - ./frontend:/usr/share/nginx/html
       - ./nginx/conf.d:/etc/nginx/conf.d
