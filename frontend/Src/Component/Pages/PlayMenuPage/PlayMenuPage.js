@@ -268,6 +268,7 @@ export class PlayMenuPage extends Component {
 
     render ()
     {
+	localStorage.clear();
     const meowTitleSrc = window.Images.getFile("MeowPongTitle.png");
     const profile_img = sessionStorage.getItem('profile_img');
     const meow_pow_l = window.Images.getFile("9.png");
