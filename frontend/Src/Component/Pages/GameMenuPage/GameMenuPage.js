@@ -4,7 +4,6 @@ import { updateUserData, getValueFromSession, removeAllCookies} from "../../../.
 const name = "game-menu-page";
 
 const componentStyle = `
-
 .flex-container {
     position: absolute;
     top: 50%;

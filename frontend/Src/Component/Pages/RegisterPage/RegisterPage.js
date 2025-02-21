@@ -6,22 +6,24 @@ const name = "register-page";
 const componentStyle = `
 
     .menu {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    color: rgb(0, 0, 0);
-    font-family: 'Itim', sans-serif;
-    text-align: center;
-    height: auto; /* Let the height adjust based on content */
-    width: 80%; /* Use a percentage of the screen width */
-    max-width: 600px; /* Prevents it from being too wide */
-    margin: 10vh auto; /* Centers the menu */
-   }
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        color: rgb(0, 0, 0);
+        font-family: 'Itim', sans-serif;
+        text-align: center;
+        height: 80%;
+        width: 50%;
+    }
 
     .menu ul {
         list-style: none;
-        padding-top: 5vh; /* Adjusted for better spacing */
+        padding-top: min(25%, 50px);
         margin: 0;
         width: 100%;
         display: flex;
@@ -46,55 +48,34 @@ const componentStyle = `
     #MeowPongTitle{
         padding: 0;
         margin: 0;
-        width: 100%; /* Ensures it scales with the screen */
-        max-width: 300px; /* Keeps a max width */
-        text-align: center; /* Centers the title */
+        width: max(100%, 300px);
     }
-
-    .frame {
+        .frame {
         height: auto;
-        width: 80%; /* Scales width based on the screen size */
-        max-width: 600px; /* Prevents it from getting too wide */
+        width: 60%;
         border: #1e4950 3px solid;
         border-radius: 30px;
-        background-color: rgba(146, 220, 253, 0.5);
-        padding: 5vw; /* Scales padding based on viewport width */
+        background-color: rgba(146,220,253, 0.5);
+        padding: 40px;
         overflow: hidden;
         display: flex;
         flex-direction: column;
-      }
-
-      .frame h1 {
-    display: flex;
-    flex-direction: row;
-    align-self: start;
-    padding-bottom: 15px;
-    font-size: 4vw; /* Scalable font size */
-    }
-
-
-      .frame button {
-      font-size: 2rem; /* Scales based on font size */
-    }
-
-      @media (max-width: 768px) {
-        .menu {
-        width: 90%; /* Ensure it takes up more space on smaller screens */
-      }
+        }
 
         .frame h1 {
-            font-size: 5vw; /* Slightly larger for smaller screens */
-      }
+        display: flex;
+        flex-direction: row;
+        align-self: start;
+        padding-bottom: 15px;
+        font-size: 45px;
+        }
 
         .frame button {
-           font-size: 1.5rem; /* Slightly smaller on smaller screens */
-      }
-    }
+        font-size: 30px;
+        }
+
         #backButton {
         display: flex;
-        justify-content: center; /* Center the button */
-        align-items: center;
-        width: 100%;
         }
 
 `;

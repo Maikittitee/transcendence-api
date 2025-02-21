@@ -3,6 +3,7 @@ import { errorDisplay, getValueFromSession, fetchData } from "../../../../utils.
 
 const name = "play-menu-page";
 
+
 const componentStyle = `
 
   #MeowPongTitle{
@@ -84,7 +85,7 @@ const componentStyle = `
       border-radius: 30px;
       padding: 15px;
   }
-
+  
   .menu-block{
       display: flex;
       align-items: center;
@@ -101,30 +102,32 @@ const componentStyle = `
       padding-bottom: 15%;
   }
 
-  #meow-pow {
-    display: flex;
-    justify-content: space-between;
-    align-items: center; /* Ensures proper alignment */
-    height: auto; /* Let it adjust based on content */
-    width: 90%;
-    padding: 5% 0; /* Reduce excessive padding */
-    flex-wrap: wrap; /* Allows elements to stack on small screens */
+  #meow-pow{
+      display: flex;
+      justify-content: space-between;
+      height: 25%;
+      width: 90%;
+      padding-top: 10%;
+      padding-bottom: 10%;
   }
 
-  #meow-pow-l, #meow-pow-r {
-    height: auto;
-    max-height: 80px; /* Prevents excessive stretching */
-    max-width: 20%;
-    transform: rotate(90deg);
+  #meow-pow-l{
+      height: 100%;
+      transform: rotate(90deg);
+  }
+
+  #meow-pow-r{
+      height: 100%;
+      transform: rotate(-90deg);
   }
 
   .play-button{
       height: 10%;
       width: 75%;
+      font-size: 24px;
       padding-top: 2.5%;
       margin-top: 2.5%;
       margin-bottom: 2.5%;
-      font-size: 1.5 rem
   }
 
     .mini-profile {
@@ -163,7 +166,7 @@ const componentStyle = `
     }
 
     .mini-profile-text {
-        font-size: 1 rem;
+        font-size: 20px
     }
 
     .dot {
@@ -231,7 +234,7 @@ const componentStyle = `
     }
 
     .history-block h1 {
-        font-size: 2em;
+        font-size: 2.5em;
         font-weight: bold;
         margin-top: 3%;
         margin-bottom: 3%;
@@ -245,52 +248,7 @@ const componentStyle = `
     justify-content: center;
     align-items: center;
     border-radius: 50%;
-    border: 10px solid palevioletred;
-}
-
-@media (max-width: 768px) {
-    .flex-container {
-        flex-direction: column;
-        width: 95%;
-        height: auto;
-        padding: 2vw;
-    }
-
-    .profile-Block,
-    .history-block,
-    .menu-block {
-        width: 90%;
-        max-width: none;
-    }
-    .play-button{
-      height: 5%;
-      width: 60%;
-      font-size: 1 rem
-  }
-
-    #meow-pow {
-        flex-direction: column; /* Stack elements vertically */
-        align-items: center;
-        padding: 2% 0;
-    }
-
-    #meow-pow-l, #meow-pow-r {
-        max-height: 60px; /* Reduce size */
-        max-width: 40%; /* Prevent stretching */
-        transform: rotate(0deg); /* Remove rotation if needed */
-    }
-
-    #fight-meow{
-      font-size: 1.5 rem;
-  }
-}
-
-@media (max-width: 480px) {
-    #meow-pow-l, #meow-pow-r {
-        max-height: 50px;
-        max-width: 50%;
-        transform: none; /* Remove rotation for better layout */
-    }
+    border: 10px solid palevioletred;    
 }
 `;
 
