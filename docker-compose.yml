@@ -51,11 +51,13 @@ services:
   postgres:
       image: postgres
       restart: always
+      env_file:
+        - .env  # Add this line to read from .env file
       environment:
         - POSTGRES_HOST=postgres
-        - POSTGRES_DB=db1
-        - POSTGRES_USER=root
-        - POSTGRES_PASSWORD=root
+        - POSTGRES_DB=${DB_NAME}
+        - POSTGRES_USER=${DB_USER}
+        - POSTGRES_PASSWORD=${DB_PASSWORD}
       ports:
           - "5432:5432"
       volumes:
@@ -70,11 +72,13 @@ services:
 
   db: #match making
     image: postgres:15  # Updated to version 15
+    env_file:
+      - .env  # Add this line to read from .env file
     environment:
         - POSTGRES_HOST=db
-        - POSTGRES_DB=db1
-        - POSTGRES_USER=root
-        - POSTGRES_PASSWORD=root
+        - POSTGRES_DB=${DB_NAME}
+        - POSTGRES_USER=${DB_USER}
+        - POSTGRES_PASSWORD=${DB_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
