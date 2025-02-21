@@ -39,15 +39,22 @@ services:
       - ./backend/User_manage:/app
     ports:
       - "9000:9000"
+    # depends_on:
+    #   - postgres
+    #   - db
     depends_on:
-      - postgres
-      - db
+        postgres:
+          condition: service_healthy
+        db:
+          condition: service_started
     networks:
       - app_network
+      - database_network
   postgres:
       image: postgres
       restart: always
-      environment: 
+      environment:
+        - POSTGRES_HOST=postgres
         - POSTGRES_DB=db1  
         - POSTGRES_USER=root
         - POSTGRES_PASSWORD=root
@@ -57,6 +64,12 @@ services:
           - ./docker_postgres_init.sql:/docker-entrypoint-initdb.d/docker_postgres_init.sql
       networks:
         - database_network
+      healthcheck:
+         test: ["CMD-SHELL", "pg_isready -U root -d db1"]
+         interval: 5s
+         timeout: 5s
+         retries: 5
+
 
   pgadmin-compose:
       image: dpage/pgadmin4

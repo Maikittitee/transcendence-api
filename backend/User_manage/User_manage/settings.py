@@ -102,6 +102,7 @@ WSGI_APPLICATION = "User_manage.wsgi.application"
 
 # PostgreSQL Database Configuration (from Docker)
 
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
@@ -110,15 +111,7 @@ DATABASES = {
         "PASSWORD": "root",
         "HOST": "postgres",
         "PORT": "5432"
-    },
-    "match_making": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "userdb",
-        "USER": "dbuser",
-        "PASSWORD": "dbpassword",
-        "HOST": "db",
-        "PORT": "5432"
-    },
+    }
 }
 
 # Password validation
