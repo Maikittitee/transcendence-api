@@ -213,7 +213,7 @@ export class EditProfilePage extends Component {
         
             <enable-2fa-modal></enable-2fa-modal>
             <edit-bio-modal></edit-bio-modal>
-            
+            <error-modal></error-modal>
         `;
     }
 
