@@ -26,9 +26,11 @@ services:
     ports:
       - "25566:25566"
     depends_on:
-      - db
+        db:
+          condition: service_started
     networks:
       - app_network
+      - database_network2
 
   user_manage:
     build:
@@ -40,17 +42,12 @@ services:
       - ./backend/User_manage:/app
     ports:
       - "9000:9000"
-    # depends_on:
-    #   - postgres
-    #   - db
     depends_on:
         postgres:
           condition: service_healthy
-        db:
-          condition: service_started
     networks:
       - app_network
-      - database_network
+      - database_network1
   postgres:
       image: postgres
       restart: always
@@ -64,40 +61,37 @@ services:
       volumes:
           - ./docker_postgres_init.sql:/docker-entrypoint-initdb.d/docker_postgres_init.sql
       networks:
-        - database_network
+        - database_network1
       healthcheck:
          test: ["CMD-SHELL", "pg_isready -U root -d db1"]
          interval: 5s
          timeout: 5s
          retries: 5
 
-
-  pgadmin-compose:
-      image: dpage/pgadmin4
-      environment:
-          PGADMIN_DEFAULT_EMAIL: "admin@gmail.com"
-          PGADMIN_DEFAULT_PASSWORD: "admin"
-      ports:
-          - "16543:80"
-      depends_on:
-          - postgres
-      networks:
-        - database_network
   db: #match making
     image: postgres:15  # Updated to version 15
     environment:
-      - MATCH_DB=userdb
-      - MATCH_USER=dbuser
-      - MATCH_PASSWORD=dbpassword
+        - POSTGRES_HOST=db
+        - POSTGRES_DB=db1
+        - POSTGRES_USER=root
+        - POSTGRES_PASSWORD=root
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
-      - app_network
+      - database_network2
+    healthcheck:  # Add health check
+      test: ["CMD-SHELL", "pg_isready -U root -d db1"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    
 
 networks:
   app_network:
     driver: bridge
-  database_network:
+  database_network1:
+    driver: bridge
+  database_network2:
     driver: bridge
 
 
