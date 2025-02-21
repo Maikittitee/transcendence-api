@@ -42,7 +42,7 @@ class ProfileConfigView(APIView):
 				return Response(serializer.data)
 			return Response(serializer.errors, status=400)
 		except Exception as e:
-			return (Response({"detail": e}, 500))
+			return (Response({"detail": e}, status=status.HTTP_400_BAD_REQUEST))
 
 
 class RegisterView(APIView):
@@ -51,25 +51,28 @@ class RegisterView(APIView):
 
 	@swagger_auto_schema(request_body=UserCreateSerializer)
 	def post(self, request, *args, **kwargs):
-		serializer = self.serializer_class(data=request.data)
-		print("hello, register")
-		if serializer.is_valid():
-			print("register data is valid")
-			try:
-				print("saving")
-				user = serializer.save()
-				# print("data: ", serializer.data)
-				print("saved")
-				return Response(
-					UserSerializer(user).data,
-					status=status.HTTP_201_CREATED)
-				
-			except Exception as e:
-				return Response({
-					"detail": str(e)
-				}, status=status.HTTP_400_BAD_REQUEST)
-		print("not valid")
-		return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+		try:
+			serializer = self.serializer_class(data=request.data)
+			print("hello, register")
+			if serializer.is_valid():
+				print("register data is valid")
+				try:
+					print("saving")
+					user = serializer.save()
+					# print("data: ", serializer.data)
+					print("saved")
+					return Response(
+						UserSerializer(user).data,
+						status=status.HTTP_201_CREATED)
+					
+				except Exception as e:
+					return Response({
+						"detail": str(e)
+					}, status=status.HTTP_400_BAD_REQUEST)
+			print("not valid")
+			return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+		except:
+			return Response({"detail": "exception error"}, status=status.HTTP_400_BAD_REQUEST)
 	
 
 @csrf_exempt
@@ -114,114 +117,116 @@ class OauthView(APIView):
 	permission_classes = [AllowAny]
 	# authentication_classes  = []
 	def post(self, request):
-		print("hello Oauth")
-		code = request.data.get('code')
-		print(f"code: {code}")
-		if not code:
-			return Response(
-				{'detail': 'Authorization code not provided'}, 
-				status=status.HTTP_400_BAD_REQUEST
-			)
-
-		data = {
-			'client_id': settings.OAUTH2_SETTINGS['CLIENT_ID'],
-			'client_secret': settings.OAUTH2_SETTINGS['CLIENT_SECRET'],
-			'code': code,
-			'grant_type': 'authorization_code',
-			'redirect_uri': settings.OAUTH2_SETTINGS['REDIRECT_URI']
-		}
-		print("send data: ", data)
-
-		# Exchange authorization code for access token
 		try:
-			token_response = requests.post(
-				settings.OAUTH2_SETTINGS['TOKEN_URL'],
-				data=data
-			)
-			print("token response status:", token_response.status_code)
-			print("token response text:", token_response.text)  # Print raw response
-			
-			token_response.raise_for_status()  # Raise exception for bad status codes
-			tokens = token_response.json()
-		except requests.exceptions.RequestException as e:
-			print("Token request error:", str(e))
-			return Response(
-				{'detail': f'Failed to obtain access token: {str(e)}'},
-				status=status.HTTP_400_BAD_REQUEST
-			)
-		except ValueError as e:  # JSON decode error
-			print("JSON decode error:", str(e))
-			return Response(
-				{'detail': 'Invalid response from token endpoint'},
-				status=status.HTTP_400_BAD_REQUEST
-			)
+			print("hello Oauth")
+			code = request.data.get('code')
+			print(f"code: {code}")
+			if not code:
+				return Response(
+					{'detail': 'Authorization code not provided'}, 
+					status=status.HTTP_400_BAD_REQUEST
+				)
 
-		access_token = tokens.get('access_token')
-		refresh_token = tokens.get('refresh_token')
+			data = {
+				'client_id': settings.OAUTH2_SETTINGS['CLIENT_ID'],
+				'client_secret': settings.OAUTH2_SETTINGS['CLIENT_SECRET'],
+				'code': code,
+				'grant_type': 'authorization_code',
+				'redirect_uri': settings.OAUTH2_SETTINGS['REDIRECT_URI']
+			}
+			print("send data: ", data)
 
-		if not access_token:
-			return Response(
-				{'detail': 'No access token in response'},
-				status=status.HTTP_400_BAD_REQUEST
-			)
+			# Exchange authorization code for access token
+			try:
+				token_response = requests.post(
+					settings.OAUTH2_SETTINGS['TOKEN_URL'],
+					data=data
+				)
+				print("token response status:", token_response.status_code)
+				print("token response text:", token_response.text)  # Print raw response
+				
+				token_response.raise_for_status()  # Raise exception for bad status codes
+				tokens = token_response.json()
+			except requests.exceptions.RequestException as e:
+				print("Token request error:", str(e))
+				return Response(
+					{'detail': f'Failed to obtain access token: {str(e)}'},
+					status=status.HTTP_400_BAD_REQUEST
+				)
+			except ValueError as e:  # JSON decode error
+				print("JSON decode error:", str(e))
+				return Response(
+					{'detail': 'Invalid response from token endpoint'},
+					status=status.HTTP_400_BAD_REQUEST
+				)
 
-		try:
-			user_response = requests.get(
-				settings.OAUTH2_SETTINGS['USER_INFO_URL'],
-				headers={'Authorization': f'Bearer {access_token}'}
-			)
-			user_response.raise_for_status()
-			user_info = user_response.json()
-		except Exception as e:
-			print("User info error:", str(e))
-			return Response(
-				{'detail': f'Failed to get user info: {str(e)}'}, 
-				status=status.HTTP_400_BAD_REQUEST
-			)
+			access_token = tokens.get('access_token')
+			refresh_token = tokens.get('refresh_token')
 
-		# Rest of your code...
-		provider_id = user_info.get('id')
-		username = user_info.get("login") + "@42"
-		email = user_info.get("email")
-		first_name = user_info.get("first_name")
-		last_name = user_info.get("last_name")
-		avatar_url = user_info.get("image", {}).get("link")
+			if not access_token:
+				return Response(
+					{'detail': 'No access token in response'},
+					status=status.HTTP_400_BAD_REQUEST
+				)
 
-		try:
-			user, created = User.objects.update_or_create(
-				provider_id=provider_id,
-				is_oauth_user=True,
-				defaults={
-					'username': username,
-					'access_token': access_token,
-					'refresh_token': refresh_token,
-					'email': email,
-					"first_name": first_name,
-					"last_name": last_name,
-					# "avatar_url": avatar_url,
-					# "display_name": shortuuid.uuid()[:6]
-				}
-			)
-			if created:  # If user already existed
-				print("user is new")
-    
-				user.avatar_url = avatar_url
-				user.display_name = shortuuid.uuid()[:6]
-				user.save()
-			refresh = RefreshToken.for_user(user)
-			return Response({
-				'tokens': {
-					'refresh': str(refresh),
-					'access': str(refresh.access_token),
-				}
-			})
-		except Exception as e:
-			print("User creation error:", str(e))
-			return Response(
-				{'detail': f'Failed to create user: {str(e)}'}, 
-				status=status.HTTP_500_INTERNAL_SERVER_ERROR
-			)
+			try:
+				user_response = requests.get(
+					settings.OAUTH2_SETTINGS['USER_INFO_URL'],
+					headers={'Authorization': f'Bearer {access_token}'}
+				)
+				user_response.raise_for_status()
+				user_info = user_response.json()
+			except Exception as e:
+				print("User info error:", str(e))
+				return Response(
+					{'detail': f'Failed to get user info: {str(e)}'}, 
+					status=status.HTTP_400_BAD_REQUEST
+				)
 
+			# Rest of your code...
+			provider_id = user_info.get('id')
+			username = user_info.get("login") + "@42"
+			email = user_info.get("email")
+			first_name = user_info.get("first_name")
+			last_name = user_info.get("last_name")
+			avatar_url = user_info.get("image", {}).get("link")
+
+			try:
+				user, created = User.objects.update_or_create(
+					provider_id=provider_id,
+					is_oauth_user=True,
+					defaults={
+						'username': username,
+						'access_token': access_token,
+						'refresh_token': refresh_token,
+						'email': email,
+						"first_name": first_name,
+						"last_name": last_name,
+						# "avatar_url": avatar_url,
+						# "display_name": shortuuid.uuid()[:6]
+					}
+				)
+				if created:  # If user already existed
+					print("user is new")
+		
+					user.avatar_url = avatar_url
+					user.display_name = shortuuid.uuid()[:6]
+					user.save()
+				refresh = RefreshToken.for_user(user)
+				return Response({
+					'tokens': {
+						'refresh': str(refresh),
+						'access': str(refresh.access_token),
+					}
+				})
+			except Exception as e:
+				print("User creation error:", str(e))
+				return Response(
+					{'detail': f'Failed to create user: {str(e)}'}, 
+					status=status.HTTP_400_BAD_REQUEST
+				)
+		except:
+			return Response({"detail": "exception error"}, status=status.HTTP_400_BAD_REQUEST)
 @csrf_exempt
 @swagger_auto_schema(method="GET", operation_description="Get OTP URI of Two Factor Authentication")
 @api_view(["GET"])
@@ -251,6 +256,7 @@ def setup_mfa(request):
 @api_view(["POST"])
 @login_required
 def verify_mfa_otp(request):
+    
 	user = get_object_or_404(User, username=request.user.username)
 	try:
 		otp = request.data["otp"]
@@ -264,7 +270,7 @@ def verify_mfa_otp(request):
 			return Response({"otp": "success"}, status.HTTP_202_ACCEPTED)
 		return (Response({"detail": "otp verify failed"}, status=status.HTTP_406_NOT_ACCEPTABLE))
 	except Exception as e:
-		return (Response({"detail": e}, 500))
+		return (Response({"detail": e}, status=status.HTTP_400_BAD_REQUEST))
 
 @swagger_auto_schema(method="POST", request_body=VerifyOtpSerializer, operation_description="enable Two Factor Authentication")
 @api_view(["POST"])
@@ -283,7 +289,7 @@ def enable_mfa_otp(request):
 			return Response({"otp": "success"}, status.HTTP_202_ACCEPTED)
 		return (Response({"detail": "otp verification failed"}, status=status.HTTP_406_NOT_ACCEPTABLE))
 	except Exception as e:
-		return (Response({"detail": e}, 500))
+		return (Response({"detail": e}, status=status.HTTP_400_BAD_REQUEST))
 
 
 @swagger_auto_schema(method="POST", request_body=VerifyOtpSerializer, operation_description="disable Two Factor Authentication")
@@ -303,7 +309,7 @@ def disable_mfa_otp(request):
 			return Response({"otp": "success"}, status.HTTP_202_ACCEPTED)
 		return (Response({"detail": "otp verification failed"}, status=status.HTTP_406_NOT_ACCEPTABLE))
 	except Exception as e:
-		return (Response({"detail": e}, 500))
+		return (Response({"detail": e}, status=status.HTTP_400_BAD_REQUEST))
 
 
 
