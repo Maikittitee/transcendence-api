@@ -65,7 +65,7 @@ class RegisterView(APIView):
 				
 			except Exception as e:
 				return Response({
-					"error": str(e)
+					"detail": str(e)
 				}, status=status.HTTP_400_BAD_REQUEST)
 		print("not valid")
 		return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)

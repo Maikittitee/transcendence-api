@@ -9,6 +9,8 @@ RUN mkdir -p /etc/nginx/ssl /usr/share/nginx/html
 # Copy SSL certificates
 COPY ./ssl/meaw.crt /etc/nginx/ssl/
 COPY ./ssl/meaw.key /etc/nginx/ssl/
+COPY ./ssl/pong.ktunchar.dev.crt /etc/nginx/ssl/
+COPY ./ssl/pong.ktunchar.dev.key /etc/nginx/ssl/
 
 # Copy nginx configuration
 COPY ./conf.d/default.conf /etc/nginx/conf.d/
