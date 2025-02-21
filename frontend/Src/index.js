@@ -16,6 +16,7 @@ import { PlayMenuPage }  from "./Component/Pages/PlayMenuPage/PlayMenuPage.js";
 import { EditProfilePage }  from "./Component/Pages/EditProfilePage/EditProfilePage.js";
 import { MatchMakingPage }  from "./Component/Pages/MatchMakingPage/MatchMakingPage.js";
 import { GamePlayPage }  from "./Component/Pages/GamePlayPage/GamePlayPage.js";
+import { LocalPlayPage }  from "./Component/Pages/LocalPlayPage/LocalPlayPage.js";
 
 export {        Component,
                 LoadingPage,
@@ -27,16 +28,23 @@ export {        Component,
                 PlayMenuPage,
                 MatchMakingPage,
                 GamePlayPage,
+                LocalPlayPage
 };
 
 // Popup
-import { Modal }  from "./Component/Popup/Modal/Modal.js";
+import { ErrorModal }  from "./Component/Popup/ErrorModal/ErrorModal.js";
+import { ConfirmModal }  from "./Component/Popup/ConfirmModal/ConfirmModal.js";
 import { Enable2FAModal }  from "./Component/Popup/Enable2FAModal/Enable2FAModal.js";
 import { AddFriendModal }  from "./Component/Popup/AddFriendModal/AddFriendModal.js";
 import { EditBioModal }  from "./Component/Popup/EditBioModal/EditBioModal.js";
 import { AcceptFriendModal }  from "./Component/Popup/AcceptFriendModal/AcceptFriendModal.js";
 
-export { Modal, Enable2FAModal, AddFriendModal, EditBioModal, AcceptFriendModal};
+export {    ErrorModal,
+            ConfirmModal,
+            Enable2FAModal,
+            AddFriendModal,
+            EditBioModal,
+            AcceptFriendModal};
 
 // Router and Route
 import { Router, Route } from "./Router/Router.js";

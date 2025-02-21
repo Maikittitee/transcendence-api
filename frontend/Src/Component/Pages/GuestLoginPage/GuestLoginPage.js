@@ -1,69 +1,86 @@
 import { Component } from "../../Component.js";
-import { setCookie } from "../../../../utils.js";
+import { setCookie, errorDisplay } from "../../../../utils.js";
 
 const name = "guest-login-page";
 
 const componentStyle = `
   .menu {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      color: rgb(0, 0, 0);
-      font-family: 'Itim', sans-serif;
-      text-align: center;
-      height: 80%;
-      width: 50%;
-  }
-
-  .frame {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: rgb(0, 0, 0);
+    font-family: 'Itim', sans-serif;
+    text-align: center;
     height: auto;
-    width: 60%;
+    width: 90%; /* Adjust width for smaller screens */
+    max-width: 500px; /* Prevent excessive stretching */
+}
+
+.frame {
+    width: 90%;
+    max-width: 400px; /* Limits the width on larger screens */
     border: #1e4950 3px solid;
-    border-radius: 30px;
-    background-color: rgba(146,220,253, 0.5);
-    padding: 35px;
+    border-radius: 20px;
+    background-color: rgba(146, 220, 253, 0.5);
+    padding: 20px; /* Reduce padding on smaller screens */
     overflow: hidden;
     display: flex;
     flex-direction: column;
-  }
+}
 
-  .frame div {
-      padding-bottom: 20px;
-  }
+.frame div {
+    padding-bottom: 15px;
+}
 
-  .frame h1 {
-      display: flex;
-      flex-direction: row;
-      align-self: start;
-      padding-bottom: 20px;
-      font-size: 50px;
-  }
+.frame h1 {
+    display: flex;
+    flex-direction: row;
+    align-self: start;
+    padding-bottom: 15px;
+    font-size: 2rem; /* Use rem for scalability */
+}
 
-  .frame button {
-      font-size: 30px;
-  }
+.frame button {
+    font-size: 1.5rem;
+    padding: 10px;
+    width: 100%;
+}
 
-  #backButton {
-      display: flex;
-  }
+#MeowPongTitle {
+    padding: 0;
+    margin: 0;
+    max-width: 100%; /* Prevents the image from overflowing */
+    height: auto;
+}
 
-  #MeowPongTitle{
-      padding: 0;
-      margin: 0;
-      width: max(100%, 300px);
-  }
+@media (max-width: 768px) {
+    .menu {
+        width: 95%;
+        height: auto;
+        padding: 10px;
+    }
 
-  #error-msg{
-      color: red;
-  }
+    .frame {
+        width: 100%;
+        padding: 15px;
+    }
+
+    .frame h1 {
+        font-size: 1.8rem;
+    }
+
+    .frame button {
+        font-size: 1.2rem;
+    }
+}
 `;
 
-export class GuestLoginPage extends Component { 
+export class GuestLoginPage extends Component {
   constructor() {
     super(componentStyle);
   }
@@ -74,9 +91,9 @@ export class GuestLoginPage extends Component {
 
       <div class = "menu">
         <img id = "MeowPongTitle" src=${meowTitleSrc}>
-    
+
         <div class = "container-sm frame">
-                
+
             <h1>LOGIN</h1>
 
             <div class="form-floating mb-3">
@@ -97,9 +114,11 @@ export class GuestLoginPage extends Component {
       </div>
 
       <enable-2fa-modal></enable-2fa-modal>
+      <error-modal></error-modal>
     `;
   }
   postCreate() {
+    sessionStorage.setItem('status', name);
     super.addComponentEventListener(this.querySelector(".btn-primary"),
     "click",
     this.login_as_guest);
@@ -116,16 +135,15 @@ export class GuestLoginPage extends Component {
 		password: password,
 	};
 
-  try 
+  try
   {
-    const res = await fetchData('auth/login/', requestBody, 'POST', false);
+    const res = await fetchData('/auth/login/', requestBody, 'POST', false);
     setCookie("access", 1, res.access);
     setCookie("refresh", 7, res.refresh);
-    window.Router.navigate('/game-menu-page/');
-  } 
-  catch (error) 
+    window.Router.redirect('/game-menu-page/');
+  }
+  catch (error)
   {
-    console.log(error);
     if(error.body.detail === '2FA token required')
     {
       const modal = this.querySelector('enable-2fa-modal');
@@ -133,7 +151,8 @@ export class GuestLoginPage extends Component {
     }
     else
     {
-      alert("error: " + error.body.detail);
+      const errModal = this.querySelector("error-modal");
+      errorDisplay(errModal, error);
     }
   }
 }

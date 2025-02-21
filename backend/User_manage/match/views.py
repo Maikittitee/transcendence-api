@@ -2,11 +2,12 @@ from rest_framework import generics, permissions
 from .models import Match
 from .serializers import MatchSerializer
 from .permissions import CanReadUpdateDeleteMatch  # Import the custom permission
+from Account.models import User
 
 class MatchListCreateView(generics.ListCreateAPIView):
     queryset = Match.objects.all()
     serializer_class = MatchSerializer
-    permission_classes = [permissions.IsAuthenticated]  # Authenticated users can create
+    permission_classes = [permissions.AllowAny]  # Authenticated users can create
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -30,7 +31,9 @@ class MatchHistoryView(generics.ListAPIView):
 
         # Ensure the user is authenticated
         if user.is_authenticated:
-            return Match.objects.filter(player1=user) | Match.objects.filter(player2=user)
+            all_matches = Match.objects.filter(player1=user) | Match.objects.filter(player2=user)
+            print(all_matches) 
+            return all_matches
         else:
             return Match.objects.none()
         

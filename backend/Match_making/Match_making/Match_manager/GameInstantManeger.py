@@ -3,6 +3,9 @@ import shortuuid
 import asyncio
 import json
 from .GameInstant import GameInstant, GameSettings
+from .utils import ApiManager
+from datetime import datetime
+import sys
 
 class GameManager:
 	def __init__(self):
@@ -60,7 +63,6 @@ class GameManager:
 
 			self.games[game_id].status = 'playing'
 			self.game_tasks[game_id] = asyncio.create_task(self.game_loop(game_id))
-			print("end bro")
 			return game_id
 		except asyncio.CancelledError:
 			print(f"Game loop {game_id} was cancelled.")
@@ -86,27 +88,66 @@ class GameManager:
 			game = self.games[game_id]
 			while game_id in self.games and (game.status == "playing" or game.status == "finished"):
 				game.update({},{})
-				print(f"hello: {game.status}")
 				if ( game.status != "finished"):
+					# print(f"hello1: {game.status}")
 					state_data = {
 						'type': "game_state",
 						'state': game.get_state()
 					}
 					await self.broadcast_state(game_id, state_data)
 				else :
-					print("hi1")
-					final_message = {
-						'type': 'game_over',
-						'winner': game.winner,
-						'final_score': {
-							'player1': game.left_paddle.score,
-							'player2': game.right_paddle.score
-						},
-						'game_id' : game_id
-					}
-					print("game ending")
-					await self.broadcast_state(game_id, final_message)
-					print("game ended")
+					try:
+						final_message = {
+							'type': 'game_over',
+							'winner': game.winner,
+							'final_score': {
+								'player1': game.left_paddle.score,
+								'player2': game.right_paddle.score
+							},
+							'game_id': game_id
+						}
+						print(f"game {game_id} is finish")
+						sys.stdout.flush()
+							
+						try:
+							players = self.get_players_by_game_id(game_id)
+							request_body = {
+								"player1_score": game.left_paddle.score ,
+								"player2_score": game.right_paddle.score,
+								"status": "COMPLETED",
+								"started_at": str(datetime.today()),
+								"completed_at": str(datetime.now()),
+								"max_score": max( game.left_paddle.score, game.right_paddle.score),
+								"game_duration": 5,
+								"player1": players[0],
+								"player2": players[1],
+								"winner": game.winner  
+							}
+							print("About to print request body")
+							sys.stdout.flush()
+							print("this is request body: ", request_body)
+							sys.stdout.flush()
+						except Exception as e:
+							print(f"Error creating request body: {e}")
+							sys.stdout.flush()
+
+						try:
+							print("About to broadcast final state")
+							sys.stdout.flush()
+							await self.broadcast_state(game_id, final_message)
+							print("Broadcast complete")
+							sys.stdout.flush()
+						except Exception as e:
+							print(f"Error broadcasting final state: {e}")
+							sys.stdout.flush()
+						try:
+							print("POST match request")
+							print(await ApiManager.post("https://nginx/api/matches/match/", data=request_body))
+						except Exception as e:
+							print(f"Error posting data: {e}")
+					except Exception as e:
+						print(f"Error in game finish block: {e}")
+						sys.stdout.flush()
 					break
 				await asyncio.sleep(1/60)
 	

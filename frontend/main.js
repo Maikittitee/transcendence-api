@@ -1,11 +1,41 @@
 import * as App from './Src/index.js';
-import {handle_42Redirect, fetchData} from './utils.js';
+import {pageLoadManager, fetchData, getCookie} from './utils.js';
 
-async function initApp() {
+async function setPageLoadIndex()
+{
+    sessionStorage.removeItem('pageLoadIndex');
+    let access_token = await getCookie("access");
+    if(access_token == null)
+    {
+        sessionStorage.setItem('pageLoadIndex', "home");
+        return ;
+    }
+
+    let oauthRedirectInProgress = sessionStorage.getItem('oauthRedirectInProgress');
+    if (oauthRedirectInProgress)
+    {
+        sessionStorage.removeItem('oauthRedirectInProgress');
+        sessionStorage.setItem('pageLoadIndex', "42_login");
+        return ;
+    }
+    else
+    {
+        try
+        {
+            await fetchData('/auth/users/me/');
+            sessionStorage.setItem('pageLoadIndex', "game");
+        }
+        catch (error) 
+        {
+            sessionStorage.setItem('pageLoadIndex', "home");
+        } 
+    }
+}
+
+async function setApp() {
     const Images = new App.Images();
     window.Images = Images;
     await window.Images.loadFiles();
-
     const APIs = new App.APIs(
         ["create-account"], 
         [new App.CreateAccountAPI()]
@@ -22,16 +52,12 @@ async function initApp() {
         new App.Route('/edit-profile-page/', 'edit-profile-page'),
         new App.Route('/match-making-page/', 'match-making-page'),
         new App.Route('/game-play-page/', 'game-play-page'),
+        new App.Route('/local-play-page/', 'local-play-page'),
         new App.Route('/loading/', 'loading-page'),
     ]);
     window.Router = Router; // make Router as a global object
-    let is_oauthRedirectInProgress = sessionStorage.getItem('oauthRedirectInProgress');
-    if (is_oauthRedirectInProgress == null)
-    {
-        console.log("is_oauthRedirectInProgress: " + is_oauthRedirectInProgress);
-        Router.init();
-    }
 }
 
-initApp();
-document.addEventListener('DOMContentLoaded', handle_42Redirect);
+await setApp();
+await setPageLoadIndex();
+pageLoadManager();

@@ -1,17 +1,18 @@
 import { Component } from "../../Component.js";
 
-const name = 'modal-component';
+const name = 'confirm-modal';
 
 const componentStyle = `
 
 `;
 
-export class Modal extends Component {
+export class ConfirmModal extends Component {
 
     #modal;
     #modalTitle;
     #modalBody;
     #modalFooter;
+    #bootstrapModal
     
     constructor() {
       super(componentStyle);
@@ -30,7 +31,8 @@ export class Modal extends Component {
                 Modal content goes here.
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                <button id="comfirm-button" type="button" class="btn btn-primary">Yes</button>
               </div>
             </div>
           </div>
@@ -44,16 +46,16 @@ export class Modal extends Component {
       this.#modalTitle = super.querySelector('.modal-title');
       this.#modalBody = super.querySelector('.modal-body');
       this.#modalFooter = super.querySelector('.modal-footer');
+      this.#bootstrapModal = new bootstrap.Modal(this.#modal);
     }
   
-    openModal(title = "Modal Title", message = "Modal content goes here.") {
-      this.#modalTitle.innerHTML = title;
-      this.#modalBody.innerHTML = message;
-  
-      const modal = new bootstrap.Modal(this.#modal);
-      modal.show();
+    openModal() {
+      this.#bootstrapModal.show();
     }
 
+    closeModal() {
+      this.#bootstrapModal.hide();
+    }
 
     // Method to set title style
     set_title_style(style) {
@@ -73,12 +75,32 @@ export class Modal extends Component {
       Object.assign(this.#modal.style, style);
     }
 
-    // Method to modify modal footer content
-    modify_footer(footerContent) {
-      // Set custom content for the footer
-      this.#modalFooter.innerHTML = footerContent;
+    set_title_content(content) {
+      setTimeout(() => {
+         this.#modalTitle.innerHTML = content;
+      }, 0);
+   }
+   
+   set_body_content(content) {
+      console.log("Setting body content:", content);
+      setTimeout(() => {
+         this.#modalBody.innerHTML = content;
+      }, 0);
+   }
+
+    set_footer_content(Content) {
+      this.#modalFooter.innerHTML = Content;
+    }
+
+    set_confirm_action(callback) {
+      const confirmButton = this.#modalFooter.querySelector("#comfirm-button");
+      if (confirmButton) {
+        setTimeout(() => {
+        confirmButton.onclick = callback;
+      }, 0);
+      }
     }
   }
   
   // Register Custom Element
-  customElements.define(name, Modal);
+  customElements.define(name, ConfirmModal);

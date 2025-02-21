@@ -144,7 +144,7 @@ export class Enable2FAModal extends Component {
           password: password.value,
           otp: otpValue,
         };
-        const res = await fetchData('auth/login/', requestBody, 'POST', false);
+        const res = await fetchData('/auth/login/', requestBody, 'POST', false);
         setCookie("access", 7, res.access);
         setCookie("refresh", 7, res.refresh);
         window.Router.navigate('/game-menu-page/');

@@ -1,4 +1,5 @@
 import { Component } from "../../Component.js";
+import { fetchData } from "../../../../utils.js";
 
 const name = "game-play-page";
 
@@ -247,11 +248,11 @@ export class GamePlayPage extends Component {
 				console.log("WebSocket closed with code:", event.code, "reason:", event.reason);
 			};
 
-            this.webSocketConnection.onmessage = (e) => {
+            this.webSocketConnection.onmessage = async (e) => {
                 let recieveData =  JSON.parse(e.data);
                 this.dataBox.innerHTML = e.data + "\nKey up : " + this.key.UP+ "\nKey Down : " + this.key.DOWN;
 
-				console.log("data: ", recieveData);
+				// console.log("data: ", recieveData);
                 if (recieveData.type === "player_disconnected") {
 					console.log("someone disconnected to the game....")
                     // this.cleanUpGame();
