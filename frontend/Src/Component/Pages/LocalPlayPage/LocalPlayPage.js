@@ -18,11 +18,15 @@ const componentStyle = `
 `;
 
 export class LocalPlayPage extends Component { 
+
+    togle;
+
   constructor() {
     super(componentStyle);
   }
 
   render() {
+    this.togle = 0;
     return ` 
     <div id='pong'>
         <canvas id="pong-game"></canvas>
@@ -194,8 +198,14 @@ export class LocalPlayPage extends Component {
         }
 
 		isOnGamePage() {
-
-			return window.location.pathname === this.gamePath;
+            if (window.location.pathname === this.gamePath) {
+                this.togle = 0;
+                return true;
+            } else if ('/local-tournament-page/' === window.location.pathname) {
+                this.togle = 1;
+                return true;
+            }
+			return false;
 		}
 
         incressGame_speed() {
@@ -251,18 +261,32 @@ export class LocalPlayPage extends Component {
         detectBallAndUpdateScore() {
             this.drawScoreBoard();
     
-            if (MATCH_DATA.opponentScore >= 10 || MATCH_DATA.playerScore >= 10) {
+            if (MATCH_DATA.opponentScore >= 2 || MATCH_DATA.playerScore >= 2) {
 				if (MATCH_DATA.opponentScore > MATCH_DATA.playerScore){
-					this.winner = MATCH_DATA.opponentScore
-					this.loser = MATCH_DATA.playerScore
+					this.winner =  { "player": "left" , "score": MATCH_DATA.opponentScore}
+					this.loser = { "player": "right" , "score": MATCH_DATA.playerScore}
 				} else {
-					this.winner = MATCH_DATA.playerScore
-					this.loser = MATCH_DATA.opponentScore
+					this.winner ={ "player": "right" , "score": MATCH_DATA.playerScore}
+					this.loser = { "player": "left" , "score": MATCH_DATA.opponentScore}
 				}
 				const result = {
 					"winner": this.winner,
-					"loser": this.winner
+					"loser": this.loser
 				}
+                if ('/local-tournament-page/' === window.location.pathname)
+                {
+                    const LocalTournamentPage = document.querySelector("local-tournament-page");
+                    localStorage.setItem(`result${LocalTournamentPage.count}`, JSON.stringify(result));
+                    LocalTournamentPage.renderMatchResult();
+                    if (LocalTournamentPage.count == 3)
+                    {
+                        localStorage.setItem("TournamentEnd", true);
+                        const gameStartButton = LocalTournamentPage.querySelector("#start-game-button");
+                        gameStartButton.classList.remove("btn-sucess");
+                        gameStartButton.classList.add("btn-danger");
+                        gameStartButton.textContent = "end tournament";
+                    }
+                }
 				// IMPLEMENT MORE IN HERE
 				console.log('result: ', result)
                 this.end();
@@ -324,7 +348,16 @@ export class LocalPlayPage extends Component {
             }
 			localStorage.removeItem('pongGameRunning');
             console.log("Game Over");
-            window.Router.redirect('/play-menu-page/');
+            if(this.togle == 0) {
+                window.Router.redirect('/play-menu-page/');
+            }
+            else {
+                const thisPage = document.querySelector(name);
+                const tournamentPage = document.querySelector('local-tournament-page');
+                tournamentPage.style.display = "block";
+                // localStorage.setItem('', );
+                thisPage.remove();
+            }
         }
 
     }
