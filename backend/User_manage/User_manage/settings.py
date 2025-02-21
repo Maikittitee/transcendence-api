@@ -29,8 +29,7 @@ DEBUG = config('DEBUG', default=True, cast=bool)
 # SECURITY WARNING: don't run with debug turned on in production!
 ALLOWED_HOSTS = ["*"]
 DEBUG = True
-
-
+CSRF_TRUSTED_ORIGINS = ['https://localhost']
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
