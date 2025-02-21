@@ -84,7 +84,7 @@ const componentStyle = `
       border-radius: 30px;
       padding: 15px;
   }
-  
+
   .menu-block{
       display: flex;
       align-items: center;
@@ -101,32 +101,30 @@ const componentStyle = `
       padding-bottom: 15%;
   }
 
-  #meow-pow{
-      display: flex;
-      justify-content: space-between;
-      height: 25%;
-      width: 90%;
-      padding-top: 10%;
-      padding-bottom: 10%;
+  #meow-pow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; /* Ensures proper alignment */
+    height: auto; /* Let it adjust based on content */
+    width: 90%;
+    padding: 5% 0; /* Reduce excessive padding */
+    flex-wrap: wrap; /* Allows elements to stack on small screens */
   }
 
-  #meow-pow-l{
-      height: 100%;
-      transform: rotate(90deg);
-  }
-
-  #meow-pow-r{
-      height: 100%;
-      transform: rotate(-90deg);
+  #meow-pow-l, #meow-pow-r {
+    height: auto;
+    max-height: 80px; /* Prevents excessive stretching */
+    max-width: 20%;
+    transform: rotate(90deg);
   }
 
   .play-button{
       height: 10%;
       width: 75%;
-      font-size: 24px;
       padding-top: 2.5%;
       margin-top: 2.5%;
       margin-bottom: 2.5%;
+      font-size: 1.5 rem
   }
 
     .mini-profile {
@@ -165,7 +163,7 @@ const componentStyle = `
     }
 
     .mini-profile-text {
-        font-size: 20px
+        font-size: 1 rem;
     }
 
     .dot {
@@ -233,7 +231,7 @@ const componentStyle = `
     }
 
     .history-block h1 {
-        font-size: 2.5em;
+        font-size: 2em;
         font-weight: bold;
         margin-top: 3%;
         margin-bottom: 3%;
@@ -247,7 +245,52 @@ const componentStyle = `
     justify-content: center;
     align-items: center;
     border-radius: 50%;
-    border: 10px solid palevioletred;    
+    border: 10px solid palevioletred;
+}
+
+@media (max-width: 768px) {
+    .flex-container {
+        flex-direction: column;
+        width: 95%;
+        height: auto;
+        padding: 2vw;
+    }
+
+    .profile-Block,
+    .history-block,
+    .menu-block {
+        width: 90%;
+        max-width: none;
+    }
+    .play-button{
+      height: 5%;
+      width: 60%;
+      font-size: 1 rem
+  }
+
+    #meow-pow {
+        flex-direction: column; /* Stack elements vertically */
+        align-items: center;
+        padding: 2% 0;
+    }
+
+    #meow-pow-l, #meow-pow-r {
+        max-height: 60px; /* Reduce size */
+        max-width: 40%; /* Prevent stretching */
+        transform: rotate(0deg); /* Remove rotation if needed */
+    }
+
+    #fight-meow{
+      font-size: 1.5 rem;
+  }
+}
+
+@media (max-width: 480px) {
+    #meow-pow-l, #meow-pow-r {
+        max-height: 50px;
+        max-width: 50%;
+        transform: none; /* Remove rotation for better layout */
+    }
 }
 `;
 
@@ -287,7 +330,7 @@ export class PlayMenuPage extends Component {
             </div>
             <div id = "profileLine"></div>
             <div id = "profileFriendTiTle">Friend list</div>
-            <ul id = "profileFriendContainer" class = "overflow-auto">   
+            <ul id = "profileFriendContainer" class = "overflow-auto">
             </ul>
         </div>
 
@@ -296,7 +339,7 @@ export class PlayMenuPage extends Component {
             <h1> Match History </h1>
             <ul id = "match-history-container" class = "container overflow-auto">
             </ul>
-            
+
         </div>
 
         <div class ="menu-block">
@@ -364,9 +407,9 @@ export class PlayMenuPage extends Component {
                     console.error('The response is not a valid image file.');
                     }
                 }
-            }            
+            }
             return friendsReqList;
-        } 
+        }
         catch (error)
         {
             const errModal = this.querySelector("error-modal");
@@ -394,9 +437,9 @@ export class PlayMenuPage extends Component {
                     console.error('The response is not a valid image file.');
                     }
                 }
-            }        
+            }
             return friendsList;
-        } 
+        }
         catch (error)
         {
             const errModal = this.querySelector("error-modal");
@@ -477,7 +520,7 @@ export class PlayMenuPage extends Component {
             }
             console.log('Final ret_history:', ret_history[0]);
             return ret_history;
-        } 
+        }
         catch (error)
         {
             const errModal = this.querySelector("error-modal");
@@ -487,18 +530,18 @@ export class PlayMenuPage extends Component {
 
     render_friend_req() {
         for (let i = 0; i < this.#friend_req_list.length; i++) {
-            if(this.#friend_req_list[i].status === "pending") 
+            if(this.#friend_req_list[i].status === "pending")
             {
                 const friend_req_data = this.#friend_req_list[i].from_user;
                 const friend_req_id = this.#friend_req_list[i].id;
                 let profile_img = friend_req_data.avatar_url || default_profile;
                 const req_id_tick = "req-id-" + friend_req_id + "-tick";
                 const req_id_cross = "req-id-" + friend_req_id + "-cross";
-        
+
                 const friend_req = `
                 <li class="container bg-light h-25 rounded d-flex align-items-center justify-content-between">
-                    <div class="mini-profile bg-secondary bg-gradient rounded-circle"> 
-                        <img id="profile-img" src=${profile_img}> 
+                    <div class="mini-profile bg-secondary bg-gradient rounded-circle">
+                        <img id="profile-img" src=${profile_img}>
                     </div>
                     <div class="d-flex flex-column justify-content-center align-items-start me-1">
                         <div class="mini-profile-text text-success mb-1"> Friend Request </div>
@@ -510,7 +553,7 @@ export class PlayMenuPage extends Component {
                 `;
                 const friend_list_container = this.querySelector("#profileFriendContainer");
                 friend_list_container.insertAdjacentHTML('beforeend', friend_req);
-        
+
                 // เพิ่ม Event Listener สำหรับ Tick แบะ Cross Icon
                 super.addComponentEventListener(this.querySelector(`#${req_id_tick}`),
                     "click",
@@ -537,25 +580,25 @@ export class PlayMenuPage extends Component {
 
             let completed_at = history_data.completed_at;
             let dateObj = new Date(completed_at);
-            
+
             // แปลงวันที่เป็น "DD/MM/YYYY"
             let day = String(dateObj.getUTCDate()).padStart(2, '0');
             let month = String(dateObj.getUTCMonth() + 1).padStart(2, '0'); // เดือนเริ่มจาก 0
             let year = dateObj.getUTCFullYear();
             let formattedDate = `${day}/${month}/${year}`;
-            
+
             // แปลงเวลาเป็น "HH:mm"
             let hours = String(dateObj.getUTCHours()).padStart(2, '0');
             let minutes = String(dateObj.getUTCMinutes()).padStart(2, '0');
             let formattedTime = `${hours}:${minutes}`;
-            
+
             // ใส่ค่าลงใน game_date
             let game_date = `
             <div id="match-date">
                 <div> ${formattedDate} </div>
                 <div> ${formattedTime} </div>
             </div>`;
-            
+
             let player2_img = history_data.player2_avatar_url;
 
             let match_history_card = `
@@ -563,7 +606,7 @@ export class PlayMenuPage extends Component {
                     ${game_result}
                     ${game_date}
                     <div id="profile-card" class="rounded">
-                        <div class = "profile-card-image bg-secondary bg-gradient rounded-circle m-1"> 
+                        <div class = "profile-card-image bg-secondary bg-gradient rounded-circle m-1">
                             <img src=${player2_img}>
                         </div>
                         <div id="profile-name" class = "m-1">
@@ -598,10 +641,10 @@ export class PlayMenuPage extends Component {
             }
             const friend_req = `
             <li class = "container bg-light h-25 rounded d-flex align-items-center justify-content-between">
-                <div class = "mini-profile bg-secondary bg-gradient rounded-circle"> 
-                    <img src=${profile_img}> 
+                <div class = "mini-profile bg-secondary bg-gradient rounded-circle">
+                    <img src=${profile_img}>
                 </div>
-                <div class = "d-flex flex-column justify-content-center align-items-start"> 
+                <div class = "d-flex flex-column justify-content-center align-items-start">
                     <div class="mini-profile-text mb-1"> ${friend_data.display_name} </div>
                     ${online_status}
                 </div>
@@ -628,10 +671,10 @@ export class PlayMenuPage extends Component {
         const modal_img = accept_friend_modal.querySelector("#friend-img");
         const modal_title = accept_friend_modal.querySelector("#title");
         const yes_button = accept_friend_modal.querySelector("#yes");
-    
+
         // อัปเดตข้อมูลใน Modal
         modal_img.src = avatar_url || window.Images.getFile("1.png");
-    
+
         if (action === "accept") {
             modal_title.textContent = `Are you sure you want to accept ${display_name} as your friend?`;
             modal_title.style.color = "black";
@@ -642,11 +685,11 @@ export class PlayMenuPage extends Component {
             modal_title.textContent = `Are you sure you want to remove ${display_name} from your friends list?`;
             modal_title.style.color = "red";
         }
-    
+
         // ลบ Event Listener เดิม (ถ้ามี)
         yes_button.replaceWith(yes_button.cloneNode(true));
         const new_yes_button = accept_friend_modal.querySelector("#yes");
-    
+
         // เพิ่ม Event Listener ใหม่
         if (action === "accept") {
             super.addComponentEventListener(new_yes_button, "click", () => this.handle_friend_action('accept', req_id));
@@ -655,7 +698,7 @@ export class PlayMenuPage extends Component {
         } else if (action === "remove") {
             super.addComponentEventListener(new_yes_button, "click", () => this.handle_friend_action('remove', req_id));
         }
-    
+
         // เปิด Modal
         accept_friend_modal.openModal();
     }
@@ -672,17 +715,17 @@ export class PlayMenuPage extends Component {
             } else {
                 throw new Error("Invalid action");
             }
-    
+
             console.log("endpoint: " + endpoint);
             const res = await fetchData(endpoint, null, 'POST');
             console.log(`Friend request ${action}ed:`, res);
-    
+
             // ปิด Modal ถ้ามีการยืนยัน
             const accept_friend_modal = this.querySelector("accept-friend-modal");
             if (accept_friend_modal) {
                 accept_friend_modal.closeModal();
             }
-    
+
             // อัปเดตรายการเพื่อนและคำขอเพื่อน
             const friend_list = this.querySelector('#profileFriendContainer');
             this.#friend_req_list = await this.get_friend_req_list();
@@ -690,9 +733,9 @@ export class PlayMenuPage extends Component {
             friend_list.innerHTML = "";
             this.render_friend_req();
             this.render_friend();
-    
-        } 
-        catch (error) 
+
+        }
+        catch (error)
         {
             const errModal = this.querySelector("error-modal");
             errorDisplay(errModal, error);

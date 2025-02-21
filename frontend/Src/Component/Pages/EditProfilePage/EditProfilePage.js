@@ -6,57 +6,61 @@ const name = "edit-profile-page";
 const componentStyle = `
 
 .flex-container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display:  flex;
+    display: flex;
     flex-direction: column;
     align-items: center;
     width: 90%;
-    height: 90%;
+    height: auto; /* Let the height adjust based on content */
+    padding: 5vw 0; /* Add some padding for spacing */
+    margin: 0 auto;
 }
 
-#MeowPongTitle{
-    width: 50%;
+#MeowPongTitle {
+    width: 60%;
     height: auto;
+    max-width: 500px; /* Prevents the title from becoming too large on big screens */
+    margin-bottom: 3vh;
 }
 
 .sub-container {
-    display:  flex;
+    display: flex;
     justify-content: space-between;
     align-items: center;
     width: 90%;
-    height: 75%;
+    height: auto; /* Adjusts height according to content */
     background-color: rgba(162, 162, 162, 0.8);
     border-radius: 30px;
-    padding: 30px;
+    padding: 5vw;
+    flex-wrap: wrap; /* Ensures content stays in line on small screens */
 }
 
 .profile-Block {
-    max-width: 25%;
-    height: 100%;
-    display:  flex;
+    max-width: 100%;
+    width: 30%; /* Default width for larger screens */
+    height: auto;
+    display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-around;
-    color: rgb(0, 0, 0);
-    font-size: 35px;
+    font-size: 1.5rem;
     background: rgba(255, 255, 255, 0.5);
     border-radius: 30px;
+    padding: 2vw;
 }
 
 .profile-Block ul {
     width: 80%;
+    padding: 0;
+    margin: 0;
 }
 
 .profile-Block ul li {
-    width : 100%;
-    display:  flex;
+    width: 100%;
+    display: flex;
     justify-content: space-between;
     text-align: center;
-    font-size: 25px;
-    margin-bottom: 15px;
+    font-size: 1.5rem; /* Scalable font size */
+    margin-bottom: 2vh;
 }
 
 .profile-Block ul li div {
@@ -69,95 +73,164 @@ const componentStyle = `
 }
 
 #profileName {
-    padding: 10px 20px 10px 20px;
+    padding: 1rem 2rem;
     background-color: rgb(94, 190, 158);
     border-radius: 10px;
     color: aliceblue;
+    font-size: 1.5rem;
 }
 
 #inputBox {
-	width: 80%;
-	height: auto;
-	display: flex;
-	flex-direction: column;
+    width: 80%;
+    height: auto;
+    display: flex;
+    flex-direction: column;
 }
 
 #inputBox > label {
-    font-size: 30px;
-    margin: 10px;
+    font-size: 1.5rem;
+    margin: 1vw;
 }
 
 #inputBox > div {
     display: flex;
+    justify-content: space-between;
 }
 
 #fill-display-name {
-    background-color:  white;
-    width: 400px;
+    background-color: white;
+    width: 100%;
+    max-width: 500px;
     border: 3px solid #000;
     border-radius: 10px;
-    font-size: 30px;
-    margin-right: 30px;
+    font-size: 1.5rem;
+    margin-right: 2vw;
+    justify-content: space-between;
+
 }
 
 .profileconfig-Block {
-    display: flex;
+    width: 100%;
     max-width: 40%;
-    flex-direction: column;
-    justify-content: space-around;
-    height: 100%;
+    height: auto;
     background: rgba(255, 255, 255, 0.5);
     border-radius: 30px;
-    padding: 25px;
+    padding: 2vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
 }
 
 .profileconfig-Block > button {
-    width: 300px;
+    width: 100%;
+    max-width: 300px;
+    font-size: 1.0rem;
 }
 
 .bio-Block {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
-    width: 30%;
-    height: 100%;
+    margin-bottom: 0;
+    width: 100%;
+    max-width: 30%;
+    max-height: 100%
     background: rgb(255, 255, 255);
     border-radius: 30px;
-    padding: 25px;
+    padding: 2vw;
 }
 
 .bio-Block h1 {
-    font-size: 30px;
+    font-size: 1.5rem;
 }
 
 #bio-content {
-    background: rgb(255, 255, 255);
     border-radius: 30px;
-    padding: 10px;
-    height: 100%;
+    padding: 1vw;
+    height: auto;
     overflow-y: auto;
-    overflow-x: hidden;
     word-wrap: break-word;
-    word-break: break-word;
-    overflow-wrap: break-word;
-    white-space: normal;
 }
 
 .profileFrame {
     width: 60%;
+    max-width: 300px;
     aspect-ratio: 1 / 1;
     overflow: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
     border-radius: 50%;
-    border: 10px solid palevioletred;    
+    border: 10px solid palevioletred;
 }
-    
+
+@media (max-width: 768px) {
+    .flex-container {
+        width: 90%;
+        margin-top: 10vh;
+    }
+
+    .sub-container {
+        flex-direction: column; /* Stack subcontainers vertically on small screens */
+        padding: 5vw;
+    }
+
+    .profile-Block, .profileconfig-Block {
+        width: 80%; /* Adjust width for tablets */
+        hight: 80%;
+        max-width: none;
+        margin-bottom: 1vh; /* Add spacing */
+        font-size: 1rem;
+    }
+
+    #MeowPongTitle {
+        width: 80%;
+        margin-bottom: 5vh;
+    }
+
+    #fill-display-name {
+        width: 100%; /* Make input fields take up full width */
+        margin-right: 0;
+    }
+
+    .bio-Block {
+        max-width: 80%;
+    }
+
+    .profileconfig-Block > button {
+    margin-bottom: 5vh;
+    max-width: 80%;
+   }
+}
+
+@media (max-width: 480px) {
+    .flex-container {
+        width: 95%;
+    }
+
+    .sub-container {
+        flex-direction: column;
+    }
+
+    .profile-Block, .profileconfig-Block {
+        width: 100%; /* Full width for small screens */
+    }
+
+    .bio-Block {
+        max-width: 100%;
+    }
+
+    .profileFrame {
+        width: 70%;
+        max-width: 200px;
+    }
+}
+
+
 `;
 
 
-export class EditProfilePage extends Component { 
+export class EditProfilePage extends Component {
     constructor() {
     super(componentStyle);
     }
@@ -165,11 +238,11 @@ export class EditProfilePage extends Component {
     render() {
         const meowTitleSrc = window.Images.getFile("MeowPongTitle.png");
         const profile_img = sessionStorage.getItem('profile_img');
-    
+
         return `
             <div class="flex-container">
                 <img id="MeowPongTitle" src="${meowTitleSrc}">
-        
+
                 <div class="sub-container">
                     <div class="profile-Block">
                         <img id="profileImage" class="profileFrame" src="${profile_img}">
@@ -195,9 +268,9 @@ export class EditProfilePage extends Component {
                                 <button id="save-display-name-button" class="btn btn-primary btn-lg">save</button>
                             </div>
                         </div>
-        
+
                         <button id = "button_2fa"></button>
-        
+
                         <div id="inputBox">
                             <label for="profileImageUpload">Upload your profile picture</label>
                             <div class = "d-flex justify-content-center align-items-center">
@@ -205,12 +278,12 @@ export class EditProfilePage extends Component {
                                 <button id="uploadProfilePictureButton" class="btn btn-primary btn-lg">Upload</button>
                             </div>
                         </div>
-        
+
                         <button id="edit-bio-button" class="btn btn-success btn-lg">Edit Bio</button>
                     </div>
                 </div>
             </div>
-        
+
             <enable-2fa-modal></enable-2fa-modal>
             <edit-bio-modal></edit-bio-modal>
             <error-modal></error-modal>
@@ -246,7 +319,7 @@ export class EditProfilePage extends Component {
         super.addComponentEventListener(this.querySelector("#uploadProfilePictureButton"),
                                         "click",
                                         this.uploadProfilePicture);
-            
+
         const win = this.querySelector("#win-stat");
         const loss = this.querySelector("#loss-stat");
         const draw = this.querySelector("#draw-stat");
@@ -268,7 +341,7 @@ export class EditProfilePage extends Component {
     }
 
     async save_display_name()
-    { 
+    {
         try
         {
             const new_name = this.querySelector("#fill-display-name").value;;
@@ -279,7 +352,7 @@ export class EditProfilePage extends Component {
             console.log("after update")
             const display_name = sessionStorage.getItem('display_name').replace(/\"/g, '');
             profileName.textContent = display_name;
-        } 
+        }
         catch (error)
         {
             const errModal = this.querySelector("error-modal");
@@ -287,14 +360,14 @@ export class EditProfilePage extends Component {
         }
     }
 
-    async handle_2FA() 
+    async handle_2FA()
     {
         try
         {
             const res = await fetchData('/auth/2fa/qr/', null);
             console.log(res.otp_uri);
             setCookie("qr-link", 1, res.otp_uri);
-        } 
+        }
         catch (error)
         {
             const errModal = this.querySelector("error-modal");
@@ -311,13 +384,13 @@ export class EditProfilePage extends Component {
                 alert("Please select a file to upload.");
                 return;
             }
-    
+
             const file = fileInput.files[0];
             const formData = new FormData();
             formData.append("avatar", file);
             await fetchData('/auth/avatar/', formData, 'PUT', true, {});
             updateUserData();
-    
+
             // อัปเดตรูปภาพใหม่ในหน้าโปรไฟล์
             const profileImage = this.querySelector("#profileImage");
             profileImage.src = URL.createObjectURL(file);

@@ -6,24 +6,22 @@ const name = "register-page";
 const componentStyle = `
 
     .menu {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: flex-start;
-        color: rgb(0, 0, 0);
-        font-family: 'Itim', sans-serif;
-        text-align: center;
-        height: 80%;
-        width: 50%;
-    }
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    color: rgb(0, 0, 0);
+    font-family: 'Itim', sans-serif;
+    text-align: center;
+    height: auto; /* Let the height adjust based on content */
+    width: 80%; /* Use a percentage of the screen width */
+    max-width: 600px; /* Prevents it from being too wide */
+    margin: 10vh auto; /* Centers the menu */
+   }
 
     .menu ul {
         list-style: none;
-        padding-top: min(25%, 50px);
+        padding-top: 5vh; /* Adjusted for better spacing */
         margin: 0;
         width: 100%;
         display: flex;
@@ -48,39 +46,60 @@ const componentStyle = `
     #MeowPongTitle{
         padding: 0;
         margin: 0;
-        width: max(100%, 300px);
+        width: 100%; /* Ensures it scales with the screen */
+        max-width: 300px; /* Keeps a max width */
+        text-align: center; /* Centers the title */
     }
-        .frame {
+
+    .frame {
         height: auto;
-        width: 60%;
+        width: 80%; /* Scales width based on the screen size */
+        max-width: 600px; /* Prevents it from getting too wide */
         border: #1e4950 3px solid;
         border-radius: 30px;
-        background-color: rgba(146,220,253, 0.5);
-        padding: 40px;
+        background-color: rgba(146, 220, 253, 0.5);
+        padding: 5vw; /* Scales padding based on viewport width */
         overflow: hidden;
         display: flex;
         flex-direction: column;
-        }
+      }
+
+      .frame h1 {
+    display: flex;
+    flex-direction: row;
+    align-self: start;
+    padding-bottom: 15px;
+    font-size: 4vw; /* Scalable font size */
+    }
+
+
+      .frame button {
+      font-size: 2rem; /* Scales based on font size */
+    }
+
+      @media (max-width: 768px) {
+        .menu {
+        width: 90%; /* Ensure it takes up more space on smaller screens */
+      }
 
         .frame h1 {
-        display: flex;
-        flex-direction: row;
-        align-self: start;
-        padding-bottom: 15px;
-        font-size: 45px;
-        }
+            font-size: 5vw; /* Slightly larger for smaller screens */
+      }
 
         .frame button {
-        font-size: 30px;
-        }
-
+           font-size: 1.5rem; /* Slightly smaller on smaller screens */
+      }
+    }
         #backButton {
         display: flex;
+        justify-content: center; /* Center the button */
+        align-items: center;
+        width: 100%;
         }
 
 `;
 
-export class RegisterPage extends Component { 
+export class RegisterPage extends Component {
   constructor() {
     super(componentStyle);
   }
@@ -88,10 +107,10 @@ export class RegisterPage extends Component {
   render() {
     const meowTitleSrc = window.Images.getFile("MeowPongTitle.png");
     return `
-    
+
         <div class="menu">
             <img id="MeowPongTitle" src=${meowTitleSrc} alt="MeowPong Title">
-            
+
             <div class="container-sm frame">
             <h1>REGISTER</h1>
 
@@ -134,14 +153,14 @@ export class RegisterPage extends Component {
     const email = this.querySelector("#emailInput").value;
     const password = this.querySelector("#passwordInput").value;
     const confirm_password = this.querySelector("#confirmPasswordInput").value;
-  
+
     const requestBody = {
       username: username,
       email: email,
       password: password,
       confirm_password: confirm_password,
     };
-  
+
     try {
         const res = await fetchData('/auth/register/', requestBody, 'POST', false);
         const errModal = this.querySelector("error-modal");

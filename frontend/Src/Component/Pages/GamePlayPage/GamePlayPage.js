@@ -30,13 +30,13 @@ const componentStyle = `
     }
 `;
 
-export class GamePlayPage extends Component { 
+export class GamePlayPage extends Component {
   constructor() {
     super(componentStyle);
   }
 
   render() {
-    return ` 
+    return `
     <div id='pong'>
         <canvas id="pong-game"></canvas>
     </div>
@@ -54,18 +54,21 @@ export class GamePlayPage extends Component {
         let Drawratio = value * Math.min(widthRatio, heightRatio);
         return Drawratio;
     }
-    
+
     function resizeCanvas(element) {
         console.log(`element width : ${element.width} element height : ${element.height}`);
+
+
+
         let container = element.parentElement;
         let targetAspectRatio = 800 / 400;
-        
+
         let containerWidth = container.clientWidth;
         let containerHeight = container.clientHeight;
         let containerRatio = containerWidth / containerHeight;
-        
+
         let newWidth, newHeight;
-        
+
         if (containerRatio > targetAspectRatio) {
             newHeight = containerHeight;
             newWidth = newHeight * targetAspectRatio;
@@ -73,14 +76,14 @@ export class GamePlayPage extends Component {
             newWidth = containerWidth;
             newHeight = newWidth / targetAspectRatio;
         }
-        
+
         element.width = newWidth;
         element.height = newHeight;
-        
+
         element.style.width = `${newWidth}px`;
         element.style.height = `${newHeight}px`;
     }
-    
+
     class CircleObject
     {
         constructor(canvas, x, y, radius, color, image)
@@ -99,7 +102,7 @@ export class GamePlayPage extends Component {
             }
             this.animationFrame = null;
         }
-    
+
         draw()
         {
             let radToDraw = scaleValue(this.canvas, this.radius);
@@ -114,7 +117,7 @@ export class GamePlayPage extends Component {
             this.ctx.stroke();
         }
     }
-    
+
     class PongGame
     {
         constructor(ParentElement ,elementName)
@@ -154,34 +157,34 @@ export class GamePlayPage extends Component {
             }
             this.parentElement.appendChild(button);
         }
-    
+
         init()
         {
             this.setUpWebsocket();
             resizeCanvas(this.canvas);
             this.putbutton();
         }
-    
+
         initGameAssets()
         {
             var playerPicUrl = window.Images.getFile("player.png");
             var opponentPicUrl = window.Images.getFile("opponent.png");
             var ballPicUrl = window.Images.getFile("ball.png");
             this.leftPaddle = new CircleObject(this.canvas,
-                50, 
-                this.canvas.height / 2, 
+                50,
+                this.canvas.height / 2,
                 this.settingData.paddleRadius, "red",
                 playerPicUrl
             );
             this.rightPaddle = new CircleObject(this.canvas,
-                this.canvas.width - 50, 
-                this.canvas.height / 2, 
+                this.canvas.width - 50,
+                this.canvas.height / 2,
                 this.settingData.paddleRadius, "blue",
                 opponentPicUrl
             );
-            this.ball = new CircleObject(this.canvas, 
-                this.canvas.width / 2, 
-                this.canvas.height / 2, 
+            this.ball = new CircleObject(this.canvas,
+                this.canvas.width / 2,
+                this.canvas.height / 2,
                 this.settingData.ballRadius, "green",
                 ballPicUrl
             );
@@ -213,7 +216,7 @@ export class GamePlayPage extends Component {
                 this.ball.draw();
             }
         }
-    
+
         cleanUpGame()
         {
             this.webSocketConnection.onmessage = function() {}
@@ -241,11 +244,11 @@ export class GamePlayPage extends Component {
 			this.webSocketConnection.onerror = (error) => {
 				console.error("WebSocket Error:", error);
 			};
-			
+
 			this.webSocketConnection.onclose = (event) => {
 				console.log("WebSocket closed with code:", event.code, "reason:", event.reason);
 			};
-    
+
             this.webSocketConnection.onmessage = async (e) => {
                 let recieveData =  JSON.parse(e.data);
                 this.dataBox.innerHTML = e.data + "\nKey up : " + this.key.UP+ "\nKey Down : " + this.key.DOWN;
@@ -268,7 +271,7 @@ export class GamePlayPage extends Component {
                 }
                 if (recieveData.type === "waiting") {
                 }
-    
+
                 if (recieveData.type === "game_start") {
                     this.webSocketConnection.send(JSON.stringify({
                         "type": "game_start",
@@ -278,7 +281,7 @@ export class GamePlayPage extends Component {
                 if (recieveData.type === "game_state") {
                     this.game_id = recieveData.game_id;
                     this.currentState = recieveData.state;
-    
+
                 }
 				if (recieveData.type === "game_over"){
 					console.log("game over krabb")
@@ -289,9 +292,8 @@ export class GamePlayPage extends Component {
 					})
 
 					console.log("user data: " ,user_data)
-					
+
 					// update stat here
-                    let winLossModal = document.querySelector("win-loss-modal");
 					if (recieveData.winner == user_data.id){
 
 						console.log("You win: saving record...")
@@ -301,10 +303,7 @@ export class GamePlayPage extends Component {
 							"Content-Type": "application/json",
 							"Authorization": `Bearer ${accessToken}`
 						})
-                        winLossModal.set_display(recieveData.final_score.player1, recieveData.final_score.player2, 'WIN');
 						console.log("patch response: ", response)
-                        winLossModal.openModal();
-                        window.Router.navigate('/play-menu-page/')
 					} else {
 						console.log("You Loss: saving record...")
 						const response = await fetchData('/auth/users/me/', {
@@ -313,24 +312,24 @@ export class GamePlayPage extends Component {
 							"Content-Type": "application/json",
 							"Authorization": `Bearer ${accessToken}`
 						})
-                        winLossModal.set_display(recieveData.final_score.player1, recieveData.final_score.player2, 'LOSS');
 						console.log("patch response: ", response)
-                        winLossModal.openModal();
-                        window.Router.navigate('/play-menu-page/')
 					}
+
+
+					// should display ended of game or just redirect it
 				}
             }
         }
-    
-    
+
+
         eventListener()
         {
             document.addEventListener('keydown', (e) => {
-                if (e.key === "ArrowUp" || e.key === "ArrowDown") 
+                if (e.key === "ArrowUp" || e.key === "ArrowDown")
                 {
                     e.preventDefault();
                 }
-    
+
                 if(e.key === "ArrowUp")
                 {
                     this.key.UP = true;
@@ -344,13 +343,13 @@ export class GamePlayPage extends Component {
             document.addEventListener('popstate', () => {
                 this.webSocketConnection.close();
             });
-    
+
             document.addEventListener('keyup', (e) => {
-                if (e.key === "ArrowUp" || e.key === "ArrowDown") 
+                if (e.key === "ArrowUp" || e.key === "ArrowDown")
                 {
                     e.preventDefault();
                 }
-    
+
                 if(e.key === "ArrowUp")
                 {
                     this.key.UP = false;
@@ -361,7 +360,7 @@ export class GamePlayPage extends Component {
                 }
             });
         }
-    
+
         run()
         {
             this.eventListener();
@@ -374,7 +373,7 @@ export class GamePlayPage extends Component {
             this.animationFrame = requestAnimationFrame(this.run.bind(this));
         }
     }
-    
+
     let pongGame = new PongGame('pong','pong-game');
     window.addEventListener('resize', () => {
         resizeCanvas(pongGame.canvas);

@@ -5,50 +5,67 @@ const name = "game-menu-page";
 
 const componentStyle = `
 .flex-container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display:  flex;
+    display: flex;
+    flex-wrap: wrap; /* Allows items to wrap on smaller screens */
     justify-content: space-between;
+    align-items: center;
     width: 85%;
     height: auto;
+    margin: auto; /* Centers content */
+    position: relative; /* Removes absolute positioning */
 }
 
+// .menu ul li {
+//     margin-bottom: 5vh;
+//     text-decoration: none;
+//     color: rgb(0, 0, 0);
+//     font-size: max(4vw, 25px);
+//     transition: color 0.3s;
+//     cursor: pointer;
+//     user-select: none;
+// }
 .menu ul li {
-    margin-bottom: 5vh;
-    text-decoration: none;
-    color: rgb(0, 0, 0);
-    font-size: max(4vw, 25px);
-    transition: color 0.3s;
-    cursor: pointer;
-    user-select: none;
+    margin-bottom: 3vh;
+    font-size: clamp(18px, 4vw, 25px); /* Scales between 18px and 25px */
 }
 
 .menu ul li:hover {
     color: #FFD700;
 }
 
+// .list-Block {
+//     max-width: 65%;
+//     height: 100%;
+//     display:  flex;
+//     flex-direction: column;
+//     align-items: center;
+//     justify-content: center;
+//     list-style: none;
+// }
 .list-Block {
-    max-width: 65%;
-    height: 100%;
-    display:  flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    list-style: none;
-}
-
-.list-Block ul {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-around;
+    max-width: 100%;
     width: 65%;
     height: auto;
-    border-radius: 30px;
-    background: rgba(255, 255, 255, 0.5);
-    list-style-type: none;
+}
+.list-Block ul {
+    width: 100%;
+}
+// .list-Block ul {
+//     display: flex;
+//     flex-direction: column;
+//     align-items: center;
+//     justify-content: space-around;
+//     width: 65%;
+//     height: auto;
+//     border-radius: 30px;
+//     background: rgba(255, 255, 255, 0.5);
+//     list-style-type: none;
+// }
+
+.profile-Block {
+    width: 25%;
+    height: auto;
+    max-width: 100%;
 }
 
 .list-Block ul li {
@@ -67,8 +84,9 @@ const componentStyle = `
 }
 
 .profile-Block {
-    max-width: 25%;
+    width: 25%;
     height: auto;
+    max-width: 100%;
     display:  flex;
     flex-direction: column;
     align-items: center;
@@ -78,6 +96,7 @@ const componentStyle = `
     background: rgba(255, 255, 255, 0.5);
     border-radius: 30px;
 }
+
 .profile-Block ul {
     width: 80%;
 }
@@ -103,7 +122,7 @@ const componentStyle = `
     justify-content: center;
     align-items: center;
     border-radius: 50%;
-    border: 10px solid palevioletred;    
+    border: 10px solid palevioletred;
 }
 
 #profileImage {
@@ -175,10 +194,37 @@ loading-page {
     align-items: center;
     z-index: 9999; /* ให้แสดงเหนือทุกๆ หน้า */
 }
+@media (max-width: 768px) {
+    .flex-container {
+        width: 100%;
+    }
+
+    .menu ul li {
+        font-size: clamp(16px, 4vw, 22px);
+    }
+
+    .profile-Block {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .list-Block {
+        width: 100%;
+    }
+
+    .profile-Block {
+        width: 100%;
+    }
+
+    #profileName {
+        font-size: 1rem;
+    }
+}
 
 `;
 
-export class GameMenuPage extends Component { 
+export class GameMenuPage extends Component {
   constructor() {
     super(componentStyle);
   }
@@ -210,7 +256,7 @@ export class GameMenuPage extends Component {
             </ul>
         </div>
     </div>
-    
+
     <loading-page></loading-page>
     <confirm-modal></confirm-modal>
     `;
@@ -241,7 +287,7 @@ export class GameMenuPage extends Component {
     const total_match = this.querySelector("#total-game-stat");
     const profile_name = this.querySelector("#profileName");
     const profileImage = this.querySelector("#profileImage");
-    
+
     win.textContent = getValueFromSession("win");
     loss.textContent = getValueFromSession("loss");
     draw.textContent = getValueFromSession("draw");

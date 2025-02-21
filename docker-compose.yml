@@ -56,12 +56,12 @@ services:
       restart: always
       environment:
         - POSTGRES_HOST=postgres
-        - POSTGRES_DB=db1  
+        - POSTGRES_DB=db1
         - POSTGRES_USER=root
         - POSTGRES_PASSWORD=root
-      ports: 
+      ports:
           - "5432:5432"
-      volumes: 
+      volumes:
           - ./docker_postgres_init.sql:/docker-entrypoint-initdb.d/docker_postgres_init.sql
       networks:
         - database_network
@@ -74,12 +74,12 @@ services:
 
   pgadmin-compose:
       image: dpage/pgadmin4
-      environment: 
+      environment:
           PGADMIN_DEFAULT_EMAIL: "admin@gmail.com"
           PGADMIN_DEFAULT_PASSWORD: "admin"
-      ports: 
+      ports:
           - "16543:80"
-      depends_on: 
+      depends_on:
           - postgres
       networks:
         - database_network
