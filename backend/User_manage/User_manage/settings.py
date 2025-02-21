@@ -32,7 +32,7 @@ CSRF_TRUSTED_ORIGINS = ['https://localhost']
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'rest_framework.authentication.TokenAuthentication', #for test
+        # 'rest_framework.authentication.TokenAuthentication', #for test
     ],
 }
 
@@ -66,7 +66,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-	# "Account.middleware.UserActivityMiddleware",
+	"Account.middleware.UserActivityMiddleware",
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
@@ -102,13 +102,17 @@ WSGI_APPLICATION = "User_manage.wsgi.application"
 
 
 DATABASES = {
+    # "default": {
+    #     "ENGINE": "django.db.backends.postgresql",
+    #     "NAME": config("DB_NAME"),
+    #     "USER": config("DB_USER"),
+    #     "PASSWORD": config("DB_PASSWORD"),
+    #     "HOST": "postgres",
+    #     "PORT": "5432"
+    # },
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": config("DB_NAME"),
-        "USER": config("DB_USER"),
-        "PASSWORD": config("DB_PASSWORD"),
-        "HOST": "postgres",
-        "PORT": "5432"
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
 
