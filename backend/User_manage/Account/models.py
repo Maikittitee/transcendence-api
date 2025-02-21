@@ -97,7 +97,7 @@ class User(AbstractUser):
 	# profile
 	avatar = models.FileField(upload_to="upload/", null=True, blank=True)
 	avatar_url = models.URLField(null=True)
-	bio = models.CharField(default="Hello Everyone, Nice to meet you guy!", blank="", max_length=1000)
+	bio = models.CharField(default="Hello Everyone, Nice to meet you guy!", blank=True, max_length=1000)
 	win = models.IntegerField(default=0)
 	loss = models.IntegerField(default=0)
 	draw = models.IntegerField(default=0)

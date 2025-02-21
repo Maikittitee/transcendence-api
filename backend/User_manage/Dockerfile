@@ -16,6 +16,6 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY User_manage .
-COPY ../.env .
+# COPY ../.env .
 
 CMD ["python3", "manage.py", "runserver", "0.0.0.0:9000"]

@@ -198,10 +198,16 @@ class OauthView(APIView):
 					'email': email,
 					"first_name": first_name,
 					"last_name": last_name,
-					"avatar_url": avatar_url,
-					"display_name": shortuuid.uuid()[:6]
+					# "avatar_url": avatar_url,
+					# "display_name": shortuuid.uuid()[:6]
 				}
 			)
+			if created:  # If user already existed
+				print("user is new")
+    
+				user.avatar_url = avatar_url
+				user.display_name = shortuuid.uuid()[:6]
+				user.save()
 			refresh = RefreshToken.for_user(user)
 			return Response({
 				'tokens': {
