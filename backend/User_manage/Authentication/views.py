@@ -23,6 +23,7 @@ from drf_yasg.utils import swagger_auto_schema
 from .serializers import UserLoginSerializer, VerifyOtpSerializer, ProfileConfigSerializer, AvatarUploadSerializer, GetAvatarSerializer
 from django.conf import settings
 from rest_framework.parsers import MultiPartParser, FormParser
+import shortuuid
 
 def index(request):
 	return JsonResponse({"status": "API connected!"})
@@ -113,80 +114,113 @@ class OauthView(APIView):
 	permission_classes = [AllowAny]
 	# authentication_classes  = []
 	def post(self, request):
-		print("hiiiii")
+		print("hello Oauth")
 		code = request.data.get('code')
 		print(f"code: {code}")
 		if not code:
 			return Response(
 				{'detail': 'Authorization code not provided'}, 
 				status=status.HTTP_400_BAD_REQUEST
-		)
-		data={
-					'client_id': settings.OAUTH2_SETTINGS['CLIENT_ID'],
-					'client_secret': settings.OAUTH2_SETTINGS['CLIENT_SECRET'],
-					'code': code,
-					'grant_type': 'authorization_code',
-					'redirect_uri': settings.OAUTH2_SETTINGS['REDIRECT_URI']
-				}
+			)
+
+		data = {
+			'client_id': settings.OAUTH2_SETTINGS['CLIENT_ID'],
+			'client_secret': settings.OAUTH2_SETTINGS['CLIENT_SECRET'],
+			'code': code,
+			'grant_type': 'authorization_code',
+			'redirect_uri': settings.OAUTH2_SETTINGS['REDIRECT_URI']
+		}
 		print("send data: ", data)
+
 		# Exchange authorization code for access token
-		token_response = requests.post(
-			settings.OAUTH2_SETTINGS['TOKEN_URL'],
-			data=data
-		)
-		print("token: ", token_response.json())
-		if token_response.status_code != 200:
+		try:
+			token_response = requests.post(
+				settings.OAUTH2_SETTINGS['TOKEN_URL'],
+				data=data
+			)
+			print("token response status:", token_response.status_code)
+			print("token response text:", token_response.text)  # Print raw response
+			
+			token_response.raise_for_status()  # Raise exception for bad status codes
+			tokens = token_response.json()
+		except requests.exceptions.RequestException as e:
+			print("Token request error:", str(e))
 			return Response(
-				{'detail': 'Failed to obtain access token'},
+				{'detail': f'Failed to obtain access token: {str(e)}'},
+				status=status.HTTP_400_BAD_REQUEST
+			)
+		except ValueError as e:  # JSON decode error
+			print("JSON decode error:", str(e))
+			return Response(
+				{'detail': 'Invalid response from token endpoint'},
 				status=status.HTTP_400_BAD_REQUEST
 			)
 
-		tokens = token_response.json()
 		access_token = tokens.get('access_token')
 		refresh_token = tokens.get('refresh_token')
 
-		user_response = requests.get(
-			settings.OAUTH2_SETTINGS['USER_INFO_URL'],
-			headers={'Authorization': f'Bearer {access_token}'}
-   		)
-		# print(user_response.json())
+		if not access_token:
+			return Response(
+				{'detail': 'No access token in response'},
+				status=status.HTTP_400_BAD_REQUEST
+			)
 
-		if (user_response.status_code != 200):
-			return Response({'detail': 'Failed to get use info'}, status=status.HTTP_400_BAD_REQUEST)
+		try:
+			user_response = requests.get(
+				settings.OAUTH2_SETTINGS['USER_INFO_URL'],
+				headers={'Authorization': f'Bearer {access_token}'}
+			)
+			user_response.raise_for_status()
+			user_info = user_response.json()
+		except Exception as e:
+			print("User info error:", str(e))
+			return Response(
+				{'detail': f'Failed to get user info: {str(e)}'}, 
+				status=status.HTTP_400_BAD_REQUEST
+			)
 
-		user_info = user_response.json()
-		provider_id = user_info.get('id')  # Adjust based on provider's response
-		username = user_info.get("login") + "@42"  # Adjust based on provider's response
+		# Rest of your code...
+		provider_id = user_info.get('id')
+		username = user_info.get("login") + "@42"
 		email = user_info.get("email")
 		first_name = user_info.get("first_name")
 		last_name = user_info.get("last_name")
-		avatar_url = user_info.get("image").get("link")
-		# Create or update user
-		print("eiei1")
-		user, created = User.objects.update_or_create(
-			provider_id=provider_id,
-			is_oauth_user = True,
-			defaults={
-				'username': username,
-				'access_token': access_token,
-				'refresh_token': refresh_token,
-				'email': email,
-				"first_name": first_name,
-				"last_name": last_name,
-				"avatar_url": avatar_url
-			}
-		)
-		print("eiei2")
-		# Generate JWT tokens
-		refresh = RefreshToken.for_user(user)
-		
-		return Response({
-			# 'user': UserSerializer(user).data,
-			'tokens': {
-				'refresh': str(refresh),
-				'access': str(refresh.access_token),
-			}
-		})
+		avatar_url = user_info.get("image", {}).get("link")
+
+		try:
+			user, created = User.objects.update_or_create(
+				provider_id=provider_id,
+				is_oauth_user=True,
+				defaults={
+					'username': username,
+					'access_token': access_token,
+					'refresh_token': refresh_token,
+					'email': email,
+					"first_name": first_name,
+					"last_name": last_name,
+					# "avatar_url": avatar_url,
+					# "display_name": shortuuid.uuid()[:6]
+				}
+			)
+			if created:  # If user already existed
+				print("user is new")
+    
+				user.avatar_url = avatar_url
+				user.display_name = shortuuid.uuid()[:6]
+				user.save()
+			refresh = RefreshToken.for_user(user)
+			return Response({
+				'tokens': {
+					'refresh': str(refresh),
+					'access': str(refresh.access_token),
+				}
+			})
+		except Exception as e:
+			print("User creation error:", str(e))
+			return Response(
+				{'detail': f'Failed to create user: {str(e)}'}, 
+				status=status.HTTP_500_INTERNAL_SERVER_ERROR
+			)
 
 @csrf_exempt
 @swagger_auto_schema(method="GET", operation_description="Get OTP URI of Two Factor Authentication")

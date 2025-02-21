@@ -22,7 +22,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY User_manage .
 COPY start.sh .
-COPY ../.env .
 
 RUN chmod +x /app/start.sh
 

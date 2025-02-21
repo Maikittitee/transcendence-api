@@ -3,6 +3,7 @@ from djoser.serializers import UserCreateSerializer as BaseUserCreateSerializer
 from djoser.serializers import UserSerializer as BaseUserSerializer
 from .models import User
 from rest_framework.exceptions import ValidationError
+import shortuuid
 
 class UserCreateSerializer(BaseUserCreateSerializer):
 	confirm_password = serializers.CharField()
@@ -39,6 +40,7 @@ class UserCreateSerializer(BaseUserCreateSerializer):
 	def create(self, validated_data):
 		try:
 			user = super().create(validated_data)
+			# user.display_name = shortuuid.uuid();
 			return user
 		except Exception as e:
 			print("Creation error:", str(e))  # Debug print
