@@ -113,7 +113,6 @@ class OauthView(APIView):
 	permission_classes = [AllowAny]
 	# authentication_classes  = []
 	def post(self, request):
-		print("hiiiii")
 		code = request.data.get('code')
 		print(f"code: {code}")
 		if not code:

@@ -1,5 +1,5 @@
 import { Component } from "../../Component.js";
-import { errorDisplay, getValueFromSession } from "../../../../utils.js";
+import { errorDisplay, getValueFromSession, fetchData } from "../../../../utils.js";
 
 const name = "play-menu-page";
 
