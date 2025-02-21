@@ -30,7 +30,7 @@ export function removeAllCookies() {
 }
 
 async function sendOauthCodeToBackEnd(oauthCode) {
-  const oauthToBackEndPath = `http://localhost:9000/auth/callback/`;
+  const oauthToBackEndPath = `/api/auth/callback/`;
   console.log("Sending OAuth code to backend: ", oauthCode);
 
   try {
@@ -44,13 +44,14 @@ async function sendOauthCodeToBackEnd(oauthCode) {
       };
 
       const response = await fetch(oauthToBackEndPath, requestHeader);
-        console.log('sendOauthCodeToBackEnd response')
-        console.log(response);
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`, requestHeader);
-        }
-        const data = await response.json();
-        return data;
+      const data = await response.json();
+      console.log("data: ", data)
+      console.log('sendOauthCodeToBackEnd response')
+      console.log(response);
+      if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`, requestHeader);
+      }
+      return data;
     } catch (error) {
         console.error('Error sending OAuth code to backend:', error);
         sessionStorage.removeItem('oauthRedirectInProgress');
@@ -223,6 +224,7 @@ export async function pageLoadManager()
     }
     else if (pageLoadIndex == "42_login")
     {
+      sessionStorage.setItem('In pageLoadManager: pageLoadIndex42 Login', true);
       const oauthCode = getOauthCode();
       const res = await sendOauthCodeToBackEnd(oauthCode);
       setCookie("access", 1, res.tokens.access);
