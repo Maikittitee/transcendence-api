@@ -253,6 +253,19 @@ export class LocalPlayPage extends Component {
             this.drawScoreBoard();
     
             if (MATCH_DATA.opponentScore >= 10 || MATCH_DATA.playerScore >= 10) {
+				if (MATCH_DATA.opponentScore > MATCH_DATA.playerScore){
+					this.winner = MATCH_DATA.opponentScore
+					this.loser = MATCH_DATA.playerScore
+				} else {
+					this.winner = MATCH_DATA.playerScore
+					this.loser = MATCH_DATA.opponentScore
+				}
+				const result = {
+					"winner": this.winner,
+					"loser": this.winner
+				}
+				// IMPLEMENT MORE IN HERE
+				console.log('result: ', result)
                 this.end();
                 return;  // หยุดการทำงานหากมีคนชนะ
             }
