@@ -9,6 +9,7 @@ RUN apt-get update && \
     libpq-dev \
     python3-dev \
     libffi-dev \
+    postgresql-client \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements first
@@ -18,8 +19,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the entire project
 COPY . .
 
-# Make entrypoint executable
-COPY entrypoint.sh .
-RUN chmod +x entrypoint.sh
+# Copy and make wait-for-db script executable
+COPY wait-for-db.sh .
+RUN chmod +x wait-for-db.sh
 
-CMD ["./entrypoint.sh"]
+CMD ["./wait-for-db.sh"]
