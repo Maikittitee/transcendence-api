@@ -329,10 +329,6 @@ export class PlayMenuPage extends Component {
                                     "click",
                                     this.add_friend_popup);
 
-    super.addComponentEventListener(this.querySelector("#info"),
-    "click",
-    this.popup_test);
-
 
     this.#friend_req_list = await this.get_friend_req_list();
     this.render_friend_req();
@@ -340,13 +336,6 @@ export class PlayMenuPage extends Component {
     this.render_friend();
     this.#history_list = await this.get_history();
     this.render_history();
-    }
-
-    popup_test()
-    {
-        const winLossModal = this.querySelector("win-loss-modal");
-        winLossModal.set_display(10, 1, 'LOSS');
-        winLossModal.openModal();
     }
 
     async get_friend_req_list()

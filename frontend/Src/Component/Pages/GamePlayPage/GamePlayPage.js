@@ -234,7 +234,7 @@ export class GamePlayPage extends Component {
 			  // Use it to get the 'access' cookie
 			const accessToken = getCookie('access');
 			console.log("access tokenn: ", accessToken)
-            this.webSocketConnection = new WebSocket(`wss://${window.location.host}/ws/matchmaking/?token=${accessToken}&mode=normal`);
+            this.webSocketConnection = new WebSocket(`wss://${window.location.host}/ws/matchmaking/?token=${accessToken}`);
             this.webSocketConnection.onopen = function() {
             }
 
@@ -261,7 +261,6 @@ export class GamePlayPage extends Component {
 
                 }
                 if (recieveData.type === "game_setting") {
-					console.log("game setting")
                     this.settingData = recieveData.setting;
                     this.initGameAssets();
                 }
@@ -297,8 +296,7 @@ export class GamePlayPage extends Component {
 
 						console.log("You win: saving record...")
 						const response = await fetchData('/auth/users/me/', {
-							"win": user_data.win + 1,
-							"total_match": user_data.total_match + 1
+							"win": user_data.win + 1
 						}, "PATCH", true, {
 							"Content-Type": "application/json",
 							"Authorization": `Bearer ${accessToken}`
@@ -310,8 +308,7 @@ export class GamePlayPage extends Component {
 					} else {
 						console.log("You Loss: saving record...")
 						const response = await fetchData('/auth/users/me/', {
-							"loss": user_data.loss + 1,
-							"total_match": user_data.total_match + 1
+							"loss": user_data.loss + 1
 						}, "PATCH", true, {
 							"Content-Type": "application/json",
 							"Authorization": `Bearer ${accessToken}`
