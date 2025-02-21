@@ -101,6 +101,7 @@ export class GuestLoginPage extends Component {
     `;
   }
   postCreate() {
+    sessionStorage.setItem('status', name);
     super.addComponentEventListener(this.querySelector(".btn-primary"),
     "click",
     this.login_as_guest);
@@ -120,6 +121,7 @@ export class GuestLoginPage extends Component {
   try 
   {
     const res = await fetchData('/auth/login/', requestBody, 'POST', false);
+    console.log(res);
     setCookie("access", 1, res.access);
     setCookie("refresh", 7, res.refresh);
     window.Router.redirect('/game-menu-page/');

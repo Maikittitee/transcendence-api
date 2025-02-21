@@ -144,7 +144,7 @@ export class RegisterPage extends Component {
   
     try {
         const res = await fetchData('/auth/register/', requestBody, 'POST', false);
-        const errModal = this.querySelector("modal-component");
+        const errModal = this.querySelector("error-modal");
         errModal.set_title_style({
           color: 'green',
           fontWeight: 'bold',
