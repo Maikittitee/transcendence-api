@@ -5,8 +5,8 @@ services:
       context: ./nginx
       dockerfile: Dockerfile
     ports:
-      - "80:80"
-      - "443:443"
+      # - "80:80"
+      - "5000:443"
     volumes:
       - ./frontend:/usr/share/nginx/html
       - ./nginx/conf.d:/etc/nginx/conf.d
@@ -39,17 +39,55 @@ services:
       - ./backend/User_manage:/app
     ports:
       - "9000:9000"
+    # depends_on:
+    #   - postgres
+    #   - db
     depends_on:
-      - db
+        postgres:
+          condition: service_healthy
+        db:
+          condition: service_started
     networks:
       - app_network
+      - database_network
+  postgres:
+      image: postgres
+      restart: always
+      environment:
+        - POSTGRES_HOST=postgres
+        - POSTGRES_DB=db1  
+        - POSTGRES_USER=root
+        - POSTGRES_PASSWORD=root
+      ports: 
+          - "5432:5432"
+      volumes: 
+          - ./docker_postgres_init.sql:/docker-entrypoint-initdb.d/docker_postgres_init.sql
+      networks:
+        - database_network
+      healthcheck:
+         test: ["CMD-SHELL", "pg_isready -U root -d db1"]
+         interval: 5s
+         timeout: 5s
+         retries: 5
 
-  db:
+
+  pgadmin-compose:
+      image: dpage/pgadmin4
+      environment: 
+          PGADMIN_DEFAULT_EMAIL: "admin@gmail.com"
+          PGADMIN_DEFAULT_PASSWORD: "admin"
+      ports: 
+          - "16543:80"
+      depends_on: 
+          - postgres
+      networks:
+        - database_network
+  db: #match making
     image: postgres:15  # Updated to version 15
     environment:
-      - POSTGRES_DB=userdb
-      - POSTGRES_USER=dbuser
-      - POSTGRES_PASSWORD=dbpassword
+      - MATCH_DB=userdb
+      - MATCH_USER=dbuser
+      - MATCH_PASSWORD=dbpassword
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -58,6 +96,12 @@ services:
 networks:
   app_network:
     driver: bridge
+  database_network:
+    driver: bridge
+
 
 volumes:
   postgres_data:
+
+# docker stop $(docker ps -aq) && docker rm -f $(docker ps -aq)
+
