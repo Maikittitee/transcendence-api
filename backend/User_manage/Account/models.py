@@ -31,7 +31,7 @@ class User(AbstractUser):
 		default=False
 	)
 	mfa_secret = models.CharField(
-		max_length=16, 
+		max_length=1000, 
 		blank=True, 
 		null=True
 	)

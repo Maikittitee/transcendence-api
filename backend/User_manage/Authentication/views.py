@@ -42,7 +42,7 @@ class ProfileConfigView(APIView):
 				return Response(serializer.data)
 			return Response(serializer.errors, status=400)
 		except Exception as e:
-			return (Response({"detail": e}, status=status.HTTP_400_BAD_REQUEST))
+			return (Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST))
 
 
 class RegisterView(APIView):
@@ -109,9 +109,9 @@ def login(request):
 		})
 
 	except Exception as e:
-		print("exception error: ", e)
+		print("exception error: ", str(e))
 		# return Response("ko");
-		return Response({"detail": "Exception error"}, status=status.HTTP_400_BAD_REQUEST)
+		return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 class OauthView(APIView):
 	permission_classes = [AllowAny]
@@ -236,9 +236,10 @@ def setup_mfa(request):
 		user = get_object_or_404(User, username=request.user.username)
 		serializer = UserSerializer(user)
 		if not user.mfa_secret:
-			user.mfa_secret = pyotp.random_base32()
+			random = pyotp.random_base32()
+			print("random len",len(random))
+			user.mfa_secret = random
 			user.save()
-
 		otp_uri = pyotp.totp.TOTP(user.mfa_secret).provisioning_uri(
 			name = user.email,
 			issuer_name="Transcendence 42"
@@ -249,7 +250,7 @@ def setup_mfa(request):
 		})
 	except Exception as e:
 		return Response({
-			"detail": e
+			"detail": str(e)
 		}, status=status.HTTP_400_BAD_REQUEST)
 
 @swagger_auto_schema(method="POST", request_body=VerifyOtpSerializer, operation_description="Verify OTP")
@@ -270,7 +271,7 @@ def verify_mfa_otp(request):
 			return Response({"otp": "success"}, status.HTTP_202_ACCEPTED)
 		return (Response({"detail": "otp verify failed"}, status=status.HTTP_406_NOT_ACCEPTABLE))
 	except Exception as e:
-		return (Response({"detail": e}, status=status.HTTP_400_BAD_REQUEST))
+		return (Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST))
 
 @swagger_auto_schema(method="POST", request_body=VerifyOtpSerializer, operation_description="enable Two Factor Authentication")
 @api_view(["POST"])
@@ -280,7 +281,7 @@ def enable_mfa_otp(request):
 		user = get_object_or_404(User, username=request.user.username)
 		otp = request.data["otp"]
 	except Exception as e:
-		return (Response ({"detail": e}, status=status.HTTP_400_BAD_REQUEST))
+		return (Response ({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST))
 	try: 
 		mfa = MFA(user.mfa_secret)
 		if (mfa.verify(otp)):
@@ -289,7 +290,7 @@ def enable_mfa_otp(request):
 			return Response({"otp": "success"}, status.HTTP_202_ACCEPTED)
 		return (Response({"detail": "otp verification failed"}, status=status.HTTP_406_NOT_ACCEPTABLE))
 	except Exception as e:
-		return (Response({"detail": e}, status=status.HTTP_400_BAD_REQUEST))
+		return (Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST))
 
 
 @swagger_auto_schema(method="POST", request_body=VerifyOtpSerializer, operation_description="disable Two Factor Authentication")
@@ -300,7 +301,7 @@ def disable_mfa_otp(request):
 		user = get_object_or_404(User, username=request.user.username)
 		otp = request.data["otp"]
 	except Exception as e:
-		return (Response ({"detail": e}, status=status.HTTP_400_BAD_REQUEST))
+		return (Response ({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST))
 	try: 
 		mfa = MFA(user.mfa_secret)
 		if (mfa.verify(otp)):
@@ -309,7 +310,7 @@ def disable_mfa_otp(request):
 			return Response({"otp": "success"}, status.HTTP_202_ACCEPTED)
 		return (Response({"detail": "otp verification failed"}, status=status.HTTP_406_NOT_ACCEPTABLE))
 	except Exception as e:
-		return (Response({"detail": e}, status=status.HTTP_400_BAD_REQUEST))
+		return (Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST))
 
 
 
