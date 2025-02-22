@@ -84,12 +84,12 @@ export class Router {
           document.location.pathname,
       );
       const status = sessionStorage.getItem('status');
+      console.log(document.location.pathname);
       console.log(status);
-      if (status === 'game-menu-page')
+      if (status === 'game-menu-page' && document.location.pathname === '/')
       {
-        // window.Router.redirect('/game-menu-page/');
-      }
-      else if (route === null) {
+        document.location.pathname = 'game-menu-page';
+      } else if (route === null) {
         console.error(`Route not found`);
         return null;
       }

@@ -128,7 +128,7 @@ export class AddFriendModal extends Component {
     }
     catch (error)
     {
-      alert("error: " + error.body.detail);
+      alert("error: " + error.body.error);
     }
     this.closeModal();
   }
