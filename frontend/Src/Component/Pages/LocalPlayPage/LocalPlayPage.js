@@ -365,34 +365,58 @@ export class LocalPlayPage extends Component {
     var canvasss = document.getElementById("pong-game");
     var game = new PongGame(canvasss , "eiei")
 
-    //when prees key
-    document.addEventListener("keydown", (e) => {
+    this.addComponentEventListener(document, "keydown", this.handleKeyDown);
+    this.addComponentEventListener(document, "keyup", this.handleKeyUp);
+
+    handleKeyDown(e) 
+    {
         e.preventDefault();
-        console.log(e.key);
-        if (e.key === "ArrowUp")
-            game.keyState.UP = true;
-        if (e.key === "ArrowDown")
-            game.keyState.DOWN = true;
-        if (e.key === "w")
-            game.keyState.W = true;
-        if (e.key === "s")
-            game.keyState.S = true;
-    });
-    // when key up
-    document.addEventListener("keyup", (e) => {
+        console.log("Key Down:", e.key);
+        if (e.key === "ArrowUp") game.keyState.UP = true;
+        if (e.key === "ArrowDown") game.keyState.DOWN = true;
+        if (e.key === "w") game.keyState.W = true;
+        if (e.key === "s") game.keyState.S = true;
+    };
+
+    handleKeyUp(e) 
+    {
         e.preventDefault();
-        console.log(e.key);
-        if (e.key === "ArrowUp")
-            game.keyState.UP = false;
-        if (e.key === "ArrowDown")
-            game.keyState.DOWN = false;
-        if (e.key === "w")
-            game.keyState.W = false;
-        if (e.key === "s")
-            game.keyState.S = false;
-        if (e.key === " ")
-            console.log("SPACE");
-    }); 
+        console.log("Key Up:", e.key);
+        if (e.key === "ArrowUp") game.keyState.UP = false;
+        if (e.key === "ArrowDown") game.keyState.DOWN = false;
+        if (e.key === "w") game.keyState.W= false;
+        if (e.key === "s") game.keyState.S = false;
+        if (e.key === " ") console.log("SPACE");
+    };
+
+    // //when prees key
+    // document.addEventListener("keydown", (e) => {
+    //     e.preventDefault();
+    //     console.log(e.key);
+    //     if (e.key === "ArrowUp")
+    //         game.keyState.UP = true;
+    //     if (e.key === "ArrowDown")
+    //         game.keyState.DOWN = true;
+    //     if (e.key === "w")
+    //         game.keyState.W = true;
+    //     if (e.key === "s")
+    //         game.keyState.S = true;
+    // });
+    // // when key up
+    // document.addEventListener("keyup", (e) => {
+    //     e.preventDefault();
+    //     console.log(e.key);
+    //     if (e.key === "ArrowUp")
+    //         game.keyState.UP = false;
+    //     if (e.key === "ArrowDown")
+    //         game.keyState.DOWN = false;
+    //     if (e.key === "w")
+    //         game.keyState.W = false;
+    //     if (e.key === "s")
+    //         game.keyState.S = false;
+    //     if (e.key === " ")
+    //         console.log("SPACE");
+    // }); 
 
     function resizeCanvas() {
         const container = canvasss.parentElement;

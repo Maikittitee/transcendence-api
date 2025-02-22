@@ -85,11 +85,11 @@ export class Router {
       );
       const status = sessionStorage.getItem('status');
       console.log(status);
-      if (status === 'game-menu-page')
+      if (status === '')
       {
-        // window.Router.redirect('/game-menu-page/');
+        
       }
-      else if (route === null) {
+      if (route === null) {
         console.error(`Route not found`);
         return null;
       }
