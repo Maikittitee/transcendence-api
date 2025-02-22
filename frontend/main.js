@@ -4,13 +4,6 @@ import {pageLoadManager, fetchData, getCookie} from './utils.js';
 async function setPageLoadIndex()
 {
     sessionStorage.removeItem('pageLoadIndex');
-    let access_token = await getCookie("access");
-    if(access_token == null)
-    {
-        sessionStorage.setItem('pageLoadIndex', "home");
-        return ;
-    }
-
     let oauthRedirectInProgress = sessionStorage.getItem('oauthRedirectInProgress');
     if (oauthRedirectInProgress)
     {
@@ -18,17 +11,23 @@ async function setPageLoadIndex()
         sessionStorage.setItem('pageLoadIndex', "42_login");
         return ;
     }
-    else
+    else {
+    let access_token = await getCookie("access");
+    if(access_token == null)
     {
-        try
-        {
-            await fetchData('/auth/users/me/');
-            sessionStorage.setItem('pageLoadIndex', "game");
+        sessionStorage.setItem('pageLoadIndex', "home");
+        return ;
+    } else {
+            try
+            {
+                await fetchData('/auth/users/me/');
+                sessionStorage.setItem('pageLoadIndex', "game");
+            }
+            catch (error) 
+            {
+                sessionStorage.setItem('pageLoadIndex', "home");
+            } 
         }
-        catch (error) 
-        {
-            sessionStorage.setItem('pageLoadIndex', "home");
-        } 
     }
 }
 
@@ -52,6 +51,8 @@ async function setApp() {
         new App.Route('/edit-profile-page/', 'edit-profile-page'),
         new App.Route('/match-making-page/', 'match-making-page'),
         new App.Route('/game-play-page/', 'game-play-page'),
+        new App.Route('/local-play-page/', 'local-play-page'),
+        new App.Route('/local-tournament-page/', 'local-tournament-page'),
         new App.Route('/loading/', 'loading-page'),
     ]);
     window.Router = Router; // make Router as a global object

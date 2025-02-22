@@ -11,11 +11,19 @@ RUN apt-get update && apt-get install -y \
     libffi-dev \
     && rm -rf /var/lib/apt/lists/*
 
+# add for db
+RUN pip install --no-cache-dir psycopg2-binary
+
 # Install Python packages
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY User_manage .
-COPY ../.env .
+COPY start.sh .
 
-CMD ["python3", "manage.py", "runserver", "0.0.0.0:9000"]
+RUN chmod +x /app/start.sh
+
+RUN chown -R root:root /app && \
+	chmod -R 755 /app
+
+CMD ["/app/start.sh"]

@@ -24,17 +24,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('SECRET_KEY')
+SECRET_KEY = config('USER_MANAGE_SECRET_KEY')
 DEBUG = config('DEBUG', default=True, cast=bool)
 # SECURITY WARNING: don't run with debug turned on in production!
 ALLOWED_HOSTS = ["*"]
-DEBUG = True
-
-
+CSRF_TRUSTED_ORIGINS = ['https://localhost', 'https://localhost:8443']
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'rest_framework.authentication.TokenAuthentication', #for test
+        # 'rest_framework.authentication.TokenAuthentication', #for test
     ],
 }
 
@@ -68,7 +66,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-	# "Account.middleware.UserActivityMiddleware",
+	"Account.middleware.UserActivityMiddleware",
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
@@ -100,23 +98,23 @@ WSGI_APPLICATION = "User_manage.wsgi.application"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 
+# PostgreSQL Database Configuration (from Docker)
+
+
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": config("DB_NAME"),
+        "USER": config("DB_USER"),
+        "PASSWORD": config("DB_PASSWORD"),
+        "HOST": "postgres",
+        "PORT": "5432"
+    },
+    # "default": {
+    #     "ENGINE": "django.db.backends.sqlite3",
+    #     "NAME": BASE_DIR / "db.sqlite3",
+    # }
 }
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'db_user', 
-#         'USER': 'postgres',
-#         'PASSWORD': '1',
-#         'HOST': 'postgres',
-#         'PORT': '5432',
-#     }
-# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators

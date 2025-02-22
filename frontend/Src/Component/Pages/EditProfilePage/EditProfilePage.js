@@ -157,7 +157,8 @@ const componentStyle = `
 `;
 
 
-export class EditProfilePage extends Component { 
+
+export class EditProfilePage extends Component {
     constructor() {
     super(componentStyle);
     }
@@ -165,11 +166,11 @@ export class EditProfilePage extends Component {
     render() {
         const meowTitleSrc = window.Images.getFile("MeowPongTitle.png");
         const profile_img = sessionStorage.getItem('profile_img');
-    
+
         return `
             <div class="flex-container">
                 <img id="MeowPongTitle" src="${meowTitleSrc}">
-        
+
                 <div class="sub-container">
                     <div class="profile-Block">
                         <img id="profileImage" class="profileFrame" src="${profile_img}">
@@ -189,15 +190,15 @@ export class EditProfilePage extends Component {
 
                     <div class="profileconfig-Block">
                         <div id="inputBox">
-                            <label for="profileName">Edit your username</label>
+                            <label for="profileName">Edit your Display Name</label>
                             <div>
                                 <input id="fill-display-name" type="text">
                                 <button id="save-display-name-button" class="btn btn-primary btn-lg">save</button>
                             </div>
                         </div>
-        
+
                         <button id = "button_2fa"></button>
-        
+
                         <div id="inputBox">
                             <label for="profileImageUpload">Upload your profile picture</label>
                             <div class = "d-flex justify-content-center align-items-center">
@@ -205,15 +206,15 @@ export class EditProfilePage extends Component {
                                 <button id="uploadProfilePictureButton" class="btn btn-primary btn-lg">Upload</button>
                             </div>
                         </div>
-        
+
                         <button id="edit-bio-button" class="btn btn-success btn-lg">Edit Bio</button>
                     </div>
                 </div>
             </div>
-        
+
             <enable-2fa-modal></enable-2fa-modal>
             <edit-bio-modal></edit-bio-modal>
-            
+            <error-modal></error-modal>
         `;
     }
 
@@ -223,6 +224,7 @@ export class EditProfilePage extends Component {
         button_2fa.setAttribute("data-bs-toggle", "modal");
         button_2fa.setAttribute("data-bs-target", "#modal");
         const data = getValueFromSession("mfa_enabled");
+        sessionStorage.setItem('status', name);
         if (data) {
             console.log(data);
             button_2fa.classList.add("btn-danger");
@@ -245,7 +247,7 @@ export class EditProfilePage extends Component {
         super.addComponentEventListener(this.querySelector("#uploadProfilePictureButton"),
                                         "click",
                                         this.uploadProfilePicture);
-            
+
         const win = this.querySelector("#win-stat");
         const loss = this.querySelector("#loss-stat");
         const draw = this.querySelector("#draw-stat");
@@ -267,7 +269,7 @@ export class EditProfilePage extends Component {
     }
 
     async save_display_name()
-    { 
+    {
         try
         {
             const new_name = this.querySelector("#fill-display-name").value;;
@@ -278,7 +280,7 @@ export class EditProfilePage extends Component {
             console.log("after update")
             const display_name = sessionStorage.getItem('display_name').replace(/\"/g, '');
             profileName.textContent = display_name;
-        } 
+        }
         catch (error)
         {
             const errModal = this.querySelector("error-modal");
@@ -286,14 +288,14 @@ export class EditProfilePage extends Component {
         }
     }
 
-    async handle_2FA() 
+    async handle_2FA()
     {
         try
         {
             const res = await fetchData('/auth/2fa/qr/', null);
             console.log(res.otp_uri);
             setCookie("qr-link", 1, res.otp_uri);
-        } 
+        }
         catch (error)
         {
             const errModal = this.querySelector("error-modal");
@@ -310,13 +312,13 @@ export class EditProfilePage extends Component {
                 alert("Please select a file to upload.");
                 return;
             }
-    
+
             const file = fileInput.files[0];
             const formData = new FormData();
             formData.append("avatar", file);
             await fetchData('/auth/avatar/', formData, 'PUT', true, {});
             updateUserData();
-    
+
             // อัปเดตรูปภาพใหม่ในหน้าโปรไฟล์
             const profileImage = this.querySelector("#profileImage");
             profileImage.src = URL.createObjectURL(file);

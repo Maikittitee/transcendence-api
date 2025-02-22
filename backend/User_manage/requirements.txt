@@ -12,3 +12,4 @@ pillow
 djoser
 djangorestframework_simplejwt
 django-rest-swagger
+shortuuid==1.0.13

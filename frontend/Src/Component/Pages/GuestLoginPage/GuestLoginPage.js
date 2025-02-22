@@ -63,7 +63,7 @@ const componentStyle = `
   }
 `;
 
-export class GuestLoginPage extends Component { 
+export class GuestLoginPage extends Component {
   constructor() {
     super(componentStyle);
   }
@@ -74,9 +74,9 @@ export class GuestLoginPage extends Component {
 
       <div class = "menu">
         <img id = "MeowPongTitle" src=${meowTitleSrc}>
-    
+
         <div class = "container-sm frame">
-                
+
             <h1>LOGIN</h1>
 
             <div class="form-floating mb-3">
@@ -101,6 +101,7 @@ export class GuestLoginPage extends Component {
     `;
   }
   postCreate() {
+    sessionStorage.setItem('status', name);
     super.addComponentEventListener(this.querySelector(".btn-primary"),
     "click",
     this.login_as_guest);
@@ -117,14 +118,15 @@ export class GuestLoginPage extends Component {
 		password: password,
 	};
 
-  try 
+  try
   {
     const res = await fetchData('/auth/login/', requestBody, 'POST', false);
+    console.log(res);
     setCookie("access", 1, res.access);
     setCookie("refresh", 7, res.refresh);
     window.Router.redirect('/game-menu-page/');
-  } 
-  catch (error) 
+  }
+  catch (error)
   {
     if(error.body.detail === '2FA token required')
     {

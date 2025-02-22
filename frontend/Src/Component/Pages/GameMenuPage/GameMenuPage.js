@@ -178,7 +178,7 @@ loading-page {
 
 `;
 
-export class GameMenuPage extends Component { 
+export class GameMenuPage extends Component {
   constructor() {
     super(componentStyle);
   }
@@ -186,6 +186,7 @@ export class GameMenuPage extends Component {
   render() {
     const meowTitleSrc = window.Images.getFile("MeowPongTitle.png");
     const default_profile = window.Images.getFile("1.png");
+    localStorage.clear()
 
     return `
     <div class = "flex-container">
@@ -210,7 +211,7 @@ export class GameMenuPage extends Component {
             </ul>
         </div>
     </div>
-    
+
     <loading-page></loading-page>
     <confirm-modal></confirm-modal>
     `;
@@ -219,7 +220,7 @@ export class GameMenuPage extends Component {
   async postCreate() {
     const loading_page = this.querySelector("loading-page");
     loading_page.style.display = "block";
-    sessionStorage.setItem('status', 'login');
+    sessionStorage.setItem('status', name);
     super.addComponentEventListener( this.querySelector("#play"),
                                     "click",
                                     () => window.Router.navigate('/play-menu-page/'));
@@ -229,7 +230,6 @@ export class GameMenuPage extends Component {
     super.addComponentEventListener(this.querySelector("#logout"),
                                     "click",
                                     this.logout);
-
     await this.load_game_data();
     loading_page.style.display = "none";
   }
@@ -242,13 +242,19 @@ export class GameMenuPage extends Component {
     const total_match = this.querySelector("#total-game-stat");
     const profile_name = this.querySelector("#profileName");
     const profileImage = this.querySelector("#profileImage");
-    
+
     win.textContent = getValueFromSession("win");
     loss.textContent = getValueFromSession("loss");
     draw.textContent = getValueFromSession("draw");
     total_match.textContent = getValueFromSession("total_match");
     profile_name.textContent = getValueFromSession("display_name");
-    profileImage.src = sessionStorage.getItem('profile_img');
+
+    const Image_check = sessionStorage.getItem('profile_img');
+    if (Image_check) {
+        profileImage.src = sessionStorage.getItem('profile_img');
+    } else {
+        profileImage.src = sessionStorage.getItem('avatar_url');
+    }
   }
 
   confirm_action() {

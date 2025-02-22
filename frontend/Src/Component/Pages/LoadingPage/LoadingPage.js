@@ -50,6 +50,10 @@ export class LoadingPage extends Component {
       </div>
   `
   }
+
+  postCreate() {
+    sessionStorage.setItem('status', name);
+  }
 }
 
 customElements.define(name, LoadingPage);

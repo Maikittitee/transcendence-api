@@ -80,7 +80,7 @@ const componentStyle = `
 
 `;
 
-export class RegisterPage extends Component { 
+export class RegisterPage extends Component {
   constructor() {
     super(componentStyle);
   }
@@ -88,10 +88,10 @@ export class RegisterPage extends Component {
   render() {
     const meowTitleSrc = window.Images.getFile("MeowPongTitle.png");
     return `
-    
+
         <div class="menu">
             <img id="MeowPongTitle" src=${meowTitleSrc} alt="MeowPong Title">
-            
+
             <div class="container-sm frame">
             <h1>REGISTER</h1>
 
@@ -134,17 +134,17 @@ export class RegisterPage extends Component {
     const email = this.querySelector("#emailInput").value;
     const password = this.querySelector("#passwordInput").value;
     const confirm_password = this.querySelector("#confirmPasswordInput").value;
-  
+
     const requestBody = {
       username: username,
       email: email,
       password: password,
       confirm_password: confirm_password,
     };
-  
+
     try {
         const res = await fetchData('/auth/register/', requestBody, 'POST', false);
-        const errModal = this.querySelector("modal-component");
+        const errModal = this.querySelector("error-modal");
         errModal.set_title_style({
           color: 'green',
           fontWeight: 'bold',

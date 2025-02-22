@@ -1,0 +1,12 @@
+# Ignore env directory
+/env/
+.env/
+venv/
+
+# Ignore all Python bytecode files
+*.pyc
+**/*.pyc
+
+# Ignore all __pycache__ directories
+__pycache__/
+**/__pycache__/

@@ -74,6 +74,7 @@ const componentStyle = `
   }
 
   postCreate() {
+    sessionStorage.setItem('status', name);
     this.addComponentEventListener(  this.querySelector("#login42"),
                                       "click",
                                       this.login42);

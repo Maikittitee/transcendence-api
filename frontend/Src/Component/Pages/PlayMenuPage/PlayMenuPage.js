@@ -1,7 +1,8 @@
 import { Component } from "../../Component.js";
-import { errorDisplay, getValueFromSession } from "../../../../utils.js";
+import { errorDisplay, getValueFromSession, fetchData } from "../../../../utils.js";
 
 const name = "play-menu-page";
+
 
 const componentStyle = `
 
@@ -267,6 +268,7 @@ export class PlayMenuPage extends Component {
 
     render ()
     {
+	localStorage.clear();
     const meowTitleSrc = window.Images.getFile("MeowPongTitle.png");
     const profile_img = sessionStorage.getItem('profile_img');
     const meow_pow_l = window.Images.getFile("9.png");
@@ -287,7 +289,7 @@ export class PlayMenuPage extends Component {
             </div>
             <div id = "profileLine"></div>
             <div id = "profileFriendTiTle">Friend list</div>
-            <ul id = "profileFriendContainer" class = "overflow-auto">   
+            <ul id = "profileFriendContainer" class = "overflow-auto">
             </ul>
         </div>
 
@@ -296,37 +298,42 @@ export class PlayMenuPage extends Component {
             <h1> Match History </h1>
             <ul id = "match-history-container" class = "container overflow-auto">
             </ul>
-            
+
         </div>
 
         <div class ="menu-block">
             <h1 id = "fight-meow"> Fight Meow~ </h1>
             <div id = "meow-pow"><img id = "meow-pow-l" src=${meow_pow_l}> <img id = "meow-pow-r" src=${meow_pow_r}></div>
-            <button id = "match-making" class="btn btn-primary play-button"> Local Play </button>
-            <button id = "tournament" class="btn btn-primary play-button"> Tournament </button>
-            <button id = "local-play" class="btn btn-primary play-button"> Match Making </button>
+            <button id = "local-play" class="btn btn-primary play-button"> Local Play </button>
+            <button id = "local-tournament" class="btn btn-primary play-button"> Tournament </button>
+            <button id = "match-making" class="btn btn-primary play-button"> Match Making </button>
         </div>
     </div>
 
     <add-friend-modal></add-friend-modal>
     <accept-friend-modal></accept-friend-modal>
     <error-modal></error-modal>
+    <win-loss-modal></win-loss-modal>
     `;
     }
 
     async postCreate() {
-
-    super.addComponentEventListener( this.querySelector("#match-making"),
+    sessionStorage.setItem('status', name);
+    super.addComponentEventListener( this.querySelector("#local-play"),
                                     "click",
-                                    () => window.Router.navigate('/match-making-page/'));
+                                    () => window.Router.navigate('/local-play-page/'));
 
-    super.addComponentEventListener(this.querySelector("#local-play"),
+    super.addComponentEventListener(this.querySelector("#match-making"),
                                     "click",
                                     () => window.Router.navigate('/game-play-page/'));
 
     super.addComponentEventListener(this.querySelector("#add-friend"),
                                     "click",
                                     this.add_friend_popup);
+
+    super.addComponentEventListener( this.querySelector("#local-tournament"),
+                                    "click",
+                                    () => window.Router.navigate('/local-tournament-page/'));
 
 
     this.#friend_req_list = await this.get_friend_req_list();
@@ -349,7 +356,8 @@ export class PlayMenuPage extends Component {
                 {
                     friendsReqList[i].from_user.avatar_url = window.Images.getFile("1.png");
                 }
-                else{
+                else
+                {
                     const picture = await fetchData(friendsReqList[i].from_user.avatar_url, null);
                     if (picture instanceof Response) {
                     const blob = await picture.blob();
@@ -358,9 +366,9 @@ export class PlayMenuPage extends Component {
                     console.error('The response is not a valid image file.');
                     }
                 }
-            }            
+            }
             return friendsReqList;
-        } 
+        }
         catch (error)
         {
             const errModal = this.querySelector("error-modal");
@@ -388,9 +396,9 @@ export class PlayMenuPage extends Component {
                     console.error('The response is not a valid image file.');
                     }
                 }
-            }        
+            }
             return friendsList;
-        } 
+        }
         catch (error)
         {
             const errModal = this.querySelector("error-modal");
@@ -471,7 +479,7 @@ export class PlayMenuPage extends Component {
             }
             console.log('Final ret_history:', ret_history[0]);
             return ret_history;
-        } 
+        }
         catch (error)
         {
             const errModal = this.querySelector("error-modal");
@@ -481,18 +489,18 @@ export class PlayMenuPage extends Component {
 
     render_friend_req() {
         for (let i = 0; i < this.#friend_req_list.length; i++) {
-            if(this.#friend_req_list[i].status === "pending") 
+            if(this.#friend_req_list[i].status === "pending")
             {
                 const friend_req_data = this.#friend_req_list[i].from_user;
                 const friend_req_id = this.#friend_req_list[i].id;
                 let profile_img = friend_req_data.avatar_url || default_profile;
                 const req_id_tick = "req-id-" + friend_req_id + "-tick";
                 const req_id_cross = "req-id-" + friend_req_id + "-cross";
-        
+
                 const friend_req = `
                 <li class="container bg-light h-25 rounded d-flex align-items-center justify-content-between">
-                    <div class="mini-profile bg-secondary bg-gradient rounded-circle"> 
-                        <img id="profile-img" src=${profile_img}> 
+                    <div class="mini-profile bg-secondary bg-gradient rounded-circle">
+                        <img id="profile-img" src=${profile_img}>
                     </div>
                     <div class="d-flex flex-column justify-content-center align-items-start me-1">
                         <div class="mini-profile-text text-success mb-1"> Friend Request </div>
@@ -504,7 +512,7 @@ export class PlayMenuPage extends Component {
                 `;
                 const friend_list_container = this.querySelector("#profileFriendContainer");
                 friend_list_container.insertAdjacentHTML('beforeend', friend_req);
-        
+
                 // เพิ่ม Event Listener สำหรับ Tick แบะ Cross Icon
                 super.addComponentEventListener(this.querySelector(`#${req_id_tick}`),
                     "click",
@@ -531,25 +539,25 @@ export class PlayMenuPage extends Component {
 
             let completed_at = history_data.completed_at;
             let dateObj = new Date(completed_at);
-            
+
             // แปลงวันที่เป็น "DD/MM/YYYY"
             let day = String(dateObj.getUTCDate()).padStart(2, '0');
             let month = String(dateObj.getUTCMonth() + 1).padStart(2, '0'); // เดือนเริ่มจาก 0
             let year = dateObj.getUTCFullYear();
             let formattedDate = `${day}/${month}/${year}`;
-            
+
             // แปลงเวลาเป็น "HH:mm"
             let hours = String(dateObj.getUTCHours()).padStart(2, '0');
             let minutes = String(dateObj.getUTCMinutes()).padStart(2, '0');
             let formattedTime = `${hours}:${minutes}`;
-            
+
             // ใส่ค่าลงใน game_date
             let game_date = `
             <div id="match-date">
                 <div> ${formattedDate} </div>
                 <div> ${formattedTime} </div>
             </div>`;
-            
+
             let player2_img = history_data.player2_avatar_url;
 
             let match_history_card = `
@@ -557,7 +565,7 @@ export class PlayMenuPage extends Component {
                     ${game_result}
                     ${game_date}
                     <div id="profile-card" class="rounded">
-                        <div class = "profile-card-image bg-secondary bg-gradient rounded-circle m-1"> 
+                        <div class = "profile-card-image bg-secondary bg-gradient rounded-circle m-1">
                             <img src=${player2_img}>
                         </div>
                         <div id="profile-name" class = "m-1">
@@ -592,10 +600,10 @@ export class PlayMenuPage extends Component {
             }
             const friend_req = `
             <li class = "container bg-light h-25 rounded d-flex align-items-center justify-content-between">
-                <div class = "mini-profile bg-secondary bg-gradient rounded-circle"> 
-                    <img src=${profile_img}> 
+                <div class = "mini-profile bg-secondary bg-gradient rounded-circle">
+                    <img src=${profile_img}>
                 </div>
-                <div class = "d-flex flex-column justify-content-center align-items-start"> 
+                <div class = "d-flex flex-column justify-content-center align-items-start">
                     <div class="mini-profile-text mb-1"> ${friend_data.display_name} </div>
                     ${online_status}
                 </div>
@@ -622,10 +630,10 @@ export class PlayMenuPage extends Component {
         const modal_img = accept_friend_modal.querySelector("#friend-img");
         const modal_title = accept_friend_modal.querySelector("#title");
         const yes_button = accept_friend_modal.querySelector("#yes");
-    
+
         // อัปเดตข้อมูลใน Modal
         modal_img.src = avatar_url || window.Images.getFile("1.png");
-    
+
         if (action === "accept") {
             modal_title.textContent = `Are you sure you want to accept ${display_name} as your friend?`;
             modal_title.style.color = "black";
@@ -636,11 +644,11 @@ export class PlayMenuPage extends Component {
             modal_title.textContent = `Are you sure you want to remove ${display_name} from your friends list?`;
             modal_title.style.color = "red";
         }
-    
+
         // ลบ Event Listener เดิม (ถ้ามี)
         yes_button.replaceWith(yes_button.cloneNode(true));
         const new_yes_button = accept_friend_modal.querySelector("#yes");
-    
+
         // เพิ่ม Event Listener ใหม่
         if (action === "accept") {
             super.addComponentEventListener(new_yes_button, "click", () => this.handle_friend_action('accept', req_id));
@@ -649,7 +657,7 @@ export class PlayMenuPage extends Component {
         } else if (action === "remove") {
             super.addComponentEventListener(new_yes_button, "click", () => this.handle_friend_action('remove', req_id));
         }
-    
+
         // เปิด Modal
         accept_friend_modal.openModal();
     }
@@ -666,17 +674,17 @@ export class PlayMenuPage extends Component {
             } else {
                 throw new Error("Invalid action");
             }
-    
+
             console.log("endpoint: " + endpoint);
             const res = await fetchData(endpoint, null, 'POST');
             console.log(`Friend request ${action}ed:`, res);
-    
+
             // ปิด Modal ถ้ามีการยืนยัน
             const accept_friend_modal = this.querySelector("accept-friend-modal");
             if (accept_friend_modal) {
                 accept_friend_modal.closeModal();
             }
-    
+
             // อัปเดตรายการเพื่อนและคำขอเพื่อน
             const friend_list = this.querySelector('#profileFriendContainer');
             this.#friend_req_list = await this.get_friend_req_list();
@@ -684,9 +692,9 @@ export class PlayMenuPage extends Component {
             friend_list.innerHTML = "";
             this.render_friend_req();
             this.render_friend();
-    
-        } 
-        catch (error) 
+
+        }
+        catch (error)
         {
             const errModal = this.querySelector("error-modal");
             errorDisplay(errModal, error);
