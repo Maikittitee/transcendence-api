@@ -302,7 +302,8 @@ export class LocalTournamentPage extends Component {
   tournamentStart() {
     if (this.count >= 3)
     {
-      window.Router.redirect('/play-menu-page/');
+		localStorage.clear();
+		window.Router.redirect('/play-menu-page/');
     }
     else {
       this.count++;
