@@ -1,20 +1,22 @@
 FROM nginx:alpine
 
+# Install OpenSSL
+RUN apk add --no-cache openssl
+
 # Remove default nginx config
 RUN rm /etc/nginx/conf.d/default.conf
 
-# Create directories if they don't exist
+# Create directories
 RUN mkdir -p /etc/nginx/ssl /usr/share/nginx/html
 
-# Copy SSL certificates
-COPY ./ssl/meaw.crt /etc/nginx/ssl/
-COPY ./ssl/meaw.key /etc/nginx/ssl/
-COPY ./ssl/pong.ktunchar.dev.crt /etc/nginx/ssl/
-COPY ./ssl/pong.ktunchar.dev.key /etc/nginx/ssl/
+# Create entrypoint script to generate certificates
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 # Copy nginx configuration
 COPY ./conf.d/default.conf /etc/nginx/conf.d/
 
 EXPOSE 80 443
 
-CMD ["nginx", "-g", "daemon off;"]
+# Use the entrypoint script
+ENTRYPOINT ["/entrypoint.sh"]
