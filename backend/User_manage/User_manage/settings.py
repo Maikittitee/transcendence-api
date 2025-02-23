@@ -190,7 +190,7 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 OAUTH2_SETTINGS = {
-    'CLIENT_ID': config("UID"),
+    'CLIENT_ID': config("OAUTH_UID"),
     'CLIENT_SECRET': config("FT_CLIENT_SECRET"),
     'AUTHORIZATION_URL': 'https://api.intra.42.fr/oauth/authorize',
     'TOKEN_URL': 'https://api.intra.42.fr/oauth/token',
