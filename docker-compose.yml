@@ -6,6 +6,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8443:443"
+    env_file:
+      - .env
     volumes:
       - ./frontend:/usr/share/nginx/html
       - ./nginx/conf.d:/etc/nginx/conf.d
