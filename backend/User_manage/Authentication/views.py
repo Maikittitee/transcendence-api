@@ -16,6 +16,9 @@ import json, jwt, datetime, requests
 from Account.models import User
 from Account.serializers import UserCreateSerializer, UserSerializer
 from . import utils
+from django.http import FileResponse, Http404
+import os
+from django.conf import settings
 import pyotp, qrcode, io
 from .mfa import MFA
 from Account.serializers import UserSerializer
@@ -367,3 +370,12 @@ class GetOAuthUrlView(APIView):
 		return Response({
 			'oauth_url': settings.OAUTH2_SETTINGS['OAUTH_URL']
 		})
+  
+
+def serve_media(request, path):
+    file_path = os.path.join(settings.MEDIA_ROOT, 'upload', path)
+    
+    if os.path.exists(file_path):
+        return FileResponse(open(file_path, 'rb'))
+    else:
+        raise Http404("File not found")
