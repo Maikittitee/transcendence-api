@@ -6,6 +6,7 @@ from django.conf import settings
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+from Authentication.views import serve_media
 
 
 schema_view = get_schema_view(
@@ -35,6 +36,7 @@ urlpatterns = [
         path("admin/", admin.site.urls),
         path("account/", include("Account.urls")),
         path('friends/', include('Friend.urls')),
-        path('matches/', include('match.urls'))
+        path('matches/', include('match.urls')),
+        path('media/upload/<path:path>', serve_media, name='serve_media'),
     ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT))),  
 ] 
