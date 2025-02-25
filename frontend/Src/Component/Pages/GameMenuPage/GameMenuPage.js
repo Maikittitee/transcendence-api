@@ -246,7 +246,7 @@ export class GameMenuPage extends Component {
     win.textContent = getValueFromSession("win");
     loss.textContent = getValueFromSession("loss");
     draw.textContent = getValueFromSession("draw");
-    total_match.textContent = getValueFromSession("total_match");
+    total_match.textContent = getValueFromSession("win") + getValueFromSession("loss");
     profile_name.textContent = getValueFromSession("display_name");
 
     const Image_check = sessionStorage.getItem('profile_img');
